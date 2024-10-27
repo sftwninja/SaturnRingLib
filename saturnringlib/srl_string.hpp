@@ -1,6 +1,5 @@
 #pragma once
-
-#include "utils.h"
+#include <type_traits>
 
 extern "C" {
     int snprintf(char* buffer, size_t n, const char* fmt, ...);
@@ -24,7 +23,9 @@ extern "C" {
     void* memchr(const void* mem, int ptn, size_t len);
 }
 
-namespace std
+#if !DOXYGEN
+
+namespace SRL
 {
     class string
     {
@@ -119,3 +120,5 @@ namespace std
         }
     };
 }
+
+#endif
