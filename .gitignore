@@ -17,6 +17,9 @@
 /[Ss]amples/**/[Bb]uild[Dd]rop/**
 /[Cc]ompiler/msys2/tmp/*
 !/[Cc]ompiler/msys2/tmp/.gitkeep
+/[Mm]odules/[Ss][Gg][Ll]/[Ii][Pp]/*.o
+/[Mm]odules/[Tt][Ll][Ss][Ff]/**
+!/[Mm]odules/[Tt][Ll][Ss][Ff]/.git
 
 # just to get rid of the old txt
 !/[Ee]mulators/[Mm]ednafen/put_mednafen_here.txt
