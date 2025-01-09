@@ -395,6 +395,10 @@ namespace SRL
              */
             inline static MemoryZone zone;
 
+            /** @brief Full main system memory zone
+             */
+            inline static const MemoryZone fullZone = { (void*)0x06000000, 0x07FFFFFF - 0x06000000};
+
             /** @brief Initialize memory zone
              */
             inline static void Initialize()
@@ -425,7 +429,16 @@ namespace SRL
              */
             static bool InRange(void* ptr)
             {
-                return Memory::InZone(HighWorkRam::zone, ptr);
+                return Memory::InZone(HighWorkRam::fullZone, ptr);
+            }
+
+            /** @brief Check whether pointer is in range of the memory zone
+             * @param ptr Pointer to check
+             * @return true if pointer belongs to the current memory zone
+             */
+            static bool InRange(uint32_t ptr)
+            {
+                return Memory::InZone(HighWorkRam::fullZone, (void*)ptr);
             }
 
             /** @brief Free allocated memory
@@ -561,6 +574,15 @@ namespace SRL
                 return Memory::InZone(LowWorkRam::zone, ptr);
             }
 
+            /** @brief Check whether pointer is in range of the memory zone
+             * @param ptr Pointer to check
+             * @return true if pointer belongs to the current memory zone
+             */
+            inline static bool InRange(uint32_t zoneAddress)
+            {
+                return Memory::InZone(LowWorkRam::zone, (void*)zoneAddress);
+            }
+
             /** @brief Free allocated memory
              * @param ptr Pointer to allocated memory
              */
@@ -674,6 +696,15 @@ namespace SRL
              * @return true if pointer belongs to the current memory zone
              */
             inline static bool InRange(void* ptr)
+            {
+                return CartRam::InRange(reinterpret_cast<uint32_t>(ptr));
+            }
+
+            /** @brief Check whether pointer is in range of the memory zone
+             * @param zoneAddress Address in the memory zone where object should be allocated
+             * @return true if pointer belongs to the current memory zone
+             */
+            inline static bool InRange(uint32_t zoneAddress)
             {
                 return false;
             }
@@ -852,20 +883,172 @@ namespace SRL
                 CartRam::Free(ptr);
             }
         }
+
+        /** @brief Allocate some memory in specified zone
+         * @param size Number of bytes to allocate
+         * @param zone Memory zone
+         * @return Pointer to the allocated space in memory
+         */
+        inline static void* Malloc(size_t size, const SRL::Memory::Zone zone)
+        {
+            switch (zone)
+            {
+            case SRL::Memory::Zone::CartRam:
+                return SRL::Memory::CartRam::Malloc(size);
+
+            case SRL::Memory::Zone::LWRam:
+                return SRL::Memory::LowWorkRam::Malloc(size);
+
+            default:
+                return SRL::Memory::HighWorkRam::Malloc(size);
+            }
+        }
+
+        /** @brief Allocate some memory in zone containing specified address
+         * @param size Number of bytes to allocate
+         * @param address Address in the memory where object should be allocated
+         * @return Pointer to the allocated space in memory
+         */
+        inline static void* PlacementMalloc(size_t size, uint32_t address)
+        {
+            // Figure out what malloc we have to use
+            if (SRL::Memory::HighWorkRam::InRange(address))
+            {
+                return SRL::Memory::HighWorkRam::Malloc(size);
+            }
+            else if (SRL::Memory::LowWorkRam::InRange(address))
+            {
+                return SRL::Memory::LowWorkRam::Malloc(size);
+            }
+            else if (SRL::Memory::CartRam::InRange(address))
+            {
+                return SRL::Memory::CartRam::Malloc(size);
+            }
+
+            return NULL;
+        }
+
+        /** @brief Allocate some memory in zone containing specified address
+         * @param size Number of bytes to allocate
+         * @param address Address in the memory where object should be allocated
+         * @return Pointer to the allocated space in memory
+         */
+        inline static void* PlacementMalloc(size_t size, void* address)
+        {
+            // Figure out what malloc we have to use
+            if (SRL::Memory::HighWorkRam::InRange(address))
+            {
+                return SRL::Memory::HighWorkRam::Malloc(size);
+            }
+            else if (SRL::Memory::LowWorkRam::InRange(address))
+            {
+                return SRL::Memory::LowWorkRam::Malloc(size);
+            }
+            else if (SRL::Memory::CartRam::InRange(address))
+            {
+                return SRL::Memory::CartRam::Malloc(size);
+            }
+
+            return NULL;
+        }
     };
 }
 
-/** @brief New keyword for expansion cartridge RAM
+/** @relates SRL::Memory
+ * @brief @c new keyword for expansion cartridge RAM
+ * @code {.cpp}
+ * class MyFirstThing { }
+ * 
+ * void main()
+ * {
+ *      // Allocates MyFirstThing in the cart RAM
+ *      MyFirstThing* second = cartnew MyFirstThing();
+ * }
+ * @endcode
  */
 #define cartnew new (SRL::Memory::Zone::CartRam)
 
-/** @brief New keyword for low work RAM
+/** @relates SRL::Memory
+ * @brief @c new keyword for low work RAM
+ * @code {.cpp}
+ * class MyFirstThing { }
+ * 
+ * void main()
+ * {
+ *      // Allocates MyFirstThing in the low RAM
+ *      MyFirstThing* second = lwnew MyFirstThing();
+ * }
+ * @endcode
  */
 #define lwnew new (SRL::Memory::Zone::LWRam)
 
-/** @brief New keyword for high work RAM 
+/** @relates SRL::Memory
+ * @brief @c new keyword for high work RAM 
+ * @code {.cpp}
+ * class MyFirstThing { }
+ * 
+ * void main()
+ * {
+ *      // Allocates MyFirstThing in the high RAM
+ *      MyFirstThing* second = hwnew MyFirstThing();
+ * 
+ *      // For High RAM, keywords new or hwnew can be both used
+ *      MyFirstThing* second = new MyFirstThing();
+ * }
+ * @endcode
  */
 #define hwnew new
+
+/** @relates SRL::Memory
+ * @brief Allocates memory in the same zone as current context
+ * @warning <b>Extreme cation is required</b>.<br/> This will allocate new object in the same zone as the @c this keyword is present in.
+ * @code {.cpp}
+ * class MyFirstThing { }
+ * 
+ * class MySecondThing
+ * {
+ *      MyFirstThing * thing;
+ * 
+ *      MySecondThing() {
+ *          // Allocate object MyFirstThing in the same memory zone as MySecondThing
+ *          this->thing = autonew MyFirstThing();
+ *      }
+ * }
+ * 
+ * void main()
+ * {
+ *      // Allocates MySecondThing object in the Low RAM, which in term in its constructor allocates
+ *      // MyFirstThing object in the same zone (Low RAM)
+ *      MySecondThing* first = lwnew MySecondThing();
+ * 
+ *      // Allocates MySecondThing object in the High RAM, which in term in its constructor allocates
+ *      // MyFirstThing object in the same zone (High RAM)
+ *      // For High RAM, keywords new or hwnew can be both used
+ *      MySecondThing* second = new MySecondThing();
+ * }
+ * @endcode
+ */
+#define autonew new(reinterpret_cast<uint32_t>(this))
+
+/** @brief Allocate some memory
+ * @param size Number of bytes to allocate
+ * @param zoneAddress Address in the memory zone where object should be allocated
+ * @return Pointer to the allocated space in memory
+ */
+inline void* operator new(size_t size, uint32_t zoneAddress)
+{
+    return SRL::Memory::PlacementMalloc(size, zoneAddress);
+}
+
+/** @brief Allocate some memory
+ * @param size Number of bytes to allocate
+ * @param zoneAddress Address in the memory zone where object should be allocated
+ * @return Pointer to the allocated space in memory
+ */
+inline void* operator new[](size_t size, uint32_t zoneAddress)
+{
+    return SRL::Memory::PlacementMalloc(size, zoneAddress);
+}
 
 /** @brief Allocate some memory
  * @param size Number of bytes to allocate
@@ -878,7 +1061,7 @@ inline void* operator new(size_t size)
 
 /** @brief Allocate some memory
  * @param size Number of bytes to allocate
- * @param tone Memory zone
+ * @param zone Memory zone
  * @return Pointer to the allocated space in memory
  */
 inline void* operator new(size_t size, const SRL::Memory::Zone zone)

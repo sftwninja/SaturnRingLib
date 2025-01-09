@@ -74,7 +74,7 @@ namespace SRL::Types
             Gouraud(gouraud),
             Direction(direction & 0x3f) { }
 
-        /** @brief Inidcates whether face is visible at all times or only when its normal vector is pointing towards camera
+        /** @brief Indicates whether face is visible at all times or only when its normal vector is pointing towards camera
          */
         FaceVisibility Visibility;
 
@@ -160,9 +160,9 @@ namespace SRL::Types
          */
         Mesh(const size_t& vertexCount, const size_t& polygonCount) : FaceCount(polygonCount), VertexCount(vertexCount)
         {
-            this->Vertices = new Vector3D[vertexCount];
-            this->Faces = new Polygon[polygonCount];
-            this->Attributes = new Attribute[polygonCount];
+            this->Vertices = autonew Vector3D[vertexCount];
+            this->Faces = autonew Polygon[polygonCount];
+            this->Attributes = autonew Attribute[polygonCount];
         }
 
         /** @brief Construct a new mesh object from existing data
@@ -263,10 +263,10 @@ namespace SRL::Types
          */
         SmoothMesh(const size_t& vertexCount, const size_t& faceCount) : FaceCount(faceCount), VertexCount(vertexCount)
         {
-            this->Vertices = new Vector3D[vertexCount];
-            this->Faces = new Polygon[faceCount];
-            this->Attributes = new Attribute[faceCount];
-            this->Normals = new Vector3D[vertexCount];
+            this->Vertices = autonew Vector3D[vertexCount];
+            this->Faces = autonew Polygon[faceCount];
+            this->Attributes = autonew Attribute[faceCount];
+            this->Normals = autonew Vector3D[vertexCount];
         }
 
         /** @brief Construct a new mesh object from existing data

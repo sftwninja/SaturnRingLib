@@ -110,9 +110,13 @@ private:
          */
         uint8_t HasMeshEffect : 1;
 
+        /** @brief Indicates whether this polygon has a mesh effect applied to it
+         */
+        uint8_t IsDoubleSided : 1;
+
         /** @brief Reserved for future use
          */
-        uint8_t ReservedForFlags : 6;
+        uint8_t ReservedForFlags : 5;
 
         /** @brief Reserved for future use
          */
@@ -188,7 +192,7 @@ private:
             #pragma GCC diagnostic push
             #pragma GCC diagnostic ignored "-Wnarrowing"
             mesh.Attributes[attributeIndex] = SRL::Types::Attribute(
-                SRL::Types::Attribute::FaceVisibility::SingleSided,
+                attributeHeader->IsDoubleSided != 1 ? SRL::Types::Attribute::FaceVisibility::SingleSided : SRL::Types::Attribute::FaceVisibility::DoubleSided,
                 SRL::Types::Attribute::SortMode::Maximum,
                 textureIndex,
                 color,
@@ -240,7 +244,7 @@ private:
             #pragma GCC diagnostic push
             #pragma GCC diagnostic ignored "-Wnarrowing"
             mesh.Attributes[attributeIndex] = SRL::Types::Attribute(
-                SRL::Types::Attribute::FaceVisibility::SingleSided,
+                attributeHeader->IsDoubleSided != 1 ? SRL::Types::Attribute::FaceVisibility::SingleSided : SRL::Types::Attribute::FaceVisibility::DoubleSided,
                 SRL::Types::Attribute::SortMode::Maximum,
                 textureIndex,
                 color,

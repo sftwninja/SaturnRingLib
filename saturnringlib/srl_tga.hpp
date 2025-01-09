@@ -320,10 +320,10 @@ namespace SRL::Bitmap
          * @param header File header
          * @param transparentColor defines a color that should be changed to be transparent
          */
-        static Bitmap::Palette* DecodePalette(uint8_t* stream, const TGA::TgaHeader* header, int32_t transparentColor)
+        Bitmap::Palette* DecodePalette(uint8_t* stream, const TGA::TgaHeader* header, int32_t transparentColor)
         {
             uint8_t* buffer = (stream + TGA::ImagePaletteOffset(header));
-            Bitmap::Palette* palette = new Bitmap::Palette(header->Palette.PaletteLength);
+            Bitmap::Palette* palette = autonew Bitmap::Palette(header->Palette.PaletteLength);
             uint8_t depth = header->Palette.PaletteColorDepth >> 3;
             uint8_t* pixelData = buffer;
 
@@ -379,7 +379,7 @@ namespace SRL::Bitmap
             if (header->Palette.PaletteLength <= 16)
             {
                 uint32_t pixels = (this->width * this->height) >> 1;
-                this->imageData = new uint8_t[pixels];
+                this->imageData = autonew uint8_t[pixels];
 
                 // 16 color palette
                 for (uint32_t index = 0; index < pixels; index++)
@@ -401,7 +401,7 @@ namespace SRL::Bitmap
             else
             {
                 uint32_t pixels = this->width * this->height;
-                this->imageData = new uint8_t[pixels];
+                this->imageData = autonew uint8_t[pixels];
 
                 // 256 color palette
                 for (uint32_t index = 0; index < pixels; index++)
@@ -429,7 +429,7 @@ namespace SRL::Bitmap
         {
             // Allocated space for image data
             size_t size = this->width * this->height;
-            this->imageData = new uint8_t[size];
+            this->imageData = autonew uint8_t[size];
             uint8_t* buffer = (stream + TGA::ImageDataOffset(header));
             int32_t xLocation = xLoop.Start;
             int32_t yLocation = yLoop.Start;
@@ -527,7 +527,7 @@ namespace SRL::Bitmap
         {
             // Allocated space for image data
             uint32_t size = this->width * this->height;
-            this->imageData = (uint8_t*)new SRL::Types::HighColor[size];
+            this->imageData = (uint8_t*)autonew SRL::Types::HighColor[size];
             uint8_t* buffer = (stream + TGA::ImageDataOffset(header));
             uint8_t depth = header->Image.PixelColorDepth >> 3;
             int32_t xLocation = xLoop.Start;
@@ -579,7 +579,7 @@ namespace SRL::Bitmap
         {
             // Allocated space for image data
             uint32_t size = this->width * this->height;
-            this->imageData = (uint8_t*)new SRL::Types::HighColor[size];
+            this->imageData = (uint8_t*)autonew SRL::Types::HighColor[size];
             uint8_t* buffer = (stream + TGA::ImageDataOffset(header));
             uint8_t depth = header->Image.PixelColorDepth >> 3;
             SRL::Types::HighColor fill;
@@ -711,7 +711,7 @@ namespace SRL::Bitmap
          */
         void LoadData(Cd::File* file, LoaderSettings* settings)
         {
-            uint8_t* stream = new uint8_t[file->Size.Bytes + 1];
+            uint8_t* stream = autonew uint8_t[file->Size.Bytes + 1];
             int32_t read = file->LoadBytes(0, file->Size.Bytes, stream);
             
             // Open file
@@ -782,12 +782,12 @@ namespace SRL::Bitmap
                 switch (static_cast<TgaTypes>(header.ImageType))
                 {
                 case TGA::TgaTypes::TgaPaletted:
-                    this->palette = TGA::DecodePalette(stream, &header, settings->TransparentColorIndex);
+                    this->palette = this->DecodePalette(stream, &header, settings->TransparentColorIndex);
                     this->DecodePaletted(stream, &header, xLoop, yLoop);
                     break;
 
                 case TGA::TgaTypes::TgaRlePaletted:
-                    this->palette = TGA::DecodePalette(stream, &header, settings->TransparentColorIndex);
+                    this->palette = this->DecodePalette(stream, &header, settings->TransparentColorIndex);
                     this->DecodeRlePaletted(stream, &header, xLoop, yLoop);
                     break;
 
