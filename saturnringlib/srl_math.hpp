@@ -5,6 +5,9 @@
 #include "srl_angle.hpp"
 #include "srl_datetime.hpp"
 
+#define SaturnMathPP SRL::Math
+#include "saturn_math.hpp"
+
 namespace SRL
 {
 	/** @brief Math functions

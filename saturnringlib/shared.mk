@@ -152,6 +152,7 @@ BUILD_MAP = $(BUILD_ELF:.elf=.map)
 
 TLSFDIR = $(MODDIR)/tlsf
 DUMMYIDIR = $(MODDIR)/dummy
+SATURNMATHPPDIR = $(MODDIR)/SaturnMathPP
 
 SYSSOURCES += $(SGLLDIR)/../SRC/workarea.c
 
@@ -166,7 +167,7 @@ SYSOBJECTS = $(SYSSOURCES:.c=.o)
 
 # General compilation flags
 CCFLAGS += $(SYSFLAGS) -W -m2 -c -O2 -Wno-strict-aliasing \
-					-I$(DUMMYIDIR) -I$(SGLIDIR) -I$(STDDIR) -I$(TLSFDIR) -I$(SDK_ROOT) $(MODULE_EXTRA_INC)
+					-I$(DUMMYIDIR) -I$(SATURNMATHPPDIR) -I$(SGLIDIR) -I$(STDDIR) -I$(TLSFDIR) -I$(SDK_ROOT) $(MODULE_EXTRA_INC)
 LDFLAGS = -m2 -L$(SGLLDIR) -Xlinker -T$(LDFILE) -Xlinker -Map \
 					-Xlinker $(BUILD_MAP) -Xlinker -e -Xlinker ___Start -nostartfiles
 
