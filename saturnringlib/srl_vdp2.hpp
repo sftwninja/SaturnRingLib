@@ -1,9 +1,8 @@
 #pragma once
 
+#include "srl_base.hpp"
 #include "srl_tv.hpp"
 #include "srl_cram.hpp"
-#include "srl_math.hpp"
-#include "srl_vector.hpp"
 #include "srl_ascii.hpp"
 #include "srl_debug.hpp"
 #include "srl_cd.hpp"
@@ -511,18 +510,18 @@ namespace SRL
             * in place of their specified ratios.
             * @param opacity Fxp decimal value between 0.0 and 1.0 representing pixel opacity for the scroll screen (Default 1.0)
             */
-            inline static void SetOpacity(Types::Fxp opacity = 1.0)
+            inline static void SetOpacity(Math::Fxp opacity = 1.0)
             {
-                if (opacity < Types::Fxp(0.0)) return;
+                if (opacity < Math::Fxp(0.0)) return;
 
-                else if (opacity >= Types::Fxp(1.0))
+                else if (opacity >= Math::Fxp(1.0))
                 {
                     VDP2::ColorCalcScrolls &= ~(ScreenType::ScreenON);
                     slColorCalcOn(VDP2::ColorCalcScrolls);
                 }
                 else
                 {
-                    slColRate(ScreenType::ScreenID, 31 - (uint16_t)(opacity.Value() >> 11));
+                    slColRate(ScreenType::ScreenID, 31 - (uint16_t)(opacity.RawValue() >> 11));
                     VDP2::ColorCalcScrolls |= ScreenType::ScreenON;
                     slColorCalcOn(VDP2::ColorCalcScrolls);
                 }
@@ -646,14 +645,14 @@ namespace SRL
             /** @brief Sets the Screen Position of NBG Scroll Screen
              * @param pos Fixed Point X and Y Screen Position
              */
-            static void SetPosition(Types::Vector2D& pos) { slScrPosNbg0(pos.X.Value(), pos.Y.Value()); }
+            static void SetPosition(Math::Vector2D& pos) { slScrPosNbg0(pos.X.RawValue(), pos.Y.RawValue()); }
 
             /** @brief Sets the Scale of NBG0 Screen display
              *  @param scl Fixed Point X an Y scaling values
              *  @note The minimum scale that can be displayed is determined by The Scale Limit, Scaling values
              *  lower than the minimum will be clamped to the minimum
              */
-            static void SetScale(Types::Vector2D& scl) { slScrScaleNbg0(scl.X.Value(), scl.Y.Value()); }
+            static void SetScale(Math::Vector2D& scl) { slScrScaleNbg0(scl.X.RawValue(), scl.Y.RawValue()); }
         };
 
         /** @brief NBG1 interface
@@ -687,14 +686,14 @@ namespace SRL
             /** @brief Sets the Screen Position of NBG Scroll Screen
              * @param pos Fixed Point X and Y Screen Position
              */
-            static void SetPosition(Types::Vector2D& pos) { slScrPosNbg1(pos.X.Value(), pos.Y.Value()); }
+            static void SetPosition(Math::Vector2D& pos) { slScrPosNbg1(pos.X.RawValue(), pos.Y.RawValue()); }
 
             /** @brief Sets the Scale of NBG1 Screen display
              * @param scl Fixed Point X an Y scaling values
              * @note The minimum scale that can be displayed is determined by The Scale Limit, Scaling values
              * lower than the minimum will be clamped to the minimum
              */
-            static void SetScale(Types::Vector2D& scl) { slScrScaleNbg1(scl.X.Value(), scl.Y.Value()); }
+            static void SetScale(Math::Vector2D& scl) { slScrScaleNbg1(scl.X.RawValue(), scl.Y.RawValue()); }
         };
 
         /** @brief  NBG2 interface
@@ -725,7 +724,7 @@ namespace SRL
             /** @brief Sets the Screen Position of NBG Scroll Screen
              * @param pos Fixed Point X and Y Screen Position
              */
-            static void SetPosition(Types::Vector2D& pos) { slScrPosNbg2(pos.X.Value(), pos.Y.Value()); }
+            static void SetPosition(Math::Vector2D& pos) { slScrPosNbg2(pos.X.RawValue(), pos.Y.RawValue()); }
         };
 
         /** @brief NBG3 interface
@@ -756,7 +755,7 @@ namespace SRL
             /** @brief Sets the Screen Position of NBG Scroll Screen
              * @param pos Fixed Point X and Y  Screen Position
              */
-            static void SetPosition(Types::Vector2D& pos) { slScrPosNbg3(pos.X.Value(), pos.Y.Value()); }
+            static void SetPosition(Math::Vector2D& pos) { slScrPosNbg3(pos.X.RawValue(), pos.Y.RawValue()); }
         };
 
         /** @brief setting for RBG0,1 rotation constraints
@@ -948,15 +947,15 @@ namespace SRL
              * @param opacity Fxp decimal value between 0.0 and 1.0 representing pixel opacity of the cc register
              * @param bank (optional) which of the 8 CC registers to Set the opacity in (defaults to 0)
              */
-            inline static void SetOpacity(Types::Fxp opacity, VDP2::SpriteBank bank = VDP2::SpriteBank::Bank0)
+            inline static void SetOpacity(SRL::Math::Fxp opacity, VDP2::SpriteBank bank = VDP2::SpriteBank::Bank0)
             {
-                if (opacity < Types::Fxp(0.0) || opacity>Types::Fxp(1.0))
+                if (opacity < Math::Fxp(0.0) || opacity>Math::Fxp(1.0))
                 {
                     return;
                 }
                 else
                 {
-                    slColRate((int16_t)bank, 31 - (uint16_t)(opacity.Value() >> 11));
+                    slColRate((int16_t)bank, 31 - (uint16_t)(opacity.RawValue() >> 11));
                 }
             }
 

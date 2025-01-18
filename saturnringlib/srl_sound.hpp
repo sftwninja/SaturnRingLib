@@ -3,7 +3,6 @@
 #include "srl_base.hpp"
 #include "srl_memory.hpp"
 #include "srl_cd.hpp"
-#include "srl_math.hpp"
 
 extern "C" { 
     #include <sega_snd.h>
@@ -603,7 +602,7 @@ namespace SRL::Sound
                 }
 
                 // slPCMOn won't play samples shorter than 0x900
-                size_t clampedLength = SRL::Math::Max<uint32_t>(file->Size.Bytes, 0x900);
+                size_t clampedLength = SRL::Math::Utils::Max<uint32_t>(file->Size.Bytes, 0x900);
                 
                 this->data = (int8_t*)this->AllocateWithBehaviour(Pcm::DataMalloc, clampedLength);
                 this->dataSize = clampedLength;
@@ -743,7 +742,7 @@ namespace SRL::Sound
             void LoadPcmData(uint8_t* waveData, uint32_t size, bool is8bit, bool stereo)
             {
                 // slPCMOn won't play samples shorter than 0x900
-                size_t clampedLength = SRL::Math::Max<uint32_t>(size, 0x900);
+                size_t clampedLength = SRL::Math::Utils::Max<uint32_t>(size, 0x900);
                 this->data = (int8_t*)this->AllocateWithBehaviour(Pcm::DataMalloc, clampedLength);
                 this->dataSize = clampedLength;
 
