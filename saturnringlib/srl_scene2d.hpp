@@ -406,7 +406,7 @@ namespace SRL
         * @param color color of the line
         * @param sort Z order
         */
-        static bool DrawLine(SRL::Math::Vector2D& start, SRL::Math::Vector2D& end, const Types::HighColor& color, const SRL::Math::Fxp sort)
+        static bool DrawLine(const SRL::Math::Vector2D& start,const SRL::Math::Vector2D& end, const Types::HighColor& color, const SRL::Math::Fxp sort)
         {
             SPRITE line = Scene2D::GetShapeCommand(FUNC_Line, color);
             line.XA = start.X.ToInt();
