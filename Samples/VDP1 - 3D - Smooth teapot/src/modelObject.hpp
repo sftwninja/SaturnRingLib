@@ -168,8 +168,8 @@ private:
 
         SRL::Types::Mesh mesh = SRL::Types::Mesh(meshHeader->PointCount, meshHeader->PolygonCount);
         
-        SRL::Types::Vector3D* points = GetAndIterate<SRL::Types::Vector3D>(*iterator, meshHeader->PointCount);
-        slDMACopy(points, mesh.Vertices, sizeof(SRL::Types::Vector3D) * meshHeader->PointCount);
+        SRL::Math::Types::Vector3D* points = GetAndIterate<SRL::Math::Types::Vector3D>(*iterator, meshHeader->PointCount);
+        slDMACopy(points, mesh.Vertices, sizeof(SRL::Math::Types::Vector3D) * meshHeader->PointCount);
 
         SRL::Types::Polygon* faces = GetAndIterate<SRL::Types::Polygon>(*iterator, meshHeader->PolygonCount);
         slDMACopy(faces, mesh.Faces, sizeof(SRL::Types::Polygon) * meshHeader->PolygonCount);
@@ -219,8 +219,8 @@ private:
 
         SRL::Types::SmoothMesh mesh = SRL::Types::SmoothMesh(meshHeader->PointCount, meshHeader->PolygonCount);
         
-        SRL::Types::Vector3D* points = GetAndIterate<SRL::Types::Vector3D>(*iterator, meshHeader->PointCount);
-        slDMACopy(points, mesh.Vertices, sizeof(SRL::Types::Vector3D) * meshHeader->PointCount);
+        SRL::Math::Types::Vector3D* points = GetAndIterate<SRL::Math::Types::Vector3D>(*iterator, meshHeader->PointCount);
+        slDMACopy(points, mesh.Vertices, sizeof(SRL::Math::Types::Vector3D) * meshHeader->PointCount);
 
         SRL::Types::Polygon* faces = GetAndIterate<SRL::Types::Polygon>(*iterator, meshHeader->PolygonCount);
         slDMACopy(faces, mesh.Faces, sizeof(SRL::Types::Polygon) * meshHeader->PolygonCount);
@@ -256,8 +256,8 @@ private:
         }
 
         // Mesh contains XPDATA normals
-        SRL::Types::Vector3D* vertexNormals = GetAndIterate<SRL::Types::Vector3D>(*iterator, meshHeader->PointCount);
-        slDMACopy(vertexNormals, mesh.Normals, sizeof(SRL::Types::Vector3D) * meshHeader->PointCount);
+        SRL::Math::Types::Vector3D* vertexNormals = GetAndIterate<SRL::Math::Types::Vector3D>(*iterator, meshHeader->PointCount);
+        slDMACopy(vertexNormals, mesh.Normals, sizeof(SRL::Math::Types::Vector3D) * meshHeader->PointCount);
 
         ((SRL::Types::SmoothMesh*)this->meshes)[entryId] = std::move(mesh);
     }
@@ -350,7 +350,7 @@ public:
      * @param mesh Mesh index
      * @param light Light direction, used only with smooth type mesh data
      */
-    void Draw(size_t mesh, SRL::Types::Vector3D& light)
+    void Draw(size_t mesh, SRL::Math::Types::Vector3D& light)
     {
         if (mesh < this->meshCount && this->type == 1)
         {
@@ -376,7 +376,7 @@ public:
      * @note Used only with smooth type mesh data
      * @param light Light direction
      */
-    void Draw(SRL::Types::Vector3D& light)
+    void Draw(SRL::Math::Types::Vector3D& light)
     {
         if (this->type == 1)
         {

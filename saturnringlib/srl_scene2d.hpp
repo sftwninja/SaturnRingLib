@@ -287,8 +287,8 @@ namespace SRL
         static bool DrawSprite(
             const uint16_t texture,
             SRL::CRAM::Palette* texturePalette,
-            const SRL::Math::Vector2D points[4],
-            const SRL::Math::Fxp depth)
+            const SRL::Math::Types::Vector2D points[4],
+            const SRL::Math::Types::Fxp depth)
         {
             // Sprite attributes and command points
             SPR_ATTR attr = Scene2D::GetSpriteAttribute(texture, texturePalette);
@@ -301,7 +301,7 @@ namespace SRL
          * @param depth Depth sort value
          * @return True on success
          */
-        static bool DrawSprite(const uint16_t texture, const SRL::Math::Vector2D points[4], const SRL::Math::Fxp depth)
+        static bool DrawSprite(const uint16_t texture, const SRL::Math::Types::Vector2D points[4], const SRL::Math::Types::Fxp depth)
         {
             return Scene2D::DrawSprite(texture, nullptr, points, depth);
         }
@@ -317,25 +317,25 @@ namespace SRL
         static bool DrawSprite(
             const uint16_t texture,
             SRL::CRAM::Palette* texturePalette,
-            const SRL::Math::Vector3D& location,
-            const SRL::Math::Angle& angle = SRL::Math::Angle(),
-            const SRL::Math::Vector2D& scale = SRL::Math::Vector2D(1.0, 1.0))
+            const SRL::Math::Types::Vector3D& location,
+            const SRL::Math::Types::Angle& angle = SRL::Math::Types::Angle(),
+            const SRL::Math::Types::Vector2D& scale = SRL::Math::Types::Vector2D(1.0, 1.0))
         {
             if (scale.X != scale.Y || angle.RawValue() != 0)
             {
                 // Due to bug in SGL we can't use slDispSpriteHV or slDispSpriteSZ
-                SRL::Math::Fxp sin = Math::Trigonometry::Sin(angle);
-                SRL::Math::Fxp cos = Math::Trigonometry::Cos(angle);
+                SRL::Math::Types::Fxp sin = Math::Trigonometry::Sin(angle);
+                SRL::Math::Types::Fxp cos = Math::Trigonometry::Cos(angle);
 
-                SRL::Math::Vector2D size = SRL::Math::Vector2D(
-                    (SRL::Math::Fxp((int16_t)VDP1::Textures[texture].Width) * scale.X) >> 1,
-                    (SRL::Math::Fxp((int16_t)VDP1::Textures[texture].Height) * scale.Y) >> 1);
+                SRL::Math::Types::Vector2D size = SRL::Math::Types::Vector2D(
+                    (SRL::Math::Types::Fxp((int16_t)VDP1::Textures[texture].Width) * scale.X) >> 1,
+                    (SRL::Math::Types::Fxp((int16_t)VDP1::Textures[texture].Height) * scale.Y) >> 1);
 
-                SRL::Math::Vector2D points[4] = {
-                    SRL::Math::Vector2D(((cos * -size.X) - (sin * -size.Y)) + location.X, ((sin * -size.X) + (cos * -size.Y)) + location.Y),
-                    SRL::Math::Vector2D(((cos * size.X) - (sin * -size.Y)) + location.X, ((sin * size.X) + (cos * -size.Y)) + location.Y),
-                    SRL::Math::Vector2D(((cos * size.X) - (sin * size.Y)) + location.X, ((sin * size.X) + (cos * size.Y)) + location.Y),
-                    SRL::Math::Vector2D(((cos * -size.X) - (sin * size.Y)) + location.X, ((sin * -size.X) + (cos * size.Y)) + location.Y)
+                SRL::Math::Types::Vector2D points[4] = {
+                    SRL::Math::Types::Vector2D(((cos * -size.X) - (sin * -size.Y)) + location.X, ((sin * -size.X) + (cos * -size.Y)) + location.Y),
+                    SRL::Math::Types::Vector2D(((cos * size.X) - (sin * -size.Y)) + location.X, ((sin * size.X) + (cos * -size.Y)) + location.Y),
+                    SRL::Math::Types::Vector2D(((cos * size.X) - (sin * size.Y)) + location.X, ((sin * size.X) + (cos * size.Y)) + location.Y),
+                    SRL::Math::Types::Vector2D(((cos * -size.X) - (sin * size.Y)) + location.X, ((sin * -size.X) + (cos * size.Y)) + location.Y)
                 };
 
                 // Calculate new 4 corners
@@ -366,9 +366,9 @@ namespace SRL
          */
         static bool DrawSprite(
             const uint16_t texture,
-            const SRL::Math::Vector3D& location,
-            const SRL::Math::Angle& angle = SRL::Math::Angle(0),
-            const SRL::Math::Vector2D& scale = SRL::Math::Vector2D(1.0, 1.0))
+            const SRL::Math::Types::Vector3D& location,
+            const SRL::Math::Types::Angle& angle = SRL::Math::Types::Angle(0),
+            const SRL::Math::Types::Vector2D& scale = SRL::Math::Types::Vector2D(1.0, 1.0))
         {
             return Scene2D::DrawSprite(texture, nullptr, location, angle, scale);
         }
@@ -379,9 +379,9 @@ namespace SRL
          * @param scale Scale of the sprite
          * @return True on success
          */
-        static bool DrawSprite(const uint16_t texture, const SRL::Math::Vector3D& location, const SRL::Math::Vector2D& scale)
+        static bool DrawSprite(const uint16_t texture, const SRL::Math::Types::Vector3D& location, const SRL::Math::Types::Vector2D& scale)
         {
-            return Scene2D::DrawSprite(texture, nullptr, location, SRL::Math::Angle(), scale);
+            return Scene2D::DrawSprite(texture, nullptr, location, SRL::Math::Types::Angle(), scale);
         }
         
         /** @brief Draw simple sprite
@@ -394,10 +394,10 @@ namespace SRL
         static bool DrawSprite(
             const uint16_t texture,
             SRL::CRAM::Palette* texturePalette,
-            const SRL::Math::Vector3D& location,
-            const SRL::Math::Vector2D& scale)
+            const SRL::Math::Types::Vector3D& location,
+            const SRL::Math::Types::Vector2D& scale)
         {
-            return Scene2D::DrawSprite(texture, texturePalette, location, SRL::Math::Angle(), scale);
+            return Scene2D::DrawSprite(texture, texturePalette, location, SRL::Math::Types::Angle(), scale);
         }
         
         /** @brief Draws a Line
@@ -406,13 +406,13 @@ namespace SRL
         * @param color color of the line
         * @param sort Z order
         */
-        static bool DrawLine(const SRL::Math::Vector2D& start,const SRL::Math::Vector2D& end, const Types::HighColor& color, const SRL::Math::Fxp sort)
+        static bool DrawLine(const SRL::Math::Types::Vector2D& start,const SRL::Math::Types::Vector2D& end, const Types::HighColor& color, const SRL::Math::Types::Fxp sort)
         {
             SPRITE line = Scene2D::GetShapeCommand(FUNC_Line, color);
-            line.XA = start.X.ToInt();
-            line.YA = start.Y.ToInt();
-            line.XB = end.X.ToInt();
-            line.YB = end.Y.ToInt();
+            line.XA = start.X.As<int16_t>();
+            line.YA = start.Y.As<int16_t>();
+            line.XB = end.X.As<int16_t>();
+            line.YB = end.Y.As<int16_t>();
             return slSetSprite(&line, sort.RawValue()) != 0;
         }
 
@@ -422,17 +422,17 @@ namespace SRL
          * @param color Polygon color
          * @param sort Z order
          */
-        static bool DrawPolygon(SRL::Math::Vector2D points[4], const bool fill, const Types::HighColor& color, const SRL::Math::Fxp sort)
+        static bool DrawPolygon(SRL::Math::Types::Vector2D points[4], const bool fill, const Types::HighColor& color, const SRL::Math::Types::Fxp sort)
         {
             SPRITE polygon = Scene2D::GetShapeCommand(fill ? FUNC_Polygon : FUNC_PolyLine, color);
-            polygon.XA = points[0].X.ToInt();
-            polygon.YA = points[0].Y.ToInt();
-            polygon.XB = points[1].X.ToInt();
-            polygon.YB = points[1].Y.ToInt();
-            polygon.XC = points[2].X.ToInt();
-            polygon.YC = points[2].Y.ToInt();
-            polygon.XD = points[3].X.ToInt();
-            polygon.YD = points[3].Y.ToInt();
+            polygon.XA = points[0].X.As<int16_t>();
+            polygon.YA = points[0].Y.As<int16_t>();
+            polygon.XB = points[1].X.As<int16_t>();
+            polygon.YB = points[1].Y.As<int16_t>();
+            polygon.XC = points[2].X.As<int16_t>();
+            polygon.YC = points[2].Y.As<int16_t>();
+            polygon.XD = points[3].X.As<int16_t>();
+            polygon.YD = points[3].Y.As<int16_t>();
             return slSetSprite(&polygon, sort.RawValue());
         }
         
@@ -448,14 +448,14 @@ namespace SRL
          * @param size Rectangle size
          * @return true on success
          */
-        static inline bool SetClippingRectangle(SRL::Math::Vector3D& location, SRL::Math::Vector2D& size)
+        static inline bool SetClippingRectangle(const SRL::Math::Types::Vector3D& location, const SRL::Math::Types::Vector2D& size)
         {
             SPRITE sprite;
             sprite.CTRL = FUNC_UserClip;
-            sprite.XA = location.X.ToInt();
-            sprite.YA = location.Y.ToInt();
-            sprite.XC = (location.X + size.X).ToInt();
-            sprite.YC = (location.Y + size.Y).ToInt();
+            sprite.XA = location.X.As<int16_t>();
+            sprite.YA = location.Y.As<int16_t>();
+            sprite.XC = (location.X + size.X).As<int16_t>();
+            sprite.YC = (location.Y + size.Y).As<int16_t>();
             return slSetSprite(&sprite, location.Z.RawValue());
         }
 

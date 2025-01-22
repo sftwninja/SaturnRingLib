@@ -4,6 +4,7 @@ This Demo Shows how to Load Tilemaps to display on ScrollScreens and adjust thei
 #include <srl.hpp>
  
 using namespace SRL::Types;
+using namespace SRL::Math::Types;
 using namespace SRL::Input;
 
 
@@ -28,7 +29,7 @@ int main()
     SRL::Debug::Print(2, 7, "%x", SRL::VDP2::NBG1::GetMapAddress());
     SRL::VDP2::NBG0::SetPriority(SRL::VDP2::Priority::Layer6);//set NBG0 priority
     SRL::VDP2::NBG0::ScrollEnable();//enable display of NBG0 
-      SRL::VDP2::NBG0::SetOpacity(SRL::Types::Fxp(0.5));//set opacity of NBG0
+      SRL::VDP2::NBG0::SetOpacity(SRL::Math::Types::Fxp(0.5));//set opacity of NBG0
 
     SRL::VDP2::NBG1::SetPriority(SRL::VDP2::Priority::Layer2);//set NBG1 priority
     SRL::VDP2::NBG1::ScrollEnable();//enable display of NBG1 

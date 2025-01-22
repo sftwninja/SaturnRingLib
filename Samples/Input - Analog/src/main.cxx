@@ -4,6 +4,7 @@
 
 // Using to shorten names for Vector and HighColor
 using namespace SRL::Types;
+using namespace SRL::Math::Types;
 
 // Using to shorten names for input
 using namespace SRL::Input;

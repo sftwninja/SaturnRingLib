@@ -947,9 +947,9 @@ namespace SRL
              * @param opacity Fxp decimal value between 0.0 and 1.0 representing pixel opacity of the cc register
              * @param bank (optional) which of the 8 CC registers to Set the opacity in (defaults to 0)
              */
-            inline static void SetOpacity(SRL::Math::Fxp opacity, VDP2::SpriteBank bank = VDP2::SpriteBank::Bank0)
+            inline static void SetOpacity(SRL::Math::Types::Fxp opacity, VDP2::SpriteBank bank = VDP2::SpriteBank::Bank0)
             {
-                if (opacity < Math::Fxp(0.0) || opacity>Math::Fxp(1.0))
+                if (opacity < 0 || opacity >1)
                 {
                     return;
                 }
