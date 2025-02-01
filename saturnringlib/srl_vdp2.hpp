@@ -377,7 +377,7 @@ namespace SRL
                     return;
                 }
 
-                ScreenType::Init(ScreenType::Info);
+                
                 int colorID = 0;
 
                 if (ScreenType::Info.ColorMode != SRL::CRAM::TextureColorMode::RGB555)
@@ -390,7 +390,9 @@ namespace SRL
 
                     SRL::CRAM::SetBankUsedState(colorID, ScreenType::Info.ColorMode, true);
                     ScreenType::TilePalette = SRL::CRAM::Palette(ScreenType::Info.ColorMode, colorID);
-                    ScreenType::TilePalette.Load((Types::HighColor*)tilemap.GetPalData(), 256);
+                    uint16_t len = (ScreenType::Info.ColorMode == SRL::CRAM::TextureColorMode::Paletted16) ? 16 : 256;
+                    ScreenType::TilePalette.Load((Types::HighColor*)tilemap.GetPalData(), len);
+                   
                 }
 
                 if (ScreenType::ScreenID != scnRBG0) VDP2::ScrollScreen<ScreenType, Id, On>::SetPlanesDefault(ScreenType::Info);
@@ -402,6 +404,7 @@ namespace SRL
                     ScreenType::MapAddress,
                     colorID,
                     VDP2::ScrollScreen<ScreenType, Id, On>::GetCellOffset(ScreenType::Info, ScreenType::CellAddress));
+                ScreenType::Init(ScreenType::Info);
             }
 
             /** @brief Manually Sets VRAM area for Cell Data (Advanced Use Cases)
@@ -713,7 +716,7 @@ namespace SRL
             static void Init(SRL::Tilemap::TilemapInfo& info)
             {
                 slCharNbg0(info.SGLColorMode(), info.CharSize);
-                slPageNbg0(NBG0::CellAddress, 0, info.MapMode);
+                slPageNbg0(NBG0::CellAddress, (void*)NBG0::TilePalette.GetData(), info.MapMode);
                 slPlaneNbg0(info.PlaneSize);
                 slMapNbg0(MapAddress, MapAddress, MapAddress, MapAddress);
             }
@@ -754,7 +757,7 @@ namespace SRL
             static void Init(SRL::Tilemap::TilemapInfo& info)
             {
                 slCharNbg1(info.SGLColorMode(), info.CharSize);
-                slPageNbg1(NBG1::CellAddress, 0, info.MapMode);
+                slPageNbg1(NBG1::CellAddress, (void*)NBG1::TilePalette.GetData(), info.MapMode);
                 slPlaneNbg1(info.PlaneSize);
                 slMapNbg1(MapAddress, MapAddress, MapAddress, MapAddress);
             }
@@ -792,7 +795,7 @@ namespace SRL
             static void Init(SRL::Tilemap::TilemapInfo& info)
             {
                 slCharNbg2(info.SGLColorMode(), info.CharSize);
-                slPageNbg2(NBG2::CellAddress, 0, info.MapMode);
+                slPageNbg2(NBG2::CellAddress, (void*)NBG2::TilePalette.GetData(), info.MapMode);
                 slPlaneNbg2(info.PlaneSize);
                 slMapNbg2(MapAddress, MapAddress, MapAddress, MapAddress);
             }
@@ -823,7 +826,7 @@ namespace SRL
             static void Init(SRL::Tilemap::TilemapInfo& info)
             {
                 slCharNbg3(info.SGLColorMode(), info.CharSize);
-                slPageNbg3(NBG3::CellAddress, 0, info.MapMode);
+                slPageNbg3(NBG3::CellAddress, (void*)NBG3::TilePalette.GetData(), info.MapMode);
                 slPlaneNbg3(info.PlaneSize);
                 slMapNbg3(MapAddress, MapAddress, MapAddress, MapAddress);
             }
@@ -881,7 +884,7 @@ namespace SRL
                 slRparaMode(RA);
                 slOverRA(0);
                 slCharRbg0(info.SGLColorMode(), info.CharSize);
-                slPageRbg0(CellAddress, 0, info.MapMode);
+                slPageRbg0(CellAddress, (void*)RBG0::TilePalette.GetData(), info.MapMode);
                 slPlaneRA(info.PlaneSize);
                 sl1MapRA(MapAddress);
                 slPopMatrix();
@@ -1185,8 +1188,8 @@ namespace SRL
             // Initialize ascii print to use NBG3
             SRL::ASCII::LoadFontSG((uint8_t*)(VDP2_VRAM_B1 + 0x800), 0);
             SRL::ASCII::SetPalette(0);
-            int myID = SRL::CRAM::GetFreeBank(SRL::CRAM::TextureColorMode::Paletted256);
-            SRL::CRAM::SetBankUsedState(myID, SRL::CRAM::TextureColorMode::Paletted256, true);
+            int myID = SRL::CRAM::GetFreeBank(SRL::CRAM::TextureColorMode::Paletted16);
+            SRL::CRAM::SetBankUsedState(myID, SRL::CRAM::TextureColorMode::Paletted16, true);
             SRL::ASCII::SetFont(0);
             slCharNbg3(COL_TYPE_16, CHAR_SIZE_1x1);
             slPageNbg3((void*)(VDP2_VRAM_B1 + 0x1D000), 0, PNB_1WORD | CN_10BIT);
