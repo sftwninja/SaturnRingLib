@@ -110,9 +110,25 @@ private:
          */
         uint8_t HasMeshEffect : 1;
 
-        /** @brief Reserved for future use
+        /** @brief Indicates whether this polygon has a mesh effect applied to it
          */
-        uint8_t ReservedForFlags : 6;
+        uint8_t IsDoubleSided : 1;
+        
+        /** @brief Half transparency effect
+         */
+        uint8_t HasTransparency: 1;
+
+        /** @brief Face does not use gouraud shading
+         */
+        uint8_t HasFlatShading : 1;
+
+        /** @brief Render face using half the brightness
+         */
+        uint8_t HasHalfBrightness : 1;
+
+        /** @brief Sort mode for face (0 = center)
+         */
+        uint8_t SortMode : 2;
 
         /** @brief Reserved for future use
          */
@@ -188,12 +204,15 @@ private:
             #pragma GCC diagnostic push
             #pragma GCC diagnostic ignored "-Wnarrowing"
             mesh.Attributes[attributeIndex] = SRL::Types::Attribute(
-                SRL::Types::Attribute::FaceVisibility::SingleSided,
-                SRL::Types::Attribute::SortMode::Maximum,
+                attributeHeader->IsDoubleSided != 0 ? SRL::Types::Attribute::FaceVisibility::DoubleSided : SRL::Types::Attribute::FaceVisibility::SingleSided,
+                (SRL::Types::Attribute::SortMode)(SRL::Types::Attribute::SortMode::Center - attributeHeader->SortMode),
                 textureIndex,
                 color,
-                CL32KRGB | No_Gouraud,
-                CL32KRGB | (attributeHeader->HasMeshEffect != 1 ? MESHon : MESHoff),
+                CL32KRGB,
+                    CL32KRGB |
+                    (attributeHeader->HasMeshEffect != 0 ? MESHon : MESHoff) |
+                    (attributeHeader->HasTransparency != 0 ? CL_Trans : 0) |
+                    (attributeHeader->HasHalfBrightness != 0 ? CL_Half : 0),
                 (attributeHeader->HasTexture != 0 ? sprNoflip : sprPolygon),
                 UseLight);
             #pragma GCC diagnostic pop
@@ -207,7 +226,7 @@ private:
      * @param entryId Entry index
      * @param header File header
      */
-    void LoadSmoothMesh(char** iterator, size_t entryId, ModelHeader* header)
+    void LoadSmoothMesh(char** iterator, size_t* gouraudIterator, size_t entryId, ModelHeader* header)
     {
         // Get mesh header
         MeshHeader* meshHeader = GetAndIterate<MeshHeader>(*iterator);
@@ -220,7 +239,6 @@ private:
 
         SRL::Types::Polygon* faces = GetAndIterate<SRL::Types::Polygon>(*iterator, meshHeader->PolygonCount);
         slDMACopy(faces, mesh.Faces, sizeof(SRL::Types::Polygon) * meshHeader->PolygonCount);
-        int gouraudIndex = 0xe000 + this->gouraudOffset;
 
         for (size_t attributeIndex = 0; attributeIndex < meshHeader->PolygonCount; attributeIndex++)
         {
@@ -240,15 +258,21 @@ private:
             #pragma GCC diagnostic push
             #pragma GCC diagnostic ignored "-Wnarrowing"
             mesh.Attributes[attributeIndex] = SRL::Types::Attribute(
-                SRL::Types::Attribute::FaceVisibility::SingleSided,
-                SRL::Types::Attribute::SortMode::Maximum,
+                attributeHeader->IsDoubleSided != 0 ? SRL::Types::Attribute::FaceVisibility::DoubleSided : SRL::Types::Attribute::FaceVisibility::SingleSided,
+                (SRL::Types::Attribute::SortMode)(SRL::Types::Attribute::SortMode::Center - attributeHeader->SortMode),
                 textureIndex,
                 color,
-                gouraudIndex++,
-                CL32KRGB | (attributeHeader->HasMeshEffect != 1 ? MESHon : MESHoff) | CL_Gouraud,
+                (attributeHeader->HasFlatShading != 0 ? CL32KRGB : *gouraudIterator),
+                    CL32KRGB |
+                    (attributeHeader->HasMeshEffect != 0 ? MESHon : MESHoff) |
+                    (attributeHeader->HasFlatShading != 0 ? 0 : CL_Gouraud) |
+                    (attributeHeader->HasTransparency != 0 ? CL_Trans : 0) |
+                    (attributeHeader->HasHalfBrightness != 0 ? CL_Half : 0),
                 (attributeHeader->HasTexture != 0 ? sprNoflip : sprPolygon),
-                UseGouraud);
+                (attributeHeader->HasFlatShading != 0 ? UseLight : UseGouraud));
             #pragma GCC diagnostic pop
+
+            *gouraudIterator += 1;
         }
 
         // Mesh contains XPDATA normals
@@ -281,6 +305,7 @@ public:
         this->meshCount = header->MeshCount;
         this->type = header->Type;
         this->gouraudOffset = gouraudTableStart;
+        size_t gouraudIterator = 0xe000 + this->gouraudOffset;
 
         this->meshes = header->Type == 1 ? (void*)new SRL::Types::SmoothMesh[this->meshCount] : (void*)new SRL::Types::Mesh[this->meshCount];
 
@@ -288,7 +313,7 @@ public:
         {
             for (size_t meshIndex = 0; meshIndex < this->meshCount; meshIndex++)
             {
-                this->LoadSmoothMesh(&iterator, meshIndex, header);
+                this->LoadSmoothMesh(&iterator, &gouraudIterator, meshIndex, header);
             }
         }
         else

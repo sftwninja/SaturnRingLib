@@ -24,7 +24,7 @@ namespace SRL::Bitmap
          */
         Palette(size_t count) : Colors(nullptr), Count(count)
         {
-            this->Colors = new SRL::Types::HighColor[count];
+            this->Colors = autonew SRL::Types::HighColor[count];
         }
 
         /** @brief Construct a new Palette object
