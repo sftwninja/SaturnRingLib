@@ -91,9 +91,8 @@ int main()
   while(1)
   {
     // Draw background
+    SRL::Scene2D::DrawSprite(BackgroundWire, Vector3D(5.0,-100.0,500.0), Vector2D(1.0, 40.0));
     SRL::Scene2D::DrawSprite(BackgroundPad, Vector3D(0.0,0.0,500.0));
-
-    SRL::Scene2D::DrawSprite(BackgroundWire, Vector3D(0.0,-150.0,500.0), Vector2D(1.0, 40.0));
 
     // Check whether gamepad is connected to port 0
     if (port0.IsConnected())
@@ -190,7 +189,7 @@ int main()
       SRL::Debug::Print(1, 2, "Axis1:%03d Axis2:%03d", axes[0], axes[1]);
       SRL::Debug::Print(1, 3, "Axis3:%03d Axis4:%03d", axes[2], axes[3]);
 
-      // Transform d-pad coordonates to [-127;128] range
+      // Transform d-pad coordinates to [-127;128] range
       for (auto i = 0; i < 2; i++)
       {
         axes[i] -= 128;
