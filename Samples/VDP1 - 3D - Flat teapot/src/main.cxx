@@ -3,6 +3,7 @@
 
 // Using to shorten names for Vector and HighColor
 using namespace SRL::Types;
+using namespace SRL::Math::Types;
 using namespace SRL::Input;
 
 // Main program entry
@@ -25,7 +26,7 @@ int main()
     SRL::Scene3D::SetDirectionalLight(lightDirection);
 
     // Initialize rotation angle
-    Angle rotation = Angle::FromRaw(0.0);
+    Angle rotation = 0;
     Angle rotationStep = Angle::FromDegrees(1);
 
     // Main program loop

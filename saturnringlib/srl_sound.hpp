@@ -3,7 +3,6 @@
 #include "srl_base.hpp"
 #include "srl_memory.hpp"
 #include "srl_cd.hpp"
-#include "srl_math.hpp"
 
 extern "C" { 
     #include <sega_snd.h>
