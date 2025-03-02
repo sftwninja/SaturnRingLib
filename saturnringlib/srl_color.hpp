@@ -129,7 +129,10 @@ namespace SRL::Types
             return *((uint16_t*)this);
         }
 
-        // Blend function
+        /** @brief Blend two colors together
+         * @param other Second color to blend with the first one
+         * @return HighColor BLend color of the two input colors
+         */
         HighColor Blend(const HighColor& other) const {
             HighColor result;
 

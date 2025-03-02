@@ -7,7 +7,7 @@
 namespace SRL::Tilemap::Interfaces
 {
     /** @brief Interface to Convert Bitmap Image into Tilemap
-     * @note Maximum Size of bitmap to convert is 0x20000 bytes (512x512 @ 4bpp, 512x256 @ 8bpp, or 256x256 @ 16bppp).
+     * @note Maximum Size of bitmap to convert is 0x20000 bytes (512x512 @ 4bpp, 512x256 @ 8bpp, or 256x256 @ 16bpp).
      * @note Empty tiles in the source image are detected and removed from the tileset, but duplicate and mirrored tiles are not.
      * @note In cases where bitmap is below maximum size or contains empty tiles, a default empty tile is written at start
      * of tileset.
@@ -211,7 +211,7 @@ namespace SRL::Tilemap::Interfaces
 
         /** @brief Create a Tilemap out of an existing Bitmap
         * @param bmp The Bitmap Image to convert
-        * @param pages the number of pages avaiable to the resulting tilemap
+        * @param pages the number of pages available to the resulting tilemap
         * @note A page is a unit of map data representing the tiling af a 512x512 pixel region
         * (32x32 or 64x64 tiles depending on the base tile size). The resulting Tilemap always
         * Contains at least 1 page with the default mapping of all tiles extracted from the bitmap,

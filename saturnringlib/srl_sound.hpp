@@ -96,7 +96,7 @@ namespace SRL::Sound
     
 		/** @brief Set CD playback volume
 		 *  @param left Left channel audio volume (7 is max)
-		 *  @param right Right channle audio volume (7 is max)
+		 *  @param right Right channel audio volume (7 is max)
 		 */
 		constexpr static void SetVolume(const uint8_t left, const uint8_t right)
         {
