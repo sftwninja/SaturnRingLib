@@ -5,8 +5,7 @@ This Demo Shows how to Load Tilemaps to display on VDP2 ScrollScreens and adjust
  
 using namespace SRL::Types;
 using namespace SRL::Input;
-
-
+using namespace SRL::Math;
 
 int main()
 {
@@ -38,7 +37,7 @@ int main()
     SRL::VDP2::NBG0::ScrollEnable();//enable display of NBG0 
 
     SRL::VDP2::NBG1::SetPriority(SRL::VDP2::Priority::Layer6);//set NBG1 priority
-    SRL::VDP2::NBG1::SetOpacity(SRL::Types::Fxp(0.5));//set opacity of NBG0
+    SRL::VDP2::NBG1::SetOpacity(0.5);//set opacity of NBG0
     SRL::VDP2::NBG1::ScrollEnable();//enable display of NBG1 
     
     SRL::VDP2::NBG2::SetPriority(SRL::VDP2::Priority::Layer4);// Set NBG2 priority between NBG0 and NBG1
