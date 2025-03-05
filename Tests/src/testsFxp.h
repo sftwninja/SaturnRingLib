@@ -269,13 +269,13 @@ extern "C"
     MU_TEST(fxp_ModuloTest_LargeNumbers)
     {
         // Scenario 1: Large positive number
-        Fxp a1 = std:numeric_limits<int16_t>::max());
+        Fxp a1 = std::numeric_limits<int16_t>::max());
         Fxp b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
         mu_assert(Fxp::Mod(a1, b1) == 1, buffer);
 
         // Scenario 2: Large negative number
-        a1 = -std:numeric_limits<int16_t>::max());
+        a1 = -std::numeric_limits<int16_t>::max());
         b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
         mu_assert(Fxp::Mod(a1, b1) == -1, buffer);
@@ -284,13 +284,13 @@ extern "C"
     // Test: Edge cases (smallest/largest integers)
     MU_TEST(fxp_ModuloTest_EdgeCases)
     {
-        Fxp a1 = std:numeric_limits<int16_t>::max());
+        Fxp a1 = std::numeric_limits<int16_t>::max());
         Fxp b1 = 2;
 
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
         mu_assert(Fxp::Mod(a1, b1) == 1, buffer);
 
-        a1 = -std:numeric_limits<int16_t>::max());
+        a1 = -std::numeric_limits<int16_t>::max());
         b1 = 2;
 
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
