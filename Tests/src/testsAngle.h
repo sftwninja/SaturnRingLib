@@ -63,7 +63,7 @@ extern "C"
         Angle a2 = Angle::FromDegrees(90);
         Angle a3 = a1 - a2;
         snprintf(buffer, buffer_size, "%d != -90", a3.AsDegrees().As<int32_t>());
-        mu_assert(Angle::FromDegrees(-90 == a3, buffer);
+        mu_assert(Angle::FromDegrees(-90) == a3, buffer);
     }
 
     // Test subtracting zero from a quarter circle
@@ -138,7 +138,7 @@ extern "C"
     // Test normalization of a negative angle
     MU_TEST(angle_test_normalization_negative)
     {
-        Angle a1 = Angle::FromDegrees(-90; // -90 degrees should normalize to 270 degrees
+        Angle a1 = Angle::FromDegrees(-90); // -90 degrees should normalize to 270 degrees
         Angle normalized = a1;
         snprintf(buffer, buffer_size, "Normalization failed: %d != -90", normalized.AsDegrees().As<int32_t>());
         mu_assert(normalized.AsDegrees() == -90, buffer);

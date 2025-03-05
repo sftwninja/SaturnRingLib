@@ -1,7 +1,5 @@
 #include <srl.hpp>
 #include <srl_log.hpp>
-#include "srl_math.hpp"
-#include "srl_angle.hpp"
 
 // https://github.com/siu/minunit
 #include "minunit.h"
