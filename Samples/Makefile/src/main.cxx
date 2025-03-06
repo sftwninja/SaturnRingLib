@@ -1,6 +1,6 @@
 #include <srl.hpp>
 
-#include "tmp/tmp.h"
+#include "tmp.h"
 
 // Using to shorten names for Vector and HighColor
 using namespace SRL::Types;
