@@ -16,6 +16,8 @@ LIBS = $(SGLLDIR)/LIBCPK.A $(SGLLDIR)/SEGA_SYS.A $(SGLLDIR)/LIBCD.A $(SGLLDIR)/L
 # include extra modules
 MODULE_EXTRA_INC =
 
+.DEFAULT_GOAL := all
+
 ifneq ($(strip $(MODULES_EXTRA)),)
 	include $(patsubst %, $(SDK_ROOT)/../modules_extra/%/module.mk, $(strip $(MODULES_EXTRA)))
 	MODULE_EXTRA_INC += $(patsubst %, -I$(SDK_ROOT)/../modules_extra/%/INC, $(strip $(MODULES_EXTRA)))
