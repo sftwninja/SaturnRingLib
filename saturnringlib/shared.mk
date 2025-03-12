@@ -80,6 +80,10 @@ ifeq ($(strip ${DEBUG}), 1)
 	CCFLAGS += -DDEBUG
 endif
 
+ifneq ($(strip ${SRL_LOG_LEVEL}),)
+	CCFLAGS += -DSRL_LOG_LEVEL=$(strip ${SRL_LOG_LEVEL})
+endif
+
 ifeq ($(strip ${SRL_USE_SGL_SOUND_DRIVER}), 1)
 	CCFLAGS += -DSRL_USE_SGL_SOUND_DRIVER=$(strip ${SRL_USE_SGL_SOUND_DRIVER})
 	LIBS += $(SGLLDIR)/LIBSND.A
