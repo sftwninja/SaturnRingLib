@@ -916,6 +916,92 @@ MU_TEST(fxp_arithmetic_division_double_by_zero)
 }
     */
 
+    // Test: Verify fixed-point initialization with unsigned int
+    MU_TEST(fxp_initialization_unsigned_int)
+    {
+        unsigned int value = 10;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%u != %u", a1.As<unsigned int>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with int
+    MU_TEST(fxp_initialization_int)
+    {
+        int value = -10;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%d != %d", a1.As<int>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with float
+    MU_TEST(fxp_initialization_float)
+    {
+        float value = 10.5f;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%f != %f", a1.As<float>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with double
+    MU_TEST(fxp_initialization_double)
+    {
+        double value = 20.25;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%f != %f", a1.As<double>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with char
+    MU_TEST(fxp_initialization_char)
+    {
+        char value = 'A';
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%d != %d", a1.As<int>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with bool
+    MU_TEST(fxp_initialization_bool)
+    {
+        bool value = true;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%d != %d", a1.As<int>(), value);
+        mu_assert(a1 == value, buffer);
+
+        value = false;
+        a1 = value;
+        snprintf(buffer, buffer_size, "%d != %d", a1.As<int>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with short
+    MU_TEST(fxp_initialization_short)
+    {
+        short value = 32767;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%d != %d", a1.As<short>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with long
+    MU_TEST(fxp_initialization_long)
+    {
+        long value = 2147483647;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%ld != %ld", a1.As<long>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
+    // Test: Verify fixed-point initialization with long long
+    MU_TEST(fxp_initialization_long_long)
+    {
+        long long value = 9223372036854775807LL;
+        Fxp a1 = value;
+        snprintf(buffer, buffer_size, "%lld != %lld", a1.As<long long>(), value);
+        mu_assert(a1 == value, buffer);
+    }
+
     MU_TEST_SUITE(fxp_test_suite)
     {
         MU_SUITE_CONFIGURE_WITH_HEADER(&fxp_test_setup,
@@ -924,6 +1010,15 @@ MU_TEST(fxp_arithmetic_division_double_by_zero)
 
         MU_RUN_TEST(fxp_initialization_zero);
         MU_RUN_TEST(fxp_initialization_one);
+        MU_RUN_TEST(fxp_initialization_unsigned_int);
+        MU_RUN_TEST(fxp_initialization_int);
+        MU_RUN_TEST(fxp_initialization_float);
+        MU_RUN_TEST(fxp_initialization_double);
+        MU_RUN_TEST(fxp_initialization_char);
+        MU_RUN_TEST(fxp_initialization_bool);
+        MU_RUN_TEST(fxp_initialization_short);
+        MU_RUN_TEST(fxp_initialization_long);
+        MU_RUN_TEST(fxp_initialization_long_long);
         MU_RUN_TEST(fxp_assignment_operator);
         MU_RUN_TEST(fxp_copy_constructor);
         MU_RUN_TEST(fxp_equality_check);
