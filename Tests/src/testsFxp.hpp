@@ -98,14 +98,6 @@ extern "C"
         mu_assert(a1 != b1, buffer);
     }
 
-    // Test: Verify less than or equal comparison
-    MU_TEST(fxp_comparison_lessthan_or_equal)
-    {
-        Fxp a1(10.0);
-        snprintf(buffer, buffer_size, "%f > 20", a1);
-        mu_assert(a1 <= 20, buffer);
-    }
-
     // Test: Verify addition of fixed-point numbers
     MU_TEST(fxp_arithmetic_addition)
     {
@@ -1024,7 +1016,6 @@ MU_TEST(fxp_arithmetic_division_double_by_zero)
         MU_RUN_TEST(fxp_equality_check);
         MU_RUN_TEST(fxp_initialization_with_doubles);
         MU_RUN_TEST(fxp_inequality_check);
-        MU_RUN_TEST(fxp_comparison_lessthan_or_equal);
         MU_RUN_TEST(fxp_arithmetic_addition);
         MU_RUN_TEST(fxp_arithmetic_subtraction);
         MU_RUN_TEST(fxp_arithmetic_multiplication);

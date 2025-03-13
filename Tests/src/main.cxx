@@ -4,13 +4,13 @@
 // https://github.com/siu/minunit
 #include "minunit.h"
 
-#include "testsASCII.h"
-//#include "testsAngle.h"
-//#include "testsCD.h"
-#include "testsCRAM.h"
-#include "testsFxp.h"
-#include "testsHighColor.h"
-#include "testsMath.h"
+#include "testsASCII.hpp"
+//#include "testsAngle.hpp"
+//#include "testsCD.hpp"
+#include "testsCRAM.hpp"
+#include "testsFxp.hpp"
+#include "testsHighColor.hpp"
+#include "testsMath.hpp"
 
 // Using to shorten names for Vector and HighColor
 using namespace SRL::Types;
