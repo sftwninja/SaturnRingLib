@@ -712,6 +712,147 @@ extern "C"
         mu_assert(a1 <= b1, buffer);
     }
 
+    // Test: Edge case for addition with int (overflow)
+    MU_TEST(fxp_arithmetic_addition_int_overflow)
+    {
+        Fxp a1 = std::numeric_limits<int32_t>::max();
+        int a2 = 1;
+        Fxp result = a1 + a2;
+        snprintf(buffer, buffer_size, "Addition overflow test failed: %d + %d != %d", a1.As<int32_t>(), a2, result.As<int32_t>());
+        mu_assert(result == std::numeric_limits<int32_t>::max(), buffer);
+    }
+
+    // Test: Edge case for subtraction with int (underflow)
+    MU_TEST(fxp_arithmetic_subtraction_int_underflow)
+    {
+        Fxp a1 = std::numeric_limits<int32_t>::min();
+        int a2 = 1;
+        Fxp result = a1 - a2;
+        snprintf(buffer, buffer_size, "Subtraction underflow test failed: %d - %d != %d", a1.As<int32_t>(), a2, result.As<int32_t>());
+        mu_assert(result == std::numeric_limits<int32_t>::min(), buffer);
+    }
+
+    // Test: Edge case for multiplication with int (overflow)
+    MU_TEST(fxp_arithmetic_multiplication_int_overflow)
+    {
+        Fxp a1 = std::numeric_limits<int32_t>::max() / 2;
+        int a2 = 3;
+        Fxp result = a1 * a2;
+        snprintf(buffer, buffer_size, "Multiplication overflow test failed: %d * %d != %d", a1.As<int32_t>(), a2, result.As<int32_t>());
+        mu_assert(result == std::numeric_limits<int32_t>::max(), buffer);
+    }
+
+    // Test: Edge case for division with int (division by zero)
+    MU_TEST(fxp_arithmetic_division_int_by_zero)
+    {
+        Fxp a1 = 10;
+        int a2 = 0;
+        try
+        {
+            Fxp result = a1 / a2;
+            mu_fail("Division by zero did not throw an exception");
+        }
+        catch (const std::exception &e)
+        {
+            snprintf(buffer, buffer_size, "Division by zero test passed: %s", e.what());
+            mu_assert(true, buffer);
+        }
+    }
+
+    // Test: Edge case for addition with float (overflow)
+    MU_TEST(fxp_arithmetic_addition_float_overflow)
+    {
+        Fxp a1 = std::numeric_limits<float>::max();
+        float a2 = 1.0f;
+        Fxp result = a1 + a2;
+        snprintf(buffer, buffer_size, "Addition overflow test failed: %f + %f != %f", a1.As<float>(), a2, result.As<float>());
+        mu_assert(result == std::numeric_limits<float>::max(), buffer);
+    }
+
+    // Test: Edge case for subtraction with float (underflow)
+    MU_TEST(fxp_arithmetic_subtraction_float_underflow)
+    {
+        Fxp a1 = std::numeric_limits<float>::min();
+        float a2 = 1.0f;
+        Fxp result = a1 - a2;
+        snprintf(buffer, buffer_size, "Subtraction underflow test failed: %f - %f != %f", a1.As<float>(), a2, result.As<float>());
+        mu_assert(result == std::numeric_limits<float>::min(), buffer);
+    }
+
+    // Test: Edge case for multiplication with float (overflow)
+    MU_TEST(fxp_arithmetic_multiplication_float_overflow)
+    {
+        Fxp a1 = std::numeric_limits<float>::max() / 2.0f;
+        float a2 = 3.0f;
+        Fxp result = a1 * a2;
+        snprintf(buffer, buffer_size, "Multiplication overflow test failed: %f * %f != %f", a1.As<float>(), a2, result.As<float>());
+        mu_assert(result == std::numeric_limits<float>::max(), buffer);
+    }
+
+    // Test: Edge case for division with float (division by zero)
+    // MU_TEST(fxp_arithmetic_division_float_by_zero)
+    // {
+    //     Fxp a1 = 10.0f;
+    //     float a2 = 0.0f;
+    //     try
+    //     {
+    //         Fxp result = a1 / a2;
+    //         mu_fail("Division by zero did not throw an exception");
+    //     }
+    //     catch (const std::exception &e)
+    //     {
+    //         snprintf(buffer, buffer_size, "Division by zero test passed: %s", e.what());
+    //         mu_assert(true, buffer);
+    //     }
+    // }
+
+    // Test: Edge case for addition with double (overflow)
+    MU_TEST(fxp_arithmetic_addition_double_overflow)
+    {
+        Fxp a1 = std::numeric_limits<double>::max();
+        double a2 = 1.0;
+        Fxp result = a1 + a2;
+        snprintf(buffer, buffer_size, "Addition overflow test failed: %f + %f != %f", a1.As<double>(), a2, result.As<double>());
+        mu_assert(result == std::numeric_limits<double>::max(), buffer);
+    }
+
+    // Test: Edge case for subtraction with double (underflow)
+    MU_TEST(fxp_arithmetic_subtraction_double_underflow)
+    {
+        Fxp a1 = std::numeric_limits<double>::min();
+        double a2 = 1.0;
+        Fxp result = a1 - a2;
+        snprintf(buffer, buffer_size, "Subtraction underflow test failed: %f - %f != %f", a1.As<double>(), a2, result.As<double>());
+        mu_assert(result == std::numeric_limits<double>::min(), buffer);
+    }
+
+    // Test: Edge case for multiplication with double (overflow)
+    MU_TEST(fxp_arithmetic_multiplication_double_overflow)
+    {
+        Fxp a1 = std::numeric_limits<double>::max() / 2.0;
+        double a2 = 3.0;
+        Fxp result = a1 * a2;
+        snprintf(buffer, buffer_size, "Multiplication overflow test failed: %f * %f != %f", a1.As<double>(), a2, result.As<double>());
+        mu_assert(result == std::numeric_limits<double>::max(), buffer);
+    }
+
+    // Test: Edge case for division with double (division by zero)
+    // MU_TEST(fxp_arithmetic_division_double_by_zero)
+    // {
+    //     Fxp a1 = 10.0;
+    //     double a2 = 0.0;
+    //     try
+    //     {
+    //         Fxp result = a1 / a2;
+    //         mu_fail("Division by zero did not throw an exception");
+    //     }
+    //     catch (const std::exception &e)
+    //     {
+    //         snprintf(buffer, buffer_size, "Division by zero test passed: %s", e.what());
+    //         mu_assert(true, buffer);
+    //     }
+    // }
+
     MU_TEST_SUITE(fxp_test_suite)
     {
         MU_SUITE_CONFIGURE_WITH_HEADER(&fxp_test_setup,
@@ -769,5 +910,19 @@ extern "C"
         MU_RUN_TEST(fxp_comparison_less_than_float);
         MU_RUN_TEST(fxp_comparison_greater_than_or_equal_float);
         MU_RUN_TEST(fxp_comparison_less_than_or_equal_float);
+
+        // Edge case tests
+        MU_RUN_TEST(fxp_arithmetic_addition_int_overflow);
+        MU_RUN_TEST(fxp_arithmetic_subtraction_int_underflow);
+        MU_RUN_TEST(fxp_arithmetic_multiplication_int_overflow);
+        MU_RUN_TEST(fxp_arithmetic_division_int_by_zero);
+        MU_RUN_TEST(fxp_arithmetic_addition_float_overflow);
+        MU_RUN_TEST(fxp_arithmetic_subtraction_float_underflow);
+        MU_RUN_TEST(fxp_arithmetic_multiplication_float_overflow);
+        //MU_RUN_TEST(fxp_arithmetic_division_float_by_zero);
+        MU_RUN_TEST(fxp_arithmetic_addition_double_overflow);
+        MU_RUN_TEST(fxp_arithmetic_subtraction_double_underflow);
+        MU_RUN_TEST(fxp_arithmetic_multiplication_double_overflow);
+        //MU_RUN_TEST(fxp_arithmetic_division_double_by_zero);
     }
 }
