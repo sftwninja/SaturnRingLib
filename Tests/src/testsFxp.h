@@ -8,6 +8,7 @@
 #include "minunit.h"
 
 using namespace SRL::Types;
+using namespace SRL::Math::Types;
 using namespace SRL::Logger;
 
 extern "C"
@@ -196,13 +197,13 @@ extern "C"
         Fxp a1 = 10;
         Fxp b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
-        mu_assert(Fxp::Mod(a1, b1) == 1, buffer);
+        mu_assert((a1 % b1) == 1, buffer);
 
         // Scenario 2: Perfectly divisible numbers
         a1 = 20;
         b1 = 5;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 0);
-        mu_assert(Fxp::Mod(a1, b1) == 0, buffer);
+        mu_assert((a1 % b1)  == 0, buffer);
     }
 
     // Test series: Modulo operation with negative dividend
@@ -213,13 +214,13 @@ extern "C"
         Fxp a1 = -10;
         Fxp b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
-        mu_assert(Fxp::Mod(a1, b1) == -1, buffer);
+        mu_assert((a1 % b1)  == -1, buffer);
 
         // Scenario 2: Perfectly divisible negative number
         a1 = -20;
         b1 = 5;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 0);
-        mu_assert(Fxp::Mod(a1, b1) == 0, buffer);
+        mu_assert((a1 % b1)  == 0, buffer);
     }
 
     // Test series: Modulo operation with negative divisor
@@ -230,13 +231,13 @@ extern "C"
         Fxp a1 = 10;
         Fxp b1 = -3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
-        mu_assert(Fxp::Mod(a1, b1) == 1, buffer);
+        mu_assert((a1 % b1)  == 1, buffer);
 
         // Scenario 2: Perfectly divisible numbers with negative divisor
         a1 = 20;
         b1 = -5;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 0);
-        mu_assert(Fxp::Mod(a1, b1) == 0, buffer);
+        mu_assert((a1 % b1) == 0, buffer);
     }
 
     // Test series: Modulo operation with both dividend and divisor negative
@@ -247,13 +248,13 @@ extern "C"
         Fxp a1 = -10;
         Fxp b1 = -3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
-        mu_assert(Fxp::Mod(a1, b1) == -1, buffer);
+        mu_assert((a1 % b1)  == -1, buffer);
 
         // Scenario 2: Perfectly divisible negative numbers
         a1 = -20;
         b1 = -5;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 0);
-        mu_assert(Fxp::Mod(a1, b1) == 0, buffer);
+        mu_assert((a1 % b1)  == 0, buffer);
     }
 
     // Placeholder test: Division by zero handling
@@ -269,32 +270,32 @@ extern "C"
     MU_TEST(fxp_ModuloTest_LargeNumbers)
     {
         // Scenario 1: Large positive number
-        Fxp a1 = std:numeric_limits<int16_t>::max());
+        Fxp a1 = std::numeric_limits<int16_t>::max();
         Fxp b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
-        mu_assert(Fxp::Mod(a1, b1) == 1, buffer);
+        mu_assert((a1 % b1)  == 1, buffer);
 
         // Scenario 2: Large negative number
-        a1 = -std:numeric_limits<int16_t>::max());
+        a1 = -std::numeric_limits<int16_t>::max();
         b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
-        mu_assert(Fxp::Mod(a1, b1) == -1, buffer);
+        mu_assert((a1 % b1)  == -1, buffer);
     }
 
     // Test: Edge cases (smallest/largest integers)
     MU_TEST(fxp_ModuloTest_EdgeCases)
     {
-        Fxp a1 = std:numeric_limits<int16_t>::max());
+        Fxp a1 = std::numeric_limits<int16_t>::max();
         Fxp b1 = 2;
 
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
-        mu_assert(Fxp::Mod(a1, b1) == 1, buffer);
+        mu_assert((a1 % b1) == 1, buffer);
 
-        a1 = -std:numeric_limits<int16_t>::max());
+        a1 = -std::numeric_limits<int16_t>::max();
         b1 = 2;
 
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
-        mu_assert(Fxp::Mod(a1, b1) == -1, buffer);
+        mu_assert((a1 % b1)  == -1, buffer);
     }
 
     // Test: Positive numbers
