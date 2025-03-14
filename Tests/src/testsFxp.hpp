@@ -813,31 +813,31 @@ MU_TEST(fxp_arithmetic_division_int_by_zero)
     // Test: Edge case for addition with float (overflow)
     MU_TEST(fxp_arithmetic_addition_float_overflow)
     {
-        Fxp a1 = std::numeric_limits<float>::max();
+        Fxp a1 = FLT_MAX;
         float a2 = 1.0f;
         Fxp result = a1 + a2;
         snprintf(buffer, buffer_size, "Addition overflow test failed: %f + %f != %f", a1.As<float>(), a2, result.As<float>());
-        mu_assert(result == std::numeric_limits<float>::max(), buffer);
+        mu_assert(result == FLT_MAX, buffer);
     }
 
     // Test: Edge case for subtraction with float (underflow)
     MU_TEST(fxp_arithmetic_subtraction_float_underflow)
     {
-        Fxp a1 = std::numeric_limits<float>::min();
+        Fxp a1 = FLT_MIN;
         float a2 = 1.0f;
         Fxp result = a1 - a2;
         snprintf(buffer, buffer_size, "Subtraction underflow test failed: %f - %f != %f", a1.As<float>(), a2, result.As<float>());
-        mu_assert(result == std::numeric_limits<float>::min(), buffer);
+        mu_assert(result == FLT_MIN, buffer);
     }
 
     // Test: Edge case for multiplication with float (overflow)
     MU_TEST(fxp_arithmetic_multiplication_float_overflow)
     {
-        Fxp a1 = std::numeric_limits<float>::max() / 2.0f;
+        Fxp a1 = FLT_MAX / 2.0f;
         float a2 = 3.0f;
         Fxp result = a1 * a2;
         snprintf(buffer, buffer_size, "Multiplication overflow test failed: %f * %f != %f", a1.As<float>(), a2, result.As<float>());
-        mu_assert(result == std::numeric_limits<float>::max(), buffer);
+        mu_assert(result == FLT_MAX, buffer);
     }
 
     // Test: Edge case for division with float (division by zero)
@@ -862,31 +862,31 @@ MU_TEST(fxp_arithmetic_division_float_by_zero)
     // Test: Edge case for addition with double (overflow)
     MU_TEST(fxp_arithmetic_addition_double_overflow)
     {
-        Fxp a1 = std::numeric_limits<double>::max();
+        Fxp a1 = DBL_MAX;
         double a2 = 1.0;
         Fxp result = a1 + a2;
         snprintf(buffer, buffer_size, "Addition overflow test failed: %f + %f != %f", a1.As<double>(), a2, result.As<double>());
-        mu_assert(result == std::numeric_limits<double>::max(), buffer);
+        mu_assert(result == DBL_MAX, buffer);
     }
 
     // Test: Edge case for subtraction with double (underflow)
     MU_TEST(fxp_arithmetic_subtraction_double_underflow)
     {
-        Fxp a1 = std::numeric_limits<double>::min();
+        Fxp a1 = DBL_MIN;
         double a2 = 1.0;
         Fxp result = a1 - a2;
         snprintf(buffer, buffer_size, "Subtraction underflow test failed: %f - %f != %f", a1.As<double>(), a2, result.As<double>());
-        mu_assert(result == std::numeric_limits<double>::min(), buffer);
+        mu_assert(result == DBL_MIN, buffer);
     }
 
     // Test: Edge case for multiplication with double (overflow)
     MU_TEST(fxp_arithmetic_multiplication_double_overflow)
     {
-        Fxp a1 = std::numeric_limits<double>::max() / 2.0;
+        Fxp a1 = DBL_MAX / 2.0;
         double a2 = 3.0;
         Fxp result = a1 * a2;
         snprintf(buffer, buffer_size, "Multiplication overflow test failed: %f * %f != %f", a1.As<double>(), a2, result.As<double>());
-        mu_assert(result == std::numeric_limits<double>::max(), buffer);
+        mu_assert(result == DBL_MAX, buffer);
     }
 
     // Test: Edge case for division with double (division by zero)
