@@ -2,7 +2,7 @@
 #include <srl_log.hpp>
 
 #include <climits>
-#include <limits> // std::numeric_limits
+#include <cfloat> 
 
 // https://github.com/siu/minunit
 #include "minunit.h"
@@ -222,12 +222,12 @@ extern "C"
     // Test: Modulo operation with large numbers
     MU_TEST(fxp_ModuloTest_LargeNumbers)
     {
-        Fxp a1 = std::numeric_limits<int16_t>::max();
+        Fxp a1 = SHORT_MAX;
         Fxp b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
         mu_assert((a1 % b1) == 1, buffer);
 
-        a1 = -std::numeric_limits<int16_t>::max();
+        a1 = -SHORT_MAX;
         b1 = 3;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
         mu_assert((a1 % b1) == -1, buffer);
@@ -236,12 +236,12 @@ extern "C"
     // Test: Edge cases (smallest/largest integers)
     MU_TEST(fxp_ModuloTest_EdgeCases)
     {
-        Fxp a1 = std::numeric_limits<int16_t>::max();
+        Fxp a1 = SHORT_MAX;
         Fxp b1 = 2;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 1);
         mu_assert((a1 % b1) == 1, buffer);
 
-        a1 = -std::numeric_limits<int16_t>::max();
+        a1 = -SHORT_MAX;
         b1 = 2;
         snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
         mu_assert((a1 % b1) == -1, buffer);
@@ -707,31 +707,31 @@ extern "C"
     // Test: Edge case for addition (overflow)
     MU_TEST(fxp_arithmetic_addition_overflow)
     {
-        Fxp a1 = std::numeric_limits<int32_t>::max();
+        Fxp a1 = LLONG_MAX;
         Fxp a2 = 1;
         Fxp result = a1 + a2;
         snprintf(buffer, buffer_size, "Addition overflow test failed: %d + %d != %d", a1.As<int32_t>(), a2.As<int32_t>(), result.As<int32_t>());
-        mu_assert(result == std::numeric_limits<int32_t>::max(), buffer);
+        mu_assert(result == LLONG_MAX, buffer);
     }
 
     // Test: Edge case for subtraction (underflow)
     MU_TEST(fxp_arithmetic_subtraction_underflow)
     {
-        Fxp a1 = std::numeric_limits<int32_t>::min();
+        Fxp a1 = LLONG_MIN;
         Fxp a2 = 1;
         Fxp result = a1 - a2;
         snprintf(buffer, buffer_size, "Subtraction underflow test failed: %d - %d != %d", a1.As<int32_t>(), a2.As<int32_t>(), result.As<int32_t>());
-        mu_assert(result == std::numeric_limits<int32_t>::min(), buffer);
+        mu_assert(result == LLONG_MIN, buffer);
     }
 
     // Test: Edge case for multiplication (overflow)
     MU_TEST(fxp_arithmetic_multiplication_overflow)
     {
-        Fxp a1 = std::numeric_limits<int32_t>::max() / 2;
+        Fxp a1 = LLONG_MAX / 2;
         Fxp a2 = 3;
         Fxp result = a1 * a2;
         snprintf(buffer, buffer_size, "Multiplication overflow test failed: %d * %d != %d", a1.As<int32_t>(), a2.As<int32_t>(), result.As<int32_t>());
-        mu_assert(result == std::numeric_limits<int32_t>::max(), buffer);
+        mu_assert(result == LLONG_MAX, buffer);
     }
 
     // Test: Edge case for division (division by zero)
@@ -754,41 +754,41 @@ extern "C"
     // Test: Edge case for division (minimum value divided by -1)
     MU_TEST(fxp_arithmetic_division_min_by_negative_one)
     {
-        Fxp a1 = std::numeric_limits<int32_t>::min();
+        Fxp a1 = LLONG_MAX;
         Fxp a2 = -1;
         Fxp result = a1 / a2;
         snprintf(buffer, buffer_size, "Division min by -1 test failed: %d / %d != %d", a1.As<int32_t>(), a2.As<int32_t>(), result.As<int32_t>());
-        mu_assert(result == std::numeric_limits<int32_t>::max(), buffer);
+        mu_assert(result == LLONG_MAX, buffer);
     }
 
     // Test: Edge case for addition with int (overflow)
     MU_TEST(fxp_arithmetic_addition_int_overflow)
     {
-        Fxp a1 = std::numeric_limits<int32_t>::max();
+        Fxp a1 = LLONG_MAX;
         int a2 = 1;
         Fxp result = a1 + a2;
         snprintf(buffer, buffer_size, "Addition overflow test failed: %d + %d != %d", a1.As<int32_t>(), a2, result.As<int32_t>());
-        mu_assert(result == std::numeric_limits<int32_t>::max(), buffer);
+        mu_assert(result == LLONG_MAX, buffer);
     }
 
     // Test: Edge case for subtraction with int (underflow)
     MU_TEST(fxp_arithmetic_subtraction_int_underflow)
     {
-        Fxp a1 = std::numeric_limits<int32_t>::min();
+        Fxp a1 = LLONG_MIN;
         int a2 = 1;
         Fxp result = a1 - a2;
         snprintf(buffer, buffer_size, "Subtraction underflow test failed: %d - %d != %d", a1.As<int32_t>(), a2, result.As<int32_t>());
-        mu_assert(result == std::numeric_limits<int32_t>::min(), buffer);
+        mu_assert(result == LLONG_MIN, buffer);
     }
 
     // Test: Edge case for multiplication with int (overflow)
     MU_TEST(fxp_arithmetic_multiplication_int_overflow)
     {
-        Fxp a1 = std::numeric_limits<int32_t>::max() / 2;
+        Fxp a1 = LLONG_MAX / 2;
         int a2 = 3;
         Fxp result = a1 * a2;
         snprintf(buffer, buffer_size, "Multiplication overflow test failed: %d * %d != %d", a1.As<int32_t>(), a2, result.As<int32_t>());
-        mu_assert(result == std::numeric_limits<int32_t>::max(), buffer);
+        mu_assert(result == LLONG_MAX, buffer);
     }
 
     // Test: Edge case for division with int (division by zero)
