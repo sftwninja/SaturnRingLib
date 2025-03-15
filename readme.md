@@ -11,8 +11,12 @@
   </a>
 </p>
 
-## Big thanks to these folk:
+## Brought to you by
 <table>
+  <tr>
+    <td><a href="https://github.com/ReyeMe" target="_blank"><img src="https://github.com/ReyeMe.png" width="32px;"/></a></td>
+    <td><a href="https://github.com/ReyeMe" target="_blank">ReyeMe</a></td>
+  </tr>
   <tr>
     <td><a href="https://github.com/robertoduarte" target="_blank"><img src="https://github.com/robertoduarte.png" width="32px;"/></a></td>
     <td><a href="https://github.com/robertoduarte" target="_blank">robertoduarte</a></td>
