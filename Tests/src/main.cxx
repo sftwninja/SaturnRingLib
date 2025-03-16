@@ -12,6 +12,7 @@
 #include "testsFxp.hpp"
 #include "testsHighColor.hpp"
 #include "testsMath.hpp"
+#include "testsMemory.hpp" // Include the header for memory tests
 
 // Using to shorten names for Vector and HighColor
 using namespace SRL::Types;
@@ -41,6 +42,7 @@ int main()
 	MU_RUN_SUITE(fxp_test_suite);
 	MU_RUN_SUITE(highcolor_test_suite);
 	MU_RUN_SUITE(math_test_suite);
+	MU_RUN_SUITE(memory_test_suite); // Add the memory test suite
 
 	// Generate tests report
 	MU_REPORT();
