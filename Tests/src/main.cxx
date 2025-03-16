@@ -14,6 +14,7 @@
 #include "testsMath.hpp"
 #include "testsMemory.hpp" // Include the header for memory tests
 #include "testsBase.hpp" // Include the header for SGL tests
+#include "testsBitmap.hpp" // Include the header for bitmap tests
 
 // Using to shorten names for Vector and HighColor
 using namespace SRL::Types;
@@ -45,6 +46,7 @@ int main()
 	MU_RUN_SUITE(math_test_suite);
 	MU_RUN_SUITE(memory_test_suite); // Add the memory test suite
 	MU_RUN_SUITE(base_test_suite); // Add the SGL test suite
+	MU_RUN_SUITE(bitmap_test_suite); // Add the bitmap test suite
 
 	// Generate tests report
 	MU_REPORT();
