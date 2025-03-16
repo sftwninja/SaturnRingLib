@@ -140,8 +140,8 @@ extern "C"
     {
         Angle a1 = Angle::FromDegrees(-90); // -90 degrees should normalize to 270 degrees
         Angle normalized = a1;
-        snprintf(buffer, buffer_size, "Normalization failed: %d != -90", normalized.ToDegrees().As<int32_t>());
-        mu_assert(normalized.ToDegrees() == -90, buffer);
+        snprintf(buffer, buffer_size, "Normalization failed: %d != 270", normalized.ToDegrees().As<int32_t>());
+        mu_assert(normalized.ToDegrees() == 270, buffer);
     }
 
     // Test arithmetic addition of two small angles
