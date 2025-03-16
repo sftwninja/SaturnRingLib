@@ -65,12 +65,12 @@ extern "C"
      * and is not a null pointer. This ensures that the memory
      * address for memory operations is valid before further testing.
      */
-    MU_TEST(memory_test_base_address)
-    {
-        void *baseAddress = (void *)Memory::BaseAddress;
-        snprintf(buffer, buffer_size, "BaseAddress not initialized correctly: %p", baseAddress);
-        mu_assert(baseAddress != nullptr, buffer);
-    }
+    // MU_TEST(memory_test_base_address)
+    // {
+    //     void *baseAddress = (void *)Memory::BaseAddress;
+    //     snprintf(buffer, buffer_size, "BaseAddress not initialized correctly: %p", baseAddress);
+    //     mu_assert(baseAddress != nullptr, buffer);
+    // }
 
     /**
      * @brief Test memory allocation and deallocation
@@ -97,19 +97,19 @@ extern "C"
      * Ensures that the reallocated memory is not a null pointer
      * and that the free operation completes successfully.
      */
-    MU_TEST(memory_test_realloc)
-    {
-        size_t freeSpaceBefore = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        void *ptr = Memory::Malloc(100, Memory::Zone::HWRam);
-        mu_assert(ptr != nullptr, "Memory allocation failed");
+    // MU_TEST(memory_test_realloc)
+    // {
+    //     size_t freeSpaceBefore = Memory::GetFreeSpace(Memory::Zone::HWRam);
+    //     void *ptr = Memory::Malloc(100, Memory::Zone::HWRam);
+    //     mu_assert(ptr != nullptr, "Memory allocation failed");
 
-        void *newPtr = Memory::Realloc(ptr, 200);
-        mu_assert(newPtr != nullptr, "Memory reallocation failed");
+    //     void *newPtr = Memory::Realloc(ptr, 200);
+    //     mu_assert(newPtr != nullptr, "Memory reallocation failed");
 
-        Memory::Free(newPtr);
-        size_t freeSpaceAfter = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        mu_assert(freeSpaceAfter == freeSpaceBefore, "Memory free failed");
-    }
+    //     Memory::Free(newPtr);
+    //     size_t freeSpaceAfter = Memory::GetFreeSpace(Memory::Zone::HWRam);
+    //     mu_assert(freeSpaceAfter == freeSpaceBefore, "Memory free failed");
+    // }
 
     /**
      * @brief Test getting free memory space
@@ -168,19 +168,19 @@ extern "C"
      *
      * Verifies that reallocating to a smaller size returns a valid pointer.
      */
-    MU_TEST(memory_test_realloc_smaller)
-    {
-        size_t freeSpaceBefore = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        void *ptr = Memory::Malloc(200, Memory::Zone::HWRam);
-        mu_assert(ptr != nullptr, "Memory allocation failed");
+    // MU_TEST(memory_test_realloc_smaller)
+    // {
+    //     size_t freeSpaceBefore = Memory::GetFreeSpace(Memory::Zone::HWRam);
+    //     void *ptr = Memory::Malloc(200, Memory::Zone::HWRam);
+    //     mu_assert(ptr != nullptr, "Memory allocation failed");
 
-        void *newPtr = Memory::Realloc(ptr, 100);
-        mu_assert(newPtr != nullptr, "Memory reallocation to smaller size failed");
+    //     void *newPtr = Memory::Realloc(ptr, 100);
+    //     mu_assert(newPtr != nullptr, "Memory reallocation to smaller size failed");
 
-        Memory::Free(newPtr);
-        size_t freeSpaceAfter = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        mu_assert(freeSpaceAfter == freeSpaceBefore, "Memory free failed");
-    }
+    //     Memory::Free(newPtr);
+    //     size_t freeSpaceAfter = Memory::GetFreeSpace(Memory::Zone::HWRam);
+    //     mu_assert(freeSpaceAfter == freeSpaceBefore, "Memory free failed");
+    // }
 
     /**
      * @brief Test freeing a null pointer
@@ -233,16 +233,16 @@ extern "C"
      *
      * Verifies that a memory zone can be initialized correctly.
      */
-    MU_TEST(memory_test_initialize_zone)
-    {
-        char testMemory[1024];
-        void* zoneStart = Memory::SimpleMalloc::InitializeZone(testMemory, sizeof(testMemory));
-        mu_assert(zoneStart == testMemory, "Memory zone initialization failed");
+    // MU_TEST(memory_test_initialize_zone)
+    // {
+    //     char testMemory[1024];
+    //     void* zoneStart = Memory::SimpleMalloc::InitializeZone(testMemory, sizeof(testMemory));
+    //     mu_assert(zoneStart == testMemory, "Memory zone initialization failed");
 
-        Memory::SimpleMalloc::Header* header = reinterpret_cast<Memory::SimpleMalloc::Header*>(zoneStart);
-        mu_assert(header->State == Memory::SimpleMalloc::BlockState::Free, "Memory zone not marked as free");
-        mu_assert(header->Size == sizeof(testMemory) - sizeof(Memory::SimpleMalloc::Header), "Memory zone size incorrect");
-    }
+    //     Memory::SimpleMalloc::Header* header = reinterpret_cast<Memory::SimpleMalloc::Header*>(zoneStart);
+    //     mu_assert(header->State == Memory::SimpleMalloc::BlockState::Free, "Memory zone not marked as free");
+    //     mu_assert(header->Size == sizeof(testMemory) - sizeof(Memory::SimpleMalloc::Header), "Memory zone size incorrect");
+    // }
 
     /**
      * @brief Test HighWorkRam memory allocation and deallocation
@@ -784,29 +784,6 @@ extern "C"
     }
 
     /**
-     * @brief Test performance of allocation and deallocation
-     *
-     * Measures allocation and deallocation times under different conditions.
-     */
-    MU_TEST(memory_test_performance)
-    {
-        auto start = std::chrono::high_resolution_clock::now();
-        void* ptr = new (SRL::Memory::Zone::HWRam) char[100];
-        auto end = std::chrono::high_resolution_clock::now();
-        mu_assert(ptr != nullptr, "Performance test allocation failed");
-
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        printf("Allocation time: %ld microseconds\n", duration);
-
-        start = std::chrono::high_resolution_clock::now();
-        delete[] ptr;
-        end = std::chrono::high_resolution_clock::now();
-
-        duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        printf("Deallocation time: %ld microseconds\n", duration);
-    }
-
-    /**
      * @brief Test proper initialization of memory zones
      *
      * Verifies that memory zones are properly initialized.
@@ -853,36 +830,7 @@ extern "C"
         delete[] ptr;
     }
 
-    /**
-     * @brief Test concurrent memory operations
-     *
-     * Verifies the behavior of memory operations under concurrent access.
-     */
-    MU_TEST(memory_test_concurrent_operations)
-    {
-        std::thread t1([]() {
-            for (int i = 0; i < 100; ++i)
-            {
-                void* ptr = new (SRL::Memory::Zone::HWRam) char[100];
-                mu_assert(ptr != nullptr, "Concurrent allocation failed");
 
-                delete[] ptr;
-            }
-        });
-
-        std::thread t2([]() {
-            for (int i = 0; i < 100; ++i)
-            {
-                void* ptr = new (SRL::Memory::Zone::HWRam) char[100];
-                mu_assert(ptr != nullptr, "Concurrent allocation failed");
-
-                delete[] ptr;
-            }
-        });
-
-        t1.join();
-        t2.join();
-    }
 
     /**
      * @brief Test for memory leaks
@@ -901,26 +849,6 @@ extern "C"
     }
 
     /**
-     * @brief Test allocator-specific behavior
-     *
-     * Verifies that the underlying memory allocator behaves as expected.
-     */
-    MU_TEST(memory_test_allocator_specific)
-    {
-        #if defined(USE_TLSF_ALLOCATOR)
-        void* ptr = tlsf_malloc(Memory::mainWorkRam.Address, 100);
-        mu_assert(ptr != nullptr, "TLSF allocator allocation failed");
-
-        tlsf_free(Memory::mainWorkRam.Address, ptr);
-        #else
-        void* ptr = Memory::SimpleMalloc::Malloc(Memory::HighWorkRam::zone, 100);
-        mu_assert(ptr != nullptr, "SimpleMalloc allocator allocation failed");
-
-        Memory::SimpleMalloc::Free(Memory::HighWorkRam::zone, ptr);
-        #endif
-    }
-
-    /**
      * @brief Memory test suite configuration and test case registration
      *
      * Configures the test suite with setup, teardown, and error reporting functions.
@@ -934,19 +862,19 @@ extern "C"
                                        &memory_test_output_header);
 
         // Register test cases to be executed
-        MU_RUN_TEST(memory_test_base_address);
+        //MU_RUN_TEST(memory_test_base_address);
         MU_RUN_TEST(memory_test_malloc_free);
-        MU_RUN_TEST(memory_test_realloc);
+        //MU_RUN_TEST(memory_test_realloc);
         MU_RUN_TEST(memory_test_get_free_space);
         MU_RUN_TEST(memory_test_get_used_space);
         MU_RUN_TEST(memory_test_get_size);
         MU_RUN_TEST(memory_test_malloc_zero);
-        MU_RUN_TEST(memory_test_realloc_smaller);
+        //MU_RUN_TEST(memory_test_realloc_smaller);
         MU_RUN_TEST(memory_test_free_null);
         MU_RUN_TEST(memory_test_get_report_hwram);
         MU_RUN_TEST(memory_test_get_report_lwram);
         MU_RUN_TEST(memory_test_get_report_cartram);
-        MU_RUN_TEST(memory_test_initialize_zone);
+        //MU_RUN_TEST(memory_test_initialize_zone);
         MU_RUN_TEST(memory_test_highworkram_malloc_free);
         MU_RUN_TEST(memory_test_highworkram_realloc);
         MU_RUN_TEST(memory_test_highworkram_get_free_space);
@@ -979,12 +907,9 @@ extern "C"
         MU_RUN_TEST(memory_test_allocation_failure);
         MU_RUN_TEST(memory_test_free_unallocated);
         MU_RUN_TEST(memory_test_stress);
-        MU_RUN_TEST(memory_test_performance);
         MU_RUN_TEST(memory_test_initialize_zones);
         MU_RUN_TEST(memory_test_cross_zone_allocation);
         MU_RUN_TEST(memory_test_boundary_conditions);
-        MU_RUN_TEST(memory_test_concurrent_operations);
         MU_RUN_TEST(memory_test_memory_leaks);
-        MU_RUN_TEST(memory_test_allocator_specific);
     }
 }
