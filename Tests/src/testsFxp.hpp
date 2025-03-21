@@ -178,18 +178,18 @@ extern "C"
     }
 
     // Test: Modulo operation with negative dividend
-    // MU_TEST(fxp_ModuloTest_NegativeDividend)
-    // {
-    //     Fxp a1 = -10;
-    //     Fxp b1 = 3;
-    //     snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
-    //     mu_assert((a1 % b1) == -1, buffer);
+    MU_TEST(fxp_ModuloTest_NegativeDividend)
+    {
+        Fxp a1 = -10;
+        Fxp b1 = 3;
+        snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), -1);
+        mu_assert((a1 % b1) == -1, buffer);
 
-    //     a1 = -20;
-    //     b1 = 5;
-    //     snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 0);
-    //     mu_assert((a1 % b1) == 0, buffer);
-    // }
+        a1 = -20;
+        b1 = 5;
+        snprintf(buffer, buffer_size, "Mod value test failed: mod(%d, %d) != %d", a1.As<int32_t>(), b1.As<int32_t>(), 0);
+        mu_assert((a1 % b1) == 0, buffer);
+    }
 
     // Test: Modulo operation with negative divisor
     MU_TEST(fxp_ModuloTest_NegativeDivisor)
@@ -1028,9 +1028,9 @@ MU_TEST(fxp_arithmetic_division_double_by_zero)
         MU_RUN_TEST(fxp_min_value_check);
 
         MU_RUN_TEST(fxp_ModuloTest_PositiveNumbers);
-        //MU_RUN_TEST(fxp_ModuloTest_NegativeDividend); Mod value test failed: mod(-10, 3) != -1
+        MU_RUN_TEST(fxp_ModuloTest_NegativeDividend); //Mod value test failed: mod(-10, 3) != -1
         MU_RUN_TEST(fxp_ModuloTest_NegativeDivisor);
-        //MU_RUN_TEST(fxp_ModuloTest_NegativeDividendAndDivisor); Mod value test failed: mod(-10, -3) != -1
+        MU_RUN_TEST(fxp_ModuloTest_NegativeDividendAndDivisor); //Mod value test failed: mod(-10, -3) != -1
         MU_RUN_TEST(fxp_ModuloTest_LargeNumbers);
         MU_RUN_TEST(fxp_ModuloTest_EdgeCases);
 
