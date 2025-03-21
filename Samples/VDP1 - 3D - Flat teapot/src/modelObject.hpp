@@ -213,7 +213,7 @@ private:
                 textureIndex,
                 color,
                 CL32KRGB,
-                    CL32KRGB |
+                    CL32KRGB | ECdis |
                     (attributeHeader->HasMeshEffect != 0 ? MESHon : MESHoff) |
                     (attributeHeader->HasTransparency != 0 ? CL_Trans : 0) |
                     (attributeHeader->HasHalfBrightness != 0 ? CL_Half : 0),
@@ -267,7 +267,7 @@ private:
                 textureIndex,
                 color,
                 (attributeHeader->HasFlatShading != 0 ? CL32KRGB : *gouraudIterator),
-                    CL32KRGB |
+                    CL32KRGB | ECdis |
                     (attributeHeader->HasMeshEffect != 0 ? MESHon : MESHoff) |
                     (attributeHeader->HasFlatShading != 0 ? 0 : CL_Gouraud) |
                     (attributeHeader->HasTransparency != 0 ? CL_Trans : 0) |
