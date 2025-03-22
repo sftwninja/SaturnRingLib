@@ -17,8 +17,6 @@ struct WorkArea_
     char Pbuffer[(_LongWord_ * 4) * SGL_MAX_VERTICES];
     char CLOfstBuf[(_Byte_ * 32 * 3) * 32];
     char CommandBuf[(_LongWord_ * 8) * SGL_MAX_POLYGONS];
-    char TransList[0x4400];
-    char MasterStack[0x400];
 };
 
 struct WorkArea_ __attribute__((section("WORK_AREA_DUMMY"))) WORK_AREA_DUMMY;
