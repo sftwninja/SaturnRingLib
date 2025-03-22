@@ -114,7 +114,6 @@ CCFLAGS += -DSRL_MODE_$(strip ${SRL_MODE}) \
 	-DSRL_MAX_CD_RETRIES=$(strip ${SRL_MAX_CD_RETRIES}) \
 	-DSRL_DEBUG_MAX_PRINT_LENGTH=$(strip ${SRL_DEBUG_MAX_PRINT_LENGTH}) \
 	-DSRL_DEBUG_MAX_LOG_LENGTH=$(strip ${SRL_DEBUG_MAX_LOG_LENGTH}) \
-	-DSRL_LOG_LEVEL=$(strip ${SRL_LOG_LEVEL}) \
 
 # CD assets
 ASSETS_DIR = ./cd/data
@@ -212,8 +211,12 @@ endif
 compile_objects : $(OBJECTS) $(SYSOBJECTS)
 	$(info ****** Info ******)
 	$(info Maximum textures : ${SRL_MAX_TEXTURES})
-	$(info Log level selected : ${SRL_LOG_LEVEL})
-	$(info Maximum Log length : ${SRL_DEBUG_MAX_LOG_LENGTH})
+	$(info Maximum vertices : ${SGL_MAX_VERTICES})
+	$(info Maximum polygons : ${SGL_MAX_POLYGONS})
+	$(info Maximum events : ${SGL_MAX_EVENTS})
+	$(info Maximum work : ${SGL_MAX_WORKS})
+	$(info Log level selected : $(if $(strip ${SRL_LOG_LEVEL}),${SRL_LOG_LEVEL},NONE))
+	$(info Maximum Log length : $(if $(strip ${SRL_DEBUG_MAX_LOG_LENGTH}),${SRL_DEBUG_MAX_LOG_LENGTH},0))
 	$(info ******************)
 	mkdir -p $(MUSIC_DIR)
 	mkdir -p $(ASSETS_DIR)
