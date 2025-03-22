@@ -1,6 +1,8 @@
 #pragma once
 
 #include "srl_base.hpp"
+#include "srl_string.hpp"   // for snprintf
+#include "srl_debug.hpp"    // for SRL_DEBUG_MAX_LOG_LENGTH
 
 namespace SRL
 {
@@ -68,8 +70,9 @@ namespace SRL
 #ifndef SRL_LOG_LEVEL
             /** @brief Minimum log level to be output
              */
-            static constexpr SRL::Logger::LogLevels MinLevel = SRL::Logger::LogLevels::INFO;
+            static constexpr SRL::Logger::LogLevels MinLevel = SRL::Logger::LogLevels::NONE;
 #else
+
 #define Stringify(U) SRL::Logger::LogLevels::U
 
             /** @brief Minimum log level to be output

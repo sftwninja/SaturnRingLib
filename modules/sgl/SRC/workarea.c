@@ -12,7 +12,7 @@
 struct WorkArea_
 {
     char SortList[(_LongWord_ * 3) * (SGL_MAX_POLYGONS + 6)];
-    char Zbuffer[_LongWord_ * 512];
+    char Zbuffer[_LongWord_ * SGL_MAX_POLYGONS];
     char SpriteBuf[_Sprite_ * ((SGL_MAX_POLYGONS + 6) * 2)];
     char Pbuffer[(_LongWord_ * 4) * SGL_MAX_VERTICES];
     char CLOfstBuf[(_Byte_ * 32 * 3) * 32];
