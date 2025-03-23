@@ -16,6 +16,8 @@
 #include "testsBase.hpp" // Include the header for SGL tests
 #include "testsBitmap.hpp" // Include the header for bitmap tests
 #include "testsMemoryHWRam.hpp" // Include the header for memory HWRam tests
+#include "testsMemoryLWRam.hpp" // Include the header for memory LWRam tests
+#include "testsMemoryCartRam.hpp" // Include the header for memory Cart Ram tests
 
 // Using to shorten names for Vector and HighColor
 using namespace SRL::Types;
@@ -38,17 +40,19 @@ int main()
     LogInfo("***UT_START***");
 
     MU_RUN_SUITE(ascii_test_suite);
-    //MU_RUN_SUITE(angle_test_suite);
+    MU_RUN_SUITE(angle_test_suite);
     //MU_RUN_SUITE(euler_angles_test_suite); // Add the Euler angles test suite
     //MU_RUN_SUITE(cd_test_suite);
     MU_RUN_SUITE(cram_test_suite);
-    //MU_RUN_SUITE(fxp_test_suite);
+    MU_RUN_SUITE(fxp_test_suite);
     MU_RUN_SUITE(highcolor_test_suite);
     MU_RUN_SUITE(math_test_suite);
-    //MU_RUN_SUITE(memory_test_suite); // Add the memory test suite
+    MU_RUN_SUITE(memory_test_suite); // Add the memory test suite
     MU_RUN_SUITE(base_test_suite); // Add the SGL test suite
     MU_RUN_SUITE(bitmap_test_suite); // Add the bitmap test suite
     MU_RUN_SUITE(memory_HWRam_test_suite); // Add the memory HWRam test suite
+    MU_RUN_SUITE(memory_LWRam_test_suite); // Add the memory LWRam test suite
+    MU_RUN_SUITE(memory_CartRam_test_suite); // Add the memory CartRam test suite
 
     // Generate tests report
     MU_REPORT();
