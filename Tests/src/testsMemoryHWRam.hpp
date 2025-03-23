@@ -235,12 +235,17 @@ extern "C"
         mu_assert(ptr != nullptr, "new[] operator in HighWorkRam failed");
 
         size_t freeSpaceAfterAlloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        mu_assert(freeSpaceAfterAlloc < freeSpaceBefore, "Memory allocation in HighWorkRam did not reduce free space");
+        mu_assert(freeSpaceAfterAlloc < freeSpaceBefore,
+                "Memory allocation in HighWorkRam did not reduce free space");
 
         delete[] ptr;
 
         size_t freeSpaceAfterFree = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        mu_assert(freeSpaceAfterFree == freeSpaceBefore, "Memory free in HighWorkRam did not restore free space");
+        snprintf(buffer, buffer_size,
+            "Memory free in HighWorkRam did not restore free space : %d lost",
+            freeSpaceBefore - freeSpaceAfterFree);
+        mu_assert(freeSpaceAfterFree == freeSpaceBefore,
+            buffer);
     }
 
     /**
@@ -257,7 +262,8 @@ extern "C"
         {
             ptr = new (SRL::Memory::Zone::HWRam) char[freeSpace];
 
-            snprintf(buffer, buffer_size, "Cannot allocate %d in HighWorkRam Memory", freeSpace);
+            snprintf(buffer, buffer_size,
+                "Cannot allocate %d in HighWorkRam Memory", freeSpace);
             mu_assert(ptr != nullptr, buffer);
         }
         else
@@ -267,7 +273,8 @@ extern "C"
 
         freeSpace = Memory::GetFreeSpace(Memory::Zone::HWRam);
         
-        snprintf(buffer, buffer_size, "CMemory HighWorkRam is not full : %d remains", freeSpace);
+        snprintf(buffer, buffer_size,
+            "CMemory HighWorkRam is not full : %d remains", freeSpace);
         mu_assert(freeSpace == 0, buffer);
 
         void* ptr2 = new (SRL::Memory::Zone::HWRam) char[100];
@@ -500,7 +507,7 @@ extern "C"
             void* ptr = Memory::Malloc(size, Memory::Zone::HWRam);
             
             snprintf(buffer, buffer_size, 
-                    "Memory allocation failed for size %zu", size);
+                    "Memory allocation failed for size %d", size);
             mu_assert(ptr != nullptr, buffer);
             
             size_t after_alloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
@@ -511,7 +518,7 @@ extern "C"
             size_t after_free = Memory::GetFreeSpace(Memory::Zone::HWRam);
             
             snprintf(buffer, buffer_size, 
-                    "Memory free failed for size %zu", size);
+                    "Memory free failed for size %d", size);
             mu_assert(after_free == before_alloc, buffer);
         }
 
@@ -548,7 +555,7 @@ extern "C"
             char* array = new (SRL::Memory::Zone::HWRam) char[size];
             
             snprintf(buffer, buffer_size, 
-                    "Array allocation failed for size %zu", size);
+                    "Array allocation failed for size %d", size);
             mu_assert(array != nullptr, buffer);
             
             // Write pattern to verify memory access
@@ -559,7 +566,7 @@ extern "C"
             // Verify pattern
             for (size_t i = 0; i < size; i++) {
                 snprintf(buffer, buffer_size, 
-                        "Memory verification failed at index %zu for size %zu", i, size);
+                        "Memory verification failed at index %d for size %d", i, size);
                 mu_assert(array[i] == static_cast<char>(i % 256), buffer);
             }
             
@@ -567,7 +574,7 @@ extern "C"
             
             size_t after_free = Memory::GetFreeSpace(Memory::Zone::HWRam);
             snprintf(buffer, buffer_size, 
-                    "Memory not properly freed for size %zu", size);
+                    "Memory not properly freed for size %d", size);
             mu_assert(after_free == before_alloc, buffer);
         }
         
@@ -575,7 +582,7 @@ extern "C"
         for (size_t size : test_sizes) {
             char* array = new (SRL::Memory::Zone::HWRam) char[size];
             snprintf(buffer, buffer_size, 
-                    "Interleaved allocation failed for size %zu", size);
+                    "Interleaved allocation failed for size %d", size);
             mu_assert(array != nullptr, buffer);
             arrays.push_back(array);
         }
@@ -589,8 +596,9 @@ extern "C"
         
         // Verify final memory state
         size_t final_free_space = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        mu_assert(final_free_space == initial_free_space, 
-                  "Memory leak detected after interleaved allocations");
+        snprintf(buffer, buffer_size, 
+            "Memory leak detected after interleaved allocations : %d lost", initial_free_space - final_free_space);
+        mu_assert(final_free_space == initial_free_space, buffer);
     }
 
     /**
