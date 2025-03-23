@@ -231,21 +231,24 @@ extern "C"
     MU_TEST(memory_HWRam_test_new_array_highworkram)
     {
         size_t freeSpaceBefore = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        void* ptr = new (SRL::Memory::Zone::HWRam) char[100];
+        void *ptr = new (SRL::Memory::Zone::HWRam) char[100];
         mu_assert(ptr != nullptr, "new[] operator in HighWorkRam failed");
 
         size_t freeSpaceAfterAlloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
+        snprintf(buffer, buffer_size,
+                 "Memory allocation in HighWorkRam did not reduce free space (before %d vs after %d)",
+                 freeSpaceBefore, freeSpaceAfterAlloc);
         mu_assert(freeSpaceAfterAlloc < freeSpaceBefore,
-                "Memory allocation in HighWorkRam did not reduce free space");
+                  buffer);
 
         delete[] ptr;
 
         size_t freeSpaceAfterFree = Memory::GetFreeSpace(Memory::Zone::HWRam);
         snprintf(buffer, buffer_size,
-            "Memory free in HighWorkRam did not restore free space : %d lost",
-            freeSpaceBefore - freeSpaceAfterFree);
+                 "Memory free in HighWorkRam did not restore free space : %d lost",
+                 freeSpaceBefore - freeSpaceAfterFree);
         mu_assert(freeSpaceAfterFree == freeSpaceBefore,
-            buffer);
+                  buffer);
     }
 
     /**
@@ -256,14 +259,14 @@ extern "C"
     MU_TEST(memory_HWRam_test_deplete_highworkram)
     {
         size_t freeSpace = Memory::GetFreeSpace(Memory::Zone::HWRam) / 2;
-        void* ptr = nullptr;
+        void *ptr = nullptr;
 
         if (freeSpace > 0)
         {
             ptr = new (SRL::Memory::Zone::HWRam) char[freeSpace];
 
             snprintf(buffer, buffer_size,
-                "Cannot allocate %d in HighWorkRam Memory", freeSpace);
+                     "Cannot allocate %d in HighWorkRam Memory", freeSpace);
             mu_assert(ptr != nullptr, buffer);
         }
         else
@@ -272,12 +275,12 @@ extern "C"
         }
 
         freeSpace = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        
+
         snprintf(buffer, buffer_size,
-            "CMemory HighWorkRam is not full : %d remains", freeSpace);
+                 "CMemory HighWorkRam is not full : %d remains", freeSpace);
         mu_assert(freeSpace == 0, buffer);
 
-        void* ptr2 = new (SRL::Memory::Zone::HWRam) char[100];
+        void *ptr2 = new (SRL::Memory::Zone::HWRam) char[100];
 
         mu_assert(ptr2 == nullptr, "Memory depletion in HighWorkRam did not return nullptr");
 
@@ -298,8 +301,8 @@ extern "C"
      */
     MU_TEST(memory_HWRam_test_inrange_highworkram)
     {
-        void* validPtr = (void*)0x06000000; // Valid address in HighWorkRam range
-        void* invalidPtr = (void*)0x08000000; // Invalid address outside HighWorkRam range
+        void *validPtr = (void *)0x06000000;   // Valid address in HighWorkRam range
+        void *invalidPtr = (void *)0x08000000; // Invalid address outside HighWorkRam range
 
         mu_assert(Memory::HighWorkRam::InRange(validPtr), "InRange failed for valid HighWorkRam address");
         mu_assert(!Memory::HighWorkRam::InRange(invalidPtr), "InRange failed for invalid HighWorkRam address");
@@ -312,7 +315,7 @@ extern "C"
      */
     MU_TEST(memory_HWRam_test_realloc_larger)
     {
-        void* ptr = new (SRL::Memory::Zone::HWRam) char[100];
+        void *ptr = new (SRL::Memory::Zone::HWRam) char[100];
         mu_assert(ptr != nullptr, "Initial allocation failed");
 
         ptr = SRL::Memory::HighWorkRam::Realloc(ptr, 200);
@@ -329,7 +332,7 @@ extern "C"
     MU_TEST(memory_HWRam_test_large_block)
     {
         size_t largeSize = SRL::Memory::HighWorkRam::GetFreeSpace() / 2;
-        void* ptr = new (SRL::Memory::Zone::HWRam) char[largeSize];
+        void *ptr = new (SRL::Memory::Zone::HWRam) char[largeSize];
         mu_assert(ptr != nullptr, "Large block allocation failed");
 
         delete[] ptr;
@@ -342,13 +345,13 @@ extern "C"
      */
     MU_TEST(memory_HWRam_test_fragmentation)
     {
-        void* ptr1 = new (SRL::Memory::Zone::HWRam) char[100];
-        void* ptr2 = new (SRL::Memory::Zone::HWRam) char[200];
-        void* ptr3 = new (SRL::Memory::Zone::HWRam) char[300];
+        void *ptr1 = new (SRL::Memory::Zone::HWRam) char[100];
+        void *ptr2 = new (SRL::Memory::Zone::HWRam) char[200];
+        void *ptr3 = new (SRL::Memory::Zone::HWRam) char[300];
 
         delete[] ptr2;
 
-        void* ptr4 = new (SRL::Memory::Zone::HWRam) char[150];
+        void *ptr4 = new (SRL::Memory::Zone::HWRam) char[150];
         mu_assert(ptr4 != nullptr, "Fragmentation handling failed");
 
         delete[] ptr1;
@@ -364,8 +367,13 @@ extern "C"
     MU_TEST(memory_HWRam_test_allocation_failure)
     {
         size_t freeSpace = SRL::Memory::HighWorkRam::GetFreeSpace();
-        void* ptr = new (SRL::Memory::Zone::HWRam) char[freeSpace + 1];
-        mu_assert(ptr == nullptr, "Allocation failure handling failed");
+        size_t toAllocate = freeSpace + 1;
+        
+        void *ptr = new (SRL::Memory::Zone::HWRam) char[toAllocate];
+
+        snprintf(buffer, buffer_size,
+            "Allocation of %d error handling failed", toAllocate);
+        mu_assert(ptr == nullptr, buffer);
     }
 
     /**
@@ -375,8 +383,8 @@ extern "C"
      */
     MU_TEST(memory_HWRam_test_free_unallocated)
     {
-        void* ptr = (void*)0x06000000; // Unallocated address
-        SRL::Memory::Free(ptr); // Should not crash or cause issues
+        void *ptr = (void *)0x06000000; // Unallocated address
+        SRL::Memory::Free(ptr);         // Should not crash or cause issues
 
         ptr = new (SRL::Memory::Zone::HWRam) char[100];
         delete[] ptr;
@@ -392,7 +400,7 @@ extern "C"
     {
         for (int i = 0; i < 1000; ++i)
         {
-            void* ptr = new (SRL::Memory::Zone::HWRam) char[100];
+            void *ptr = new (SRL::Memory::Zone::HWRam) char[100];
             mu_assert(ptr != nullptr, "Stress test allocation failed");
 
             delete[] ptr;
@@ -407,7 +415,7 @@ extern "C"
     MU_TEST(memory_HWRam_test_boundary_conditions)
     {
         size_t freeSpace = Memory::HighWorkRam::GetFreeSpace();
-        void* ptr = new (SRL::Memory::Zone::HWRam) char[freeSpace - 1];
+        void *ptr = new (SRL::Memory::Zone::HWRam) char[freeSpace - 1];
         mu_assert(ptr != nullptr, "Boundary condition allocation failed");
 
         delete[] ptr;
@@ -421,7 +429,7 @@ extern "C"
     MU_TEST(memory_HWRam_test_memory_leaks)
     {
         size_t freeSpaceBefore = Memory::HighWorkRam::GetFreeSpace();
-        void* ptr = new (SRL::Memory::Zone::HWRam) char[100];
+        void *ptr = new (SRL::Memory::Zone::HWRam) char[100];
         mu_assert(ptr != nullptr, "Memory allocation failed");
 
         delete[] ptr;
@@ -434,8 +442,8 @@ extern "C"
      */
     MU_TEST(memory_HWRam_test_alignment)
     {
-        void* ptr = Memory::HighWorkRam::Malloc(100);
-        mu_assert(((uintptr_t)ptr % alignof(std::max_align_t)) == 0, 
+        void *ptr = Memory::HighWorkRam::Malloc(100);
+        mu_assert(((uintptr_t)ptr % alignof(std::max_align_t)) == 0,
                   "Memory not properly aligned");
         Memory::HighWorkRam::Free(ptr);
     }
@@ -445,16 +453,18 @@ extern "C"
      */
     MU_TEST(memory_HWRam_test_mixed_sizes)
     {
-        std::vector<void*> ptrs;
+        std::vector<void *> ptrs;
         std::vector<size_t> sizes = {8, 16, 32, 64, 128};
-        
-        for(size_t size : sizes) {
-            void* ptr = Memory::HighWorkRam::Malloc(size);
+
+        for (size_t size : sizes)
+        {
+            void *ptr = Memory::HighWorkRam::Malloc(size);
             mu_assert(ptr != nullptr, "Mixed size allocation failed");
             ptrs.push_back(ptr);
         }
-        
-        for(void* ptr : ptrs) {
+
+        for (void *ptr : ptrs)
+        {
             Memory::HighWorkRam::Free(ptr);
         }
     }
@@ -464,18 +474,20 @@ extern "C"
      */
     MU_TEST(memory_HWRam_test_memory_init)
     {
-        char* ptr = new (SRL::Memory::Zone::HWRam) char[10];
+        char *ptr = new (SRL::Memory::Zone::HWRam) char[10];
         mu_assert(ptr != nullptr, "Memory initialization allocation failed");
-        
+
         // Write and verify pattern
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             ptr[i] = i;
         }
-        
-        for(int i = 0; i < 10; i++) {
+
+        for (int i = 0; i < 10; i++)
+        {
             mu_assert(ptr[i] == i, "Memory content verification failed");
         }
-        
+
         delete[] ptr;
     }
 
@@ -490,44 +502,45 @@ extern "C"
     {
         // Test sizes from very small to large
         const size_t test_sizes[] = {
-            1,                  // Minimum size
-            16,                 // Small block
-            64,                 // Medium block
-            256,               // Large block
-            1024,              // 1KB block
-            1024 * 4,          // 4KB block
-            1024 * 16          // 16KB block
+            1,        // Minimum size
+            16,       // Small block
+            64,       // Medium block
+            256,      // Large block
+            1024,     // 1KB block
+            1024 * 4, // 4KB block
+            1024 * 16 // 16KB block
         };
 
         size_t initial_free_space = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        
+
         // Test each size individually
-        for (size_t size : test_sizes) {
+        for (size_t size : test_sizes)
+        {
             size_t before_alloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
-            void* ptr = Memory::Malloc(size, Memory::Zone::HWRam);
-            
-            snprintf(buffer, buffer_size, 
-                    "Memory allocation failed for size %d", size);
+            void *ptr = Memory::Malloc(size, Memory::Zone::HWRam);
+
+            snprintf(buffer, buffer_size,
+                     "Memory allocation failed for size %d", size);
             mu_assert(ptr != nullptr, buffer);
-            
+
             size_t after_alloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
-            snprintf(buffer, buffer_size, 
-                "Memory space didn't decrease after allocation (size : %d), before : %d vs after : %d",
-                size, before_alloc, after_alloc);
-            mu_assert(after_alloc < before_alloc, 
-                buffer);
+            snprintf(buffer, buffer_size,
+                     "Memory space didn't decrease after allocation (size : %d), before : %d vs after : %d",
+                     size, before_alloc, after_alloc);
+            mu_assert(after_alloc < before_alloc,
+                      buffer);
 
             Memory::Free(ptr);
             size_t after_free = Memory::GetFreeSpace(Memory::Zone::HWRam);
-            
-            snprintf(buffer, buffer_size, 
-                    "Memory free failed for size %d", size);
+
+            snprintf(buffer, buffer_size,
+                     "Memory free failed for size %d", size);
             mu_assert(after_free == before_alloc, buffer);
         }
 
         // Verify total memory state is unchanged
         size_t final_free_space = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        mu_assert(final_free_space == initial_free_space, 
+        mu_assert(final_free_space == initial_free_space,
                   "Final memory state different from initial state");
     }
 
@@ -541,66 +554,71 @@ extern "C"
     MU_TEST(memory_HWRam_test_multiple_array_sizes)
     {
         const size_t test_sizes[] = {
-            8,                  // Tiny array
-            32,                 // Small array
-            128,               // Medium array
-            512,               // Large array
-            2048,              // Very large array
-            4096               // Huge array
+            8,    // Tiny array
+            32,   // Small array
+            128,  // Medium array
+            512,  // Large array
+            2048, // Very large array
+            4096  // Huge array
         };
-        
+
         size_t initial_free_space = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        std::vector<char*> arrays;
-        
+        std::vector<char *> arrays;
+
         // Sequential allocation and deallocation
-        for (size_t size : test_sizes) {
+        for (size_t size : test_sizes)
+        {
             size_t before_alloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
-            char* array = new (SRL::Memory::Zone::HWRam) char[size];
-            
-            snprintf(buffer, buffer_size, 
-                    "Array allocation failed for size %d", size);
+            char *array = new (SRL::Memory::Zone::HWRam) char[size];
+
+            snprintf(buffer, buffer_size,
+                     "Array allocation failed for size %d", size);
             mu_assert(array != nullptr, buffer);
-            
+
             // Write pattern to verify memory access
-            for (size_t i = 0; i < size; i++) {
+            for (size_t i = 0; i < size; i++)
+            {
                 array[i] = static_cast<char>(i % 256);
             }
-            
+
             // Verify pattern
-            for (size_t i = 0; i < size; i++) {
-                snprintf(buffer, buffer_size, 
-                        "Memory verification failed at index %d for size %d", i, size);
+            for (size_t i = 0; i < size; i++)
+            {
+                snprintf(buffer, buffer_size,
+                         "Memory verification failed at index %d for size %d", i, size);
                 mu_assert(array[i] == static_cast<char>(i % 256), buffer);
             }
-            
+
             delete[] array;
-            
+
             size_t after_free = Memory::GetFreeSpace(Memory::Zone::HWRam);
-            snprintf(buffer, buffer_size, 
-                    "Memory not properly freed for size %d", size);
+            snprintf(buffer, buffer_size,
+                     "Memory not properly freed for size %d", size);
             mu_assert(after_free == before_alloc, buffer);
         }
-        
+
         // Interleaved allocation/deallocation
-        for (size_t size : test_sizes) {
-            char* array = new (SRL::Memory::Zone::HWRam) char[size];
-            snprintf(buffer, buffer_size, 
-                    "Interleaved allocation failed for size %d", size);
+        for (size_t size : test_sizes)
+        {
+            char *array = new (SRL::Memory::Zone::HWRam) char[size];
+            snprintf(buffer, buffer_size,
+                     "Interleaved allocation failed for size %d", size);
             mu_assert(array != nullptr, buffer);
             arrays.push_back(array);
         }
-        
+
         // Delete in reverse order
-        while (!arrays.empty()) {
-            char* array = arrays.back();
+        while (!arrays.empty())
+        {
+            char *array = arrays.back();
             arrays.pop_back();
             delete[] array;
         }
-        
+
         // Verify final memory state
         size_t final_free_space = Memory::GetFreeSpace(Memory::Zone::HWRam);
-        snprintf(buffer, buffer_size, 
-            "Memory leak detected after interleaved allocations : %d lost", initial_free_space - final_free_space);
+        snprintf(buffer, buffer_size,
+                 "Memory leak detected after interleaved allocations : %d lost", initial_free_space - final_free_space);
         mu_assert(final_free_space == initial_free_space, buffer);
     }
 
@@ -614,8 +632,8 @@ extern "C"
     {
         // Configure test suite with setup, teardown, and error reporting functions
         MU_SUITE_CONFIGURE_WITH_HEADER(&memory_HWRam_test_setup,
-                                     &memory_HWRam_test_teardown,
-                                     &memory_HWRam_test_output_header);
+                                       &memory_HWRam_test_teardown,
+                                       &memory_HWRam_test_output_header);
 
         // 1. Basic Memory Operations
         MU_RUN_TEST(memory_HWRam_test_malloc_free);
@@ -642,7 +660,7 @@ extern "C"
         MU_RUN_TEST(memory_HWRam_test_free_unallocated);
         MU_RUN_TEST(memory_HWRam_test_allocation_failure);
         MU_RUN_TEST(memory_HWRam_test_memory_leaks);
-        
+
         // 4. Memory Management Tests
         MU_RUN_TEST(memory_HWRam_test_large_block);
         MU_RUN_TEST(memory_HWRam_test_fragmentation);
