@@ -567,20 +567,32 @@ extern "C"
      */
     MU_TEST(memory_test_deplete_highworkram)
     {
-        size_t freeSpace = Memory::GetFreeSpace(Memory::Zone::HWRam);
+        size_t freeSpace = Memory::GetFreeSpace(Memory::Zone::HWRam) / 2;
         void* ptr = nullptr;
 
-        while (freeSpace > 0)
+        if (freeSpace > 0)
         {
             ptr = new (SRL::Memory::Zone::HWRam) char[freeSpace];
-            if (ptr == nullptr)
-            {
-                break;
-            }
-            freeSpace = Memory::GetFreeSpace(Memory::Zone::HWRam);
+
+            snprintf(buffer, buffer_size, "Cannot allocate %d in HighWorkRam Memory", freeSpace);
+            mu_assert(ptr != nullptr, buffer);
+        }
+        else
+        {
+            mu_assert(false, "HighWorkRam Memory is already full");
         }
 
-        mu_assert(ptr == nullptr, "Memory depletion in HighWorkRam did not return nullptr");
+        freeSpace = Memory::GetFreeSpace(Memory::Zone::HWRam);
+        
+        snprintf(buffer, buffer_size, "CMemory HighWorkRam is not full : %d remains", freeSpace);
+        mu_assert(freeSpace == 0, buffer);
+
+        void* ptr2 = new (SRL::Memory::Zone::HWRam) char[100];
+
+        mu_assert(ptr2 == nullptr, "Memory depletion in HighWorkRam did not return nullptr");
+
+        delete[] ptr2;
+        delete[] ptr;
 
         // Validate that memory can be reallocated after depletion
         ptr = new (SRL::Memory::Zone::HWRam) char[100];
