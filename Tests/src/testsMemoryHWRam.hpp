@@ -511,8 +511,11 @@ extern "C"
             mu_assert(ptr != nullptr, buffer);
             
             size_t after_alloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
+            snprintf(buffer, buffer_size, 
+                "Memory space didn't decrease after allocation (size : %d), before : %d vs after : %d",
+                size, before_alloc, after_alloc);
             mu_assert(after_alloc < before_alloc, 
-                     "Memory space didn't decrease after allocation");
+                buffer);
 
             Memory::Free(ptr);
             size_t after_free = Memory::GetFreeSpace(Memory::Zone::HWRam);
