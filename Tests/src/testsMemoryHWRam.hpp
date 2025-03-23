@@ -423,6 +423,105 @@ extern "C"
     }
 
     /**
+     * @brief Test alignment requirements for memory allocations
+     */
+    MU_TEST(memory_HWRam_test_alignment)
+    {
+        void* ptr = Memory::HighWorkRam::Malloc(100);
+        mu_assert(((uintptr_t)ptr % alignof(std::max_align_t)) == 0, 
+                  "Memory not properly aligned");
+        Memory::HighWorkRam::Free(ptr);
+    }
+
+    /**
+     * @brief Test concurrent allocations and deallocations
+     */
+    MU_TEST(memory_HWRam_test_mixed_sizes)
+    {
+        std::vector<void*> ptrs;
+        std::vector<size_t> sizes = {8, 16, 32, 64, 128};
+        
+        for(size_t size : sizes) {
+            void* ptr = Memory::HighWorkRam::Malloc(size);
+            mu_assert(ptr != nullptr, "Mixed size allocation failed");
+            ptrs.push_back(ptr);
+        }
+        
+        for(void* ptr : ptrs) {
+            Memory::HighWorkRam::Free(ptr);
+        }
+    }
+
+    /**
+     * @brief Test memory initialization
+     */
+    MU_TEST(memory_HWRam_test_memory_init)
+    {
+        char* ptr = new (SRL::Memory::Zone::HWRam) char[10];
+        mu_assert(ptr != nullptr, "Memory initialization allocation failed");
+        
+        // Write and verify pattern
+        for(int i = 0; i < 10; i++) {
+            ptr[i] = i;
+        }
+        
+        for(int i = 0; i < 10; i++) {
+            mu_assert(ptr[i] == i, "Memory content verification failed");
+        }
+        
+        delete[] ptr;
+    }
+
+    /**
+     * @brief Test multiple memory allocations of different sizes
+     *
+     * Verifies that memory can be allocated and freed correctly for different sizes.
+     * Tests both small and large allocations in sequence, ensuring proper memory
+     * management and state restoration after each operation.
+     */
+    MU_TEST(memory_HWRam_test_multiple_sizes_malloc_free)
+    {
+        // Test sizes from very small to large
+        const size_t test_sizes[] = {
+            1,                  // Minimum size
+            16,                 // Small block
+            64,                 // Medium block
+            256,               // Large block
+            1024,              // 1KB block
+            1024 * 4,          // 4KB block
+            1024 * 16          // 16KB block
+        };
+
+        size_t initial_free_space = Memory::GetFreeSpace(Memory::Zone::HWRam);
+        
+        // Test each size individually
+        for (size_t size : test_sizes) {
+            size_t before_alloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
+            void* ptr = Memory::Malloc(size, Memory::Zone::HWRam);
+            
+            snprintf(buffer, sizeof(buffer), 
+                    "Memory allocation failed for size %zu", size);
+            mu_assert(ptr != nullptr, buffer);
+            
+            size_t after_alloc = Memory::GetFreeSpace(Memory::Zone::HWRam);
+            mu_assert(after_alloc < before_alloc, 
+                     "Memory space didn't decrease after allocation");
+
+            Memory::Free(ptr);
+            size_t after_free = Memory::GetFreeSpace(Memory::Zone::HWRam);
+            
+            snprintf(buffer, sizeof(buffer), 
+                    "Memory free failed for size %zu", size);
+            mu_assert(after_free == before_alloc, buffer);
+        }
+
+        // Verify total memory state is unchanged
+        size_t final_free_space = Memory::GetFreeSpace(Memory::Zone::HWRam);
+        mu_assert(final_free_space == initial_free_space, 
+                  "Final memory state different from initial state");
+    }
+
+    /**
      * @brief Memory test suite configuration and test case registration
      *
      * Configures the test suite with setup, teardown, and error reporting functions.
@@ -432,32 +531,47 @@ extern "C"
     {
         // Configure test suite with setup, teardown, and error reporting functions
         MU_SUITE_CONFIGURE_WITH_HEADER(&memory_HWRam_test_setup,
-                                       &memory_HWRam_test_teardown,
-                                       &memory_HWRam_test_output_header);
+                                     &memory_HWRam_test_teardown,
+                                     &memory_HWRam_test_output_header);
 
-        // Register test cases to be executed
+        // 1. Basic Memory Operations
         MU_RUN_TEST(memory_HWRam_test_malloc_free);
+        MU_RUN_TEST(memory_HWRam_test_multiple_sizes_malloc_free);  // Add this line
+        MU_RUN_TEST(memory_HWRam_test_new_array_highworkram);
+        MU_RUN_TEST(memory_HWRam_test_highworkram_malloc_free);
+        MU_RUN_TEST(memory_HWRam_test_highworkram_realloc);
+        MU_RUN_TEST(memory_HWRam_test_realloc_larger);
+
+        // 2. Memory Information Tests
         MU_RUN_TEST(memory_HWRam_test_get_free_space);
         MU_RUN_TEST(memory_HWRam_test_get_used_space);
         MU_RUN_TEST(memory_HWRam_test_get_size);
-        MU_RUN_TEST(memory_HWRam_test_malloc_zero);
-        MU_RUN_TEST(memory_HWRam_test_free_null);
         MU_RUN_TEST(memory_HWRam_test_get_report_hwram);
-        MU_RUN_TEST(memory_HWRam_test_highworkram_malloc_free);
-        MU_RUN_TEST(memory_HWRam_test_highworkram_realloc);
         MU_RUN_TEST(memory_HWRam_test_highworkram_get_free_space);
         MU_RUN_TEST(memory_HWRam_test_highworkram_get_used_space);
         MU_RUN_TEST(memory_HWRam_test_highworkram_get_size);
-        MU_RUN_TEST(memory_HWRam_test_new_array_highworkram);
-        MU_RUN_TEST(memory_HWRam_test_deplete_highworkram);
         MU_RUN_TEST(memory_HWRam_test_inrange_highworkram);
-        MU_RUN_TEST(memory_HWRam_test_realloc_larger);
+
+        // 3. Edge Cases and Error Handling
+        MU_RUN_TEST(memory_HWRam_test_malloc_zero);
+        MU_RUN_TEST(memory_HWRam_test_free_null);
+        MU_RUN_TEST(memory_HWRam_test_free_unallocated);
+        MU_RUN_TEST(memory_HWRam_test_allocation_failure);
+        MU_RUN_TEST(memory_HWRam_test_memory_leaks);
+        
+        // 4. Memory Management Tests
         MU_RUN_TEST(memory_HWRam_test_large_block);
         MU_RUN_TEST(memory_HWRam_test_fragmentation);
-        MU_RUN_TEST(memory_HWRam_test_allocation_failure);
-        MU_RUN_TEST(memory_HWRam_test_free_unallocated);
-        MU_RUN_TEST(memory_HWRam_test_stress);
         MU_RUN_TEST(memory_HWRam_test_boundary_conditions);
-        MU_RUN_TEST(memory_HWRam_test_memory_leaks);
+        MU_RUN_TEST(memory_HWRam_test_deplete_highworkram);
+
+        // 5. Stress and Performance Tests
+        MU_RUN_TEST(memory_HWRam_test_stress);
+
+        // 6. Additional Tests
+        MU_RUN_TEST(memory_HWRam_test_alignment);
+        MU_RUN_TEST(memory_HWRam_test_mixed_sizes);
+        MU_RUN_TEST(memory_HWRam_test_memory_init);
+        MU_RUN_TEST(memory_HWRam_test_multiple_sizes_malloc_free);
     }
 }
