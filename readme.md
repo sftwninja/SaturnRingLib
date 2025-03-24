@@ -105,15 +105,6 @@ This block describes general code style for this project.
 Following this style will ensure readability, maintainability and ease of creating documentation.
 
 ### Sections
-- [Brought to you by](#brought-to-you-by)
-- [Getting started](#getting-started)
-  - [Installing SRL](#installing-srl)
-    - [Download](#download)
-    - [Setting up](#setting-up)
-    - [Build and run samples](#build-and-run-samples)
-    - [Creating a project](#creating-a-project)
-- [Contributing to the project](#contributing-to-the-project)
-  - [Sections](#sections)
   - [Tab vs. Spaces](#tab-vs-spaces)
   - [Empty lines](#empty-lines)
   - [Curly braces](#curly-braces)
