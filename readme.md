@@ -105,14 +105,15 @@ This block describes general code style for this project.
 Following this style will ensure readability, maintainability and ease of creating documentation.
 
 ### Sections
-  - [Tab vs. Spaces](#tab-vs-spaces)
-  - [Empty lines](#empty-lines)
-  - [Curly braces](#curly-braces)
-  - [Documentation](#documentation)
-  - [Variables \& constants](#variables--constants)
-  - [Function naming](#function-naming)
-  - [Referencing local variables](#referencing-local-variables)
-    - [Example:](#example)
+- [Tab vs. Spaces](#tab-v-space)
+- [Empty lines](#empty-line)
+- [Curly braces](#curly-braces)
+- [Documentation](#docs)
+- [Variables & constants](#variables)
+- [Function naming](#functions)
+- [Referencing local variables](#references)
+    - [Instance variables](#references-instance)
+    - [Static/Constant variables](#references-static)
 
 ### Tab vs. Spaces<a name="tab-v-space"></a>
 Tab characters should not be used, 4 spaces should be used instead of a single TAB.
