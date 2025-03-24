@@ -65,6 +65,17 @@ git clone --recurse-submodules https://github.com/ReyeMe/SaturnRingLib.git
 You will also need to obtain bios file (``mpr-17933.bin``) and put it in the mednafen folder. 
 
 > __Note:__ ``.bat`` scripts used within SRL can be run natively on Windows, Linux or Mac.
+<details>
+  <summary>Linux dependencies</summary>
+
+Use your preferred package manager to install the following:
+- `make` - for compilation
+- `unzip` - used during compiler installation
+- `wget` - to download the compiler
+- `sox` - for audio manipulation
+- `xorriso` - to burn ISO
+
+</details>
 
 #### Build and run samples
 Samples and project in SRL can be build and run from VSCode or manually by starting ``.bat`` scripts in the sample/project directory
@@ -94,15 +105,23 @@ This block describes general code style for this project.
 Following this style will ensure readability, maintainability and ease of creating documentation.
 
 ### Sections
-- [Tab vs. Spaces](#tab-v-space)
-- [Empty lines](#empty-line)
-- [Curly braces](#curly-braces)
-- [Documentation](#docs)
-- [Variables & constants](#variables)
-- [Function naming](#functions)
-- [Referencing local variables](#references)
-    - [Instance variables](#references-instance)
-    - [Static/Constant variables](#references-static)
+- [Brought to you by](#brought-to-you-by)
+- [Getting started](#getting-started)
+  - [Installing SRL](#installing-srl)
+    - [Download](#download)
+    - [Setting up](#setting-up)
+    - [Build and run samples](#build-and-run-samples)
+    - [Creating a project](#creating-a-project)
+- [Contributing to the project](#contributing-to-the-project)
+  - [Sections](#sections)
+  - [Tab vs. Spaces](#tab-vs-spaces)
+  - [Empty lines](#empty-lines)
+  - [Curly braces](#curly-braces)
+  - [Documentation](#documentation)
+  - [Variables \& constants](#variables--constants)
+  - [Function naming](#function-naming)
+  - [Referencing local variables](#referencing-local-variables)
+    - [Example:](#example)
 
 ### Tab vs. Spaces<a name="tab-v-space"></a>
 Tab characters should not be used, 4 spaces should be used instead of a single TAB.
