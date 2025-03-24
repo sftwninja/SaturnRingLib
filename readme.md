@@ -72,8 +72,8 @@ Use your preferred package manager to install the following:
 - `make` - for compilation
 - `unzip` - used during compiler installation
 - `wget` - to download the compiler
-- `sox` - for audio manipulation
-- `xorriso` - to burn ISO
+- `sox` - to convert audio
+- `xorriso` - to build cue/bin
 
 </details>
 
