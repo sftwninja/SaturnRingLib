@@ -24,8 +24,8 @@ extern "C"
     void ascii_test_teardown(void)
     {
         // Cleanup logic,
-        //ASCII::Clear();
-        //ASCII::SetPalette(0);
+        ASCII::Clear();
+        ASCII::SetPalette(0);
     }
 
     // UT output header function, called on the first test failure
