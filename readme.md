@@ -65,6 +65,17 @@ git clone --recurse-submodules https://github.com/ReyeMe/SaturnRingLib.git
 You will also need to obtain bios file (``mpr-17933.bin``) and put it in the mednafen folder. 
 
 > __Note:__ ``.bat`` scripts used within SRL can be run natively on Windows, Linux or Mac.
+<details>
+  <summary>Linux dependencies</summary>
+
+Use your preferred package manager to install the following:
+- `make` - for compilation
+- `unzip` - used during compiler installation
+- `wget` - to download the compiler
+- `sox` - to convert audio
+- `xorriso` - to build cue/bin
+
+</details>
 
 #### Build and run samples
 Samples and project in SRL can be build and run from VSCode or manually by starting ``.bat`` scripts in the sample/project directory
