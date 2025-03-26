@@ -1002,6 +1002,7 @@ namespace SRL
             static void SetPlanes(const std::vector<std::vector<int>>& arr)
             {   
                 uint8_t myLayout[16] = {};
+                
                 for (const auto& row : arr)
                 {
                     for (int val : row) {
