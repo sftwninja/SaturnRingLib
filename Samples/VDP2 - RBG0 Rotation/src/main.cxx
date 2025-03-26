@@ -43,6 +43,7 @@ static void LoadRBG0(uint8_t config, SRL::Tilemap::ITilemap* map )
         SRL::Debug::Print(1,5,"Rotation Mode <L [3 Axis] R>");
         break;
     }
+   
     SRL::VDP2::RBG0::ScrollEnable();//Turn Scroll Display back on
 }
 
@@ -59,7 +60,7 @@ int main()
    
     LoadRBG0(0, TestTilebin);
 
-   // SRL::VDP2::RBG0::SetPriority(SRL::VDP2::Priority::Layer2);//set RBG0 priority
+    //SRL::VDP2::RBG0::SetPriority(SRL::VDP2::Priority::Layer2);//set RBG0 priority
     //SRL::VDP2::RBG0::ScrollEnable();//enable display of RBG0 
     
     //variables to store current RBG0 rotation

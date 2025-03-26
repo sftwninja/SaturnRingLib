@@ -501,8 +501,8 @@ namespace SRL
             {
                 if ((uint32_t)ScreenType::MapAddress < VDP2_VRAM_A0) return nullptr;
                 uint32_t offset = 2048 * (uint32_t)index;
-                if (ScreenType::Info.CharSize = CHAR_SIZE_1x1) offset <<= 2;
-                if (ScreenType::Info.MapMode = PNB_2WORD) offset <<= 1;
+                if (ScreenType::Info.CharSize == CHAR_SIZE_1x1) offset <<= 2;
+                if (ScreenType::Info.MapMode == PNB_2WORD) offset <<= 1;
                 return ScreenType::MapAddress + (void*)offset;
             }
 
@@ -998,21 +998,29 @@ namespace SRL
                 
                 sl1MapRA(a);
             }
-            /*
-            static void SetPlanes(const std::vector<std::vector<int>>& arr)
+            
+             /** @brief Sets the plane of Tilemap Data to be displayed with 16 planes
+             * @param layout 4x4 array of uint8_t indecies representing the index of each plane in the map layout
+             * @note Unlike NBG scrolls RBG0 only loads with the default tiling of 1 plane. Use this
+             * function after loading to set the arrangement of multi plane tilemaps within a 4x4 grid.
+             * @note No check is performed to ensure the indecies entered are within the bounds of
+             * the scroll's map data. Specifying indices larger than the number of planes loaded 
+             * will result in the diplay of garbage data in those portions of the map  
+             */
+            static void SetPlanes(const uint8_t layout[4][4])
             {   
-                uint8_t myLayout[16] = {};
-                
-                for (const auto& row : arr)
-                {
-                    for (int val : row) {
-                    
-                    
+                uint8_t sz = (VDP2::RBG0::Info.CharSize==CHAR_SIZE_1x1) ? 4:1;
+                uint8_t sLayout[4][4] = {};
+                if (VDP2::RBG0::Info.MapMode == PNB_2WORD) sz <<= 1;
+                if (VDP2::RBG0::Info.PlaneSize == PL_SIZE_2x2)sz <<= 2;
+                else if (VDP2::RBG0::Info.PlaneSize == PL_SIZE_2x1)sz <<= 1;
+                for (size_t i = 0; i < 4; ++i) { 
+                    for (size_t j = 0; j < 4; ++j) { 
+                        sLayout[i][j] = layout[i][j] * sz;
                     }
-                    
                 }
-                sl16MapRA(myLayout);
-            }*/
+                sl16MapRA((uint8_t*)sLayout);
+            }
             
         };
 
