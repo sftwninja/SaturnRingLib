@@ -99,16 +99,20 @@ namespace SRL
 			{
 				this->Size = ((width & 0x1f8) << 5) | height;
 			}
+
+			/** @brief Get texture image data
+			 * @return Pointer to image data
+			 */
+			void* GetData()
+			{
+                return (void*)(SpriteVRAM + (this->Address << 3));
+			}
 		};
 
 		/** @brief Metadata for texture
 		 */
 		struct TextureMetadata
 		{
-			/** @brief Pointer to texture
-			 */
-			VDP1::Texture* Texture;
-
 			/** @brief Texture color mode
 			 */
 			CRAM::TextureColorMode ColorMode; 
@@ -119,7 +123,7 @@ namespace SRL
 
 			/** @brief Construct a new Texture Metadata object
 			 */
-			TextureMetadata() : ColorMode(CRAM::TextureColorMode::RGB555), Texture(nullptr)
+			TextureMetadata() : ColorMode(CRAM::TextureColorMode::RGB555)
 			{
 				// Do nothing
 			}
@@ -129,32 +133,19 @@ namespace SRL
 			 * @param colorMode Texture color mode
 			 * @param palette Id of the pallet (not used in RGB555 mode)
 			 */
-			TextureMetadata(VDP1::Texture* texture, CRAM::TextureColorMode colorMode, uint32_t palette) : ColorMode(colorMode), Texture(texture), PaletteId(palette)
+			TextureMetadata(CRAM::TextureColorMode colorMode, uint32_t palette) : ColorMode(colorMode), PaletteId(palette)
 			{
 				// Do nothing
-			}
-
-			/** @brief Get texture image data
-			 * @return Pointer to image data
-			 */
-			uint8_t* GetData()
-			{
-				if (this->Texture != nullptr)
-				{
-					return (uint8_t*)(SpriteVRAM + (this->Texture->Address << 3));
-				}
-
-				return nullptr;
 			}
 		};
 
 		/** @brief Texture heap
 		 */
-		inline static Texture Textures[SRL_MAX_TEXTURES] = { Texture() };
+		inline static Texture Textures[SRL_MAX_TEXTURES];
 
 		/** @brief Texture metadata
 		 */
-		inline static TextureMetadata Metadata[SRL_MAX_TEXTURES] = { TextureMetadata() };
+		inline static TextureMetadata Metadata[SRL_MAX_TEXTURES];
 
 		/** @brief Get free available memory left for textures on VDP1
 		 * @return Number of bytes left 
@@ -188,7 +179,9 @@ namespace SRL
 		 */
 		inline static int32_t TryLoadTexture(const uint16_t width, const uint16_t height, const CRAM::TextureColorMode colorMode, const uint16_t palette, void* data)
 		{
-			if (VDP1::HeapPointer < SRL_MAX_TEXTURES)
+            const size_t dataSize = (uint32_t)(((width * height) << 1) >> VDP1::GetSizeShifter(colorMode));
+
+			if (VDP1::HeapPointer < SRL_MAX_TEXTURES && dataSize < VDP1::GetAvailableMemory())
 			{
 				uint32_t address = CGADDRESS;
 
@@ -201,12 +194,12 @@ namespace SRL
 				// Create texture entry
 				VDP1::Textures[VDP1::HeapPointer] = VDP1::Texture(width, height, address >> 3);
 
-				// Create metadata entry
-				VDP1::TextureMetadata metadata = VDP1::TextureMetadata(&VDP1::Textures[VDP1::HeapPointer], colorMode, palette);
-				VDP1::Metadata[VDP1::HeapPointer] = metadata;
+				// Create metadata entry 
+				VDP1::Metadata[VDP1::HeapPointer] = VDP1::TextureMetadata(colorMode, palette);
 
 				// Copy data over to the VDP1
-				slDMACopy(data, metadata.GetData(), (uint32_t)(((width * height) << 1) >> VDP1::GetSizeShifter(colorMode)));
+				slDMACopy(data, VDP1::Textures[VDP1::HeapPointer].GetData(), dataSize);
+                slDMAWait();
 
 				// Increase heap pointer
 				return VDP1::HeapPointer++;
