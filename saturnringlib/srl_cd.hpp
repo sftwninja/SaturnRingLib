@@ -1,6 +1,7 @@
 #pragma once
 
 #include "srl_base.hpp"
+#include "srl_debug.hpp"
 
 namespace SRL
 {
@@ -98,27 +99,9 @@ namespace SRL
              */
             uint8_t *readBuffer;
 
-            /** @brief Number of bytes already read from the sector
-             */
-            int32_t readSectorBytes;
-
             /** @brief Number of bytes read in total
              */
             int32_t readBytes;
-
-            /** @brief Copy specified number of bytes from source buffer to target buffer
-             * @param target Target buffer
-             * @param source Source buffer
-             * @param count Number of bytes to copy
-             * @param targetOffset Offset in bytes in target buffer
-             */
-            static void CopyBuffers(uint8_t *target, uint8_t *source, size_t count, size_t targetOffset)
-            {
-                for (size_t byte = 0; byte < count; byte++)
-                {
-                    *(target + byte + targetOffset) = source[byte];
-                }
-            }
 
         public:
             /** @brief File handle
@@ -142,7 +125,6 @@ namespace SRL
                                                                    Size(getSize ? FileSize(handle) : FileSize()),
                                                                    identifier(fid),
                                                                    readBuffer(nullptr),
-                                                                   readSectorBytes(0),
                                                                    readBytes(0)
             {
                 #if defined(SRL_MAX_CD_FILES) && (SRL_MAX_CD_FILES < 1)
@@ -157,7 +139,6 @@ namespace SRL
                                      Size(0),
                                      identifier(-1),
                                      readBuffer(nullptr),
-                                     readSectorBytes(0),
                                      readBytes(0)
             {
                 #if defined(SRL_MAX_CD_FILES) && (SRL_MAX_CD_FILES < 1)
@@ -225,7 +206,6 @@ namespace SRL
                 if (this->identifier >= 0)
                 {
                     this->readBytes = 0;
-                    this->readSectorBytes = 0;
                     this->Handle = GFS_Open(this->identifier);
                     return true;
                 }
@@ -300,60 +280,70 @@ namespace SRL
             {
                 if (this->IsOpen() && size > 0 && this->Size.Bytes > 0)
                 {
-                    int32_t chunkBytes = 0;
-                    bool firstRead = this->readBuffer == nullptr;
+                    int32_t currentlyRead = 0;
 
-                    if (firstRead)
+                    // We have not read any data yet
+                    if (this->readBuffer == nullptr)
                     {
-                        this->readBuffer = new uint8_t[this->Size.SectorSize + 1];
+                        this->readBuffer = new uint8_t[this->Size.SectorSize];
+                        const int32_t error = GFS_Fread(this->Handle, 1, this->readBuffer, this->Size.SectorSize);
+                        
+                        if (error < 0)
+                        {
+                            delete[] this->readBuffer;
+                            this->readBuffer = nullptr;
+                            return error;
+                        }
                     }
 
-                    while (chunkBytes < size && this->readBytes < this->Size.Bytes)
+                    // Read data sector by sector
+                    while (currentlyRead < size && this->readBytes < this->Size.Bytes)
                     {
-                        int32_t read;
+                        // Current location within the sector
+                        const int32_t sectorStartOffset = this->GetOffsetInSector(this->readBytes);
 
-                        // We have first read or reached end of a sector
-                        if (firstRead || this->readSectorBytes == this->Size.SectorSize)
+                        // read = GFS_Fread(this->Handle, 1, this->readBuffer, this->Size.SectorSize);
+                        int32_t toRead = size - currentlyRead;
+
+                        // We can't read more than one sector at a time
+                        if (toRead > this->Size.SectorSize - sectorStartOffset)
                         {
-                            this->readSectorBytes = 0;
-                            read = GFS_Fread(this->Handle, 1, this->readBuffer, this->Size.SectorSize);
-                            firstRead = false;
+                            // We have read whole sector
+                            toRead = this->Size.SectorSize - sectorStartOffset;
+
+                            //SRL::Debug::Assert("Sec %d\nOff %d", toRead, sectorStartOffset);
+
+                            // Copy to target buffer
+                            for (int32_t byte = 0; byte < toRead; byte++)
+                            {
+                                reinterpret_cast<uint8_t*>(destination)[currentlyRead + byte] = this->readBuffer[byte + sectorStartOffset];
+                            }
+                            // Refresh data for new sector
+                            const int32_t error = GFS_Fread(this->Handle, 1, this->readBuffer, this->Size.SectorSize);
+
+                            if (error < 0)
+                            {
+                                delete[] this->readBuffer;
+                                this->readBuffer = nullptr;
+                                return error;
+                            }
                         }
                         else
                         {
-                            read = this->Size.SectorSize - this->readSectorBytes;
+                            // We have not reached sector bounds, we can just copy bytes over
+                            for (int32_t byte = 0; byte < toRead; byte++)
+                            {
+                                reinterpret_cast<uint8_t*>(destination)[currentlyRead + byte] = this->readBuffer[byte + sectorStartOffset];
+                            }
                         }
-
-                        // We got an error
-                        if (read < 0)
-                        {
-                            return read;
-                        }
-
-                        // Clamp to target end of file
-                        int32_t remaining = this->Size.Bytes - this->readBytes;
-
-                        if (read > remaining)
-                        {
-                            read = remaining;
-                        }
-
-                        // Clamp to target buffer size
-                        if (read > size)
-                        {
-                            read = size;
-                        }
-
-                        // Copy to target buffer
-                        File::CopyBuffers((uint8_t *)destination, this->readBuffer + this->readSectorBytes, read, chunkBytes);
 
                         // Set state
-                        this->readSectorBytes += read;
-                        this->readBytes += read;
-                        chunkBytes += read;
+                        this->readBytes += toRead;
+                        currentlyRead += toRead;
+                        //SRL::Debug::Assert("Want %d\nGot %d\nFile: %d/%d", size, currentlyRead, this->readBytes, this->Size.Bytes);
                     }
 
-                    return chunkBytes;
+                    return currentlyRead;
                 }
 
                 return -1;
@@ -369,22 +359,13 @@ namespace SRL
 
                 if (this->IsOpen() && offset >= 0 && offset < this->Size.Bytes)
                 {
-                    // Get sector count for offset
-                    bool firstRead = this->readBuffer == nullptr;
-
-                    // Initialize read buffer
-                    if (firstRead)
+                    // Initialize read buffer if does not exist yet
+                    if (this->readBuffer == nullptr)
                     {
-                        this->readBuffer = new uint8_t[this->Size.SectorSize + 1];
+                        this->readBuffer = new uint8_t[this->Size.SectorSize];
                     }
-                    else if ((this->readBytes - this->readSectorBytes) < offset &&
-                             ((this->readBytes - this->readSectorBytes) + this->Size.SectorSize) > offset)
-                    {
-                        this->readSectorBytes = offset - (this->readBytes - this->readSectorBytes);
-                        this->readBytes = offset;
-                        return this->readBytes;
-                    }
-
+                    
+                    this->readBytes = offset;
                     int32_t sector = this->GetSectorCount(offset);
 
                     if (sector >= 0)
@@ -393,11 +374,8 @@ namespace SRL
                         result = GFS_Seek(this->Handle, sector, Cd::SeekMode::Absolute);
 
                         // Refresh buffer
-                        if (result >= 0 &&
-                            GFS_Fread(this->Handle, 1, this->readBuffer, this->Size.SectorSize) >= 0)
+                        if (result >= 0 && GFS_Fread(this->Handle, 1, this->readBuffer, this->Size.SectorSize) >= 0)
                         {
-                            this->readBytes = offset;
-                            this->readSectorBytes = offset % this->Size.SectorSize;
                             return offset;
                         }
                         else
@@ -447,6 +425,20 @@ namespace SRL
                 }
 
                 return -1;
+            }
+
+            /** @brief Get the byte offset inside current sector
+             * @param bytes Absolute position
+             * @return size_t Position within sector
+             */
+            int32_t GetOffsetInSector(int32_t absolute)
+            {
+                if (absolute >= this->Size.SectorSize)
+                {
+                    return absolute % this->Size.SectorSize;
+                }
+
+                return absolute;
             }
 
             /**
