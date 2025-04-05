@@ -169,15 +169,14 @@ namespace SRL
             return (Types::HighColor*)(SpriteVRAM + 0x70000);
         }
 
-		/** @brief Try to load a texture
+		/** @brief Try to allocate a texture
 		 * @param width Texture width
 		 * @param height Texture height
 		 * @param colorMode Color mode
 		 * @param palette Palette start identifier in color RAM (not used in RGB555 mode)
-		 * @param data Texture data
-		 * @return Index of the loaded texture
+		 * @return Index of the allocated texture
 		 */
-		inline static int32_t TryLoadTexture(const uint16_t width, const uint16_t height, const CRAM::TextureColorMode colorMode, const uint16_t palette, void* data)
+		inline static int32_t TryAllocateTexture(const uint16_t width, const uint16_t height, const CRAM::TextureColorMode colorMode, const uint16_t palette)
 		{
             const size_t dataSize = (uint32_t)(((width * height) << 1) >> VDP1::GetSizeShifter(colorMode));
 
@@ -197,12 +196,32 @@ namespace SRL
 				// Create metadata entry 
 				VDP1::Metadata[VDP1::HeapPointer] = VDP1::TextureMetadata(colorMode, palette);
 
-				// Copy data over to the VDP1
-				slDMACopy(data, VDP1::Textures[VDP1::HeapPointer].GetData(), dataSize);
-                slDMAWait();
-
 				// Increase heap pointer
 				return VDP1::HeapPointer++;
+			}
+
+			// There is no free space left
+			return -1;
+		}
+
+		/** @brief Try to load a texture
+		 * @param width Texture width
+		 * @param height Texture height
+		 * @param colorMode Color mode
+		 * @param palette Palette start identifier in color RAM (not used in RGB555 mode)
+		 * @param data Texture data
+		 * @return Index of the loaded texture
+		 */
+		inline static int32_t TryLoadTexture(const uint16_t width, const uint16_t height, const CRAM::TextureColorMode colorMode, const uint16_t palette, void* data)
+		{
+            const size_t dataSize = (uint32_t)(((width * height) << 1) >> VDP1::GetSizeShifter(colorMode));
+            const int32_t id = VDP1::TryAllocateTexture(width, height, colorMode, palette);
+
+			if (id >= 0)
+			{
+				// Copy data over to the VDP1
+				slDMACopy(data, VDP1::Textures[id].GetData(), dataSize);
+                slDMAWait();
 			}
 
 			// There is no free space left
