@@ -47,9 +47,122 @@ namespace SRL
              */
             Relative = GFS_SEEK_CUR,
 
-            /** @brief Seek to the end
+            /** @brief Seek from the end
              */
             EndOfFile = GFS_SEEK_END
+        };
+
+        /** @brief access errors
+         */
+        enum ErrorCode : int32_t
+        {
+            /** @brief No error occurred, operation successful
+             */
+            ErrorOk = GFS_ERR_OK,
+
+            /** @brief Error reading from the CD
+             */
+            ErrorCDRD = GFS_ERR_CDRD,
+
+            /** @brief No disc inserted in the CD drive
+             */
+            ErrorCDNoDisc = GFS_ERR_CDNODISC,
+
+            /** @brief Error related to CD-ROM hardware or media
+             */
+            ErrorCDRom = GFS_ERR_CDROM,
+
+            /** @brief Error related to the directory table
+             */
+            ErrorDirTLD = GFS_ERR_DIRTBL,
+
+            /** @brief Maximum number of open files exceeded
+             */
+            ErrorOenMax = GFS_ERR_OPENMAX,
+
+            /** @brief Error related to directory operations
+             */
+            ErrorDir = GFS_ERR_DIR,
+
+            /** @brief Error related to CD block file system
+             */
+            ErrorCDBFS = GFS_ERR_CDBFS,
+
+            /** @brief Error indicating that the specified file or directory name does not exist
+             */
+            ErrorNoName = GFS_ERR_NONAME,
+
+            /** @brief File or directory does not exist
+             */
+            ErrorNExit = GFS_ERR_NEXIST,
+
+            /** @brief Error related to file identifier
+             */
+            ErrorFID = GFS_ERR_FID,
+
+            /** @brief Error related to file handle operations
+             */
+            ErrorHandle = GFS_ERR_HNDL,
+
+            /** @brief Error occurred during seek operation
+             */
+            ErrorSeek = GFS_ERR_SEEK,
+
+            /** @brief Error related to file organization
+             */
+            ErrorOrg = GFS_ERR_ORG,
+
+            /** @brief Error related to the number of files or directories
+             */
+            ErrorNum = GFS_ERR_NUM,
+
+            /** @brief Error related to file offset operations
+             */
+            ErrorOFS = GFS_ERR_OFS,
+
+            /** @brief File is busy, cannot perform the requested operation
+             */
+            ErrorFBusy = GFS_ERR_FBUSY,
+
+            /** @brief Error related to invalid parameters
+             */
+            ErrorPara = GFS_ERR_PARA,
+
+            /** @brief The CD drive is currently busy with another operation
+             */
+            ErrorBusy = GFS_ERR_BUSY,
+
+            /** @brief No handler available for the requested operation
+             */
+            ErrorNoHandler = GFS_ERR_NOHNDL,
+
+            /** @brief Error indicating that the peripheral unit is in use
+             */
+            ErrorPUINUSE = GFS_ERR_PUINUSE,
+
+            /** @brief Error related to data alignment issues
+             */
+            ErrorAlign = GFS_ERR_ALIGN,
+
+            /** @brief Timeout error, operation took too long to complete
+             */
+            ErrorTimeout = GFS_ERR_TMOUT,
+
+            /** @brief Error indicating that the CD drive is open
+             */
+            ErrorCDOpen = GFS_ERR_CDOPEN,
+
+            /** @brief Buffer is full, cannot write more data
+             */
+            ErrorBufferFull = GFS_ERR_BFUL,
+
+            /** @brief Fatal error, unrecoverable condition
+             */
+            ErrorFatal = GFS_ERR_FATAL,
+
+            /** @brief End of file reached
+             */
+            ErrorEOF = std::numeric_limits<int32_t>::min(),
         };
 
         /** @brief File size
@@ -250,6 +363,14 @@ namespace SRL
             constexpr bool IsOpen()
             {
                 return this->Exists() && this->Handle != nullptr;
+            }
+
+            /** @brief EOF has been reached
+             * @return true if EOF, false otherwise
+             */
+            constexpr bool IsEOF()
+            {
+                return (GFS_IsEof(Handle) == TRUE);
             }
 
             /**
