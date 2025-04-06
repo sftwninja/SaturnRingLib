@@ -17,6 +17,10 @@ SECTIONS {
         __etext = .;
 	}
 
+    COMMON ALIGN(0x10): {
+        *(COMMON)
+    }
+
 	SLPROG ALIGN(0x20): {
 		__slprog_start = .;
 		*(SLPROG)
