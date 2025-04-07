@@ -47,7 +47,7 @@ namespace SRL
              */
             Relative = GFS_SEEK_CUR,
 
-            /** @brief Seek from the end
+            /** @brief Seek to the end
              */
             EndOfFile = GFS_SEEK_END
         };
