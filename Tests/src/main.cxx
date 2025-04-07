@@ -7,7 +7,7 @@
 #include "testsASCII.hpp"
 #include "testsAngle.hpp"
 //#include "testsEulerAngles.hpp" // Include the header for Euler angles tests
-//#include "testsCD.hpp"
+#include "testsCD.hpp"
 #include "testsCRAM.hpp"
 #include "testsFxp.hpp"
 #include "testsHighColor.hpp"
@@ -39,7 +39,7 @@ int main()
 	MU_RUN_SUITE(ascii_test_suite);
 	MU_RUN_SUITE(angle_test_suite);
 	//MU_RUN_SUITE(euler_angles_test_suite); // Add the Euler angles test suite
-	//MU_RUN_SUITE(cd_test_suite);
+	MU_RUN_SUITE(cd_test_suite);
 	MU_RUN_SUITE(cram_test_suite);
 	MU_RUN_SUITE(fxp_test_suite);
 	MU_RUN_SUITE(highcolor_test_suite);
