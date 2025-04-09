@@ -335,15 +335,21 @@ namespace SRL
              */
             bool Open()
             {
-                if (this->identifier >= 0)
+                if (this->IsOpen())
+                {
+                    return true;
+                }
+                else if (this->identifier >= 0)
                 {
                     this->readBytes = 0;
                     this->Handle = GFS_Open(this->identifier);
 
-                    GFS_NwCdRead(this->Handle, this->Size.Sectors);
-                    GFS_SetTransPara(this->Handle, 10);
-
-                    return true;
+                    if (this->Handle != nullptr)
+                    {
+                        GFS_NwCdRead(this->Handle, this->Size.Sectors);
+                        GFS_SetTransPara(this->Handle, 10);
+                        return true;
+                    }
                 }
 
                 return false;
