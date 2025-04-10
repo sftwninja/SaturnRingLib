@@ -32,7 +32,6 @@ namespace SRL
         inline static void VblankHandling()
         {
             slGetStatus();
-            SRL::Input::Management::RefreshPeripherals();
             SRL::Input::Gun::VblankRefresh();
             Core::OnVblank.Invoke();
         }
@@ -90,6 +89,7 @@ namespace SRL
         inline static void Synchronize()
         {
             slSynch();
+            SRL::Input::Management::RefreshPeripherals();
             SRL::Input::Gun::Synchronize();
         }
     };
