@@ -1,0 +1,41 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python (if needed for test generation or processing)
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Step 3: Install dependencies (if applicable)
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || true
+
+      # Step 4: Run tests (if applicable)
+      - name: Run Tests
+        run: |
+          # Example: Run your test suite here
+          echo "Running tests..."
+          # Replace this with your actual test command
+          echo "Tests completed."
+
+      # Step 5: Report Test Results
+      - name: Report Test Results
+        uses: ctrf-io/github-test-reporter@v1
+        with:
+          path: Tests/uts.json
