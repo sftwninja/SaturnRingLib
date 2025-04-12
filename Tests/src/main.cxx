@@ -68,7 +68,7 @@ int main()
     MU_DISPLAY_SATURN(angle_test_suite);
 
     //MU_RUN_SUITE(euler_angles_test_suite); // Add the Euler angles test suite
-    
+
     MU_RUN_SUITE(cd_test_suite);
     MU_DISPLAY_SATURN(cd_test_suite);
     
@@ -105,15 +105,15 @@ int main()
     // Generate tests report
     MU_REPORT();
 
-    // Tag the end of the tests, will be used from script to detect the end of
-    // the tests and filter out everything below
-    LogInfo(strEnd);
-
     snprintf(buffer, buffer_size,
                 "%d tests, %d assertions, %d failures",
                 minunit_run, minunit_assert, minunit_fail);                                                                                 \
 	
     ASCII::Print(buffer, 0, line+2);
+
+    // Tag the end of the tests, will be used from script to detect the end of
+    // the tests and filter out everything below
+    LogInfo(strEnd);
 
     // Main program loop, nothing special here, the running script shall
     // detect the end of the test procedure and close the emulator
