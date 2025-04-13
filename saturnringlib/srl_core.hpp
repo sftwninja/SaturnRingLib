@@ -9,6 +9,7 @@
 #include "srl_vdp2.hpp"
 #include "srl_input.hpp"
 #include "srl_slave.hpp"
+#include "srl_scene3d.hpp"
 
 #if SRL_USE_SGL_SOUND_DRIVER == 1
     #include "srl_sound.hpp"
@@ -21,6 +22,14 @@ namespace SRL
     class Core
     {
     public:
+        /** @brief Event triggered after synchronize happens
+         */
+        inline static SRL::Types::Event<> OnAfterSync;
+
+        /** @brief Event triggered before synchronize happens
+         */
+        inline static SRL::Types::Event<> OnBeforeSync;
+
         /** @brief Event triggered every v-blank
          */
         inline static SRL::Types::Event<> OnVblank;
@@ -63,7 +72,7 @@ namespace SRL
             slIntFunction(Core::VblankHandling);
 
             // Start initializing stuff
-            slTVOff();
+            SRL::TV::TVOff();
 
             // Initialize VDP2
             VDP2::Initialize(backColor);
@@ -72,7 +81,7 @@ namespace SRL
             *(uint16_t*)(SpriteVRAM+20)=511;
 
             // Set cull depth
-            slZdspLevel(3);
+            SRL::Scene3D::SetDepthDisplayLevel(3);
 
             // Load sound driver
 #if SRL_USE_SGL_SOUND_DRIVER == 1
@@ -80,7 +89,7 @@ namespace SRL
 #endif
 
             // All was initialized
-            slTVOn();
+            SRL::TV::TVOn();
         }
 
         /** @brief Wait until graphic processing time is reached
@@ -88,9 +97,11 @@ namespace SRL
          */
         inline static void Synchronize()
         {
+            Core::OnBeforeSync.Invoke();
             slSynch();
             SRL::Input::Management::RefreshPeripherals();
             SRL::Input::Gun::Synchronize();
+            Core::OnAfterSync.Invoke();
         }
     };
 };
