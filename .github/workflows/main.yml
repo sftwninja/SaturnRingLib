@@ -2,7 +2,13 @@
 name: Generate Test Report
 # This workflow is triggered manually and generates a test report
 on:
-  workflow_dispatch: # Allows manual triggering of the workflow
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build-and-test:
