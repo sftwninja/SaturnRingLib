@@ -4,7 +4,7 @@ name: Generate Test Report
 on:
   push:
     branches:
-      - main
+      - mainW
   pull_request:
 
 jobs:
