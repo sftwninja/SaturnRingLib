@@ -1,3 +1,4 @@
+---
 name: Generate Test Report
 # This workflow is triggered manually and generates a test report
 on:
