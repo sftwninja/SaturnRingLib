@@ -741,7 +741,7 @@ namespace SRL::Sound
         public:
 
             /** @brief Initializes a new wave sound
-             * @param file Sound file
+             * @param waveFile Sound file
              */
             WaveSound(const char* waveFile)
             {
