@@ -50,7 +50,14 @@ extern "C"
         // Print error header only on the first test failure
         if (!suite_error_counter++)
         {
-            LogInfo("****UT_MEMORY_CartRam_ERROR(S)****");
+            if (Log::GetLogLevel() == Logger::LogLevels::TESTING)
+            {
+                LogDebug("****UT_MEMORY_CartRam****");
+            }
+            else
+            {
+                LogInfo("****UT_MEMORY_CartRam_ERROR(S)****");
+            }
         }
     }
 

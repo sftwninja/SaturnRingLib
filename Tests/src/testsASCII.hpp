@@ -33,7 +33,14 @@ extern "C"
     {
         if (!suite_error_counter++)
         {
-            LogInfo("****UT_ASCII_ERROR(S)****");
+            if (Log::GetLogLevel() == Logger::LogLevels::TESTING)
+            {
+                LogDebug("****UT_ASCII****");
+            }
+            else
+            {
+                LogInfo("****UT_ASCII_ERROR(S)****");
+            }
         }
     }
 
