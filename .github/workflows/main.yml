@@ -19,5 +19,5 @@ jobs:
         uses: ctrf-io/github-test-reporter@v1
         with:
           report-path: './Tests/*.json'
-          summary-report: true
+          ai-report: true
         if: always()
