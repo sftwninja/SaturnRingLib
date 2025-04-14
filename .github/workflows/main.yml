@@ -19,6 +19,5 @@ jobs:
         uses: ctrf-io/github-test-reporter@v1
         with:
           report-path: './Tests/*.json'
-          pull-request-report: true
-          ai-report: true
+          suite-folded-report: true
         if: always()
