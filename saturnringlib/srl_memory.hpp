@@ -247,6 +247,7 @@ namespace SRL
                     if (header->State == SimpleMalloc::BlockState::Free)
                     {
                         report.FreeBlocks++;
+                        report.FreeSize += header->Size;
                     }
                     else
                     {
