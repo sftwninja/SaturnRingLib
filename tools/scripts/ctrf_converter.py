@@ -44,11 +44,10 @@ def parse_uts_log(log_file):
                         "classname": classname,
                         "status": "failed",
                         "rawStatus": "failed",
-                        "failure": {
-                            "message": details_match.group(3).strip(),
-                            "file": details_match.group(1).strip(),
-                            "line": int(details_match.group(2))
-                        },
+                        "message": details_match.group(3).strip(),
+                        "trace": details_line,
+                        "filePath": details_match.group(1).strip(),
+                        "line": int(details_match.group(2)),
                         "duration": 0,
                         "retries": 0,
                         "suite": classname

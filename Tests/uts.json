@@ -887,11 +887,10 @@
                 "classname": "angle",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Addition wrap-around failed: 9 != 10",
-                    "file": "src/testsAngle.hpp",
-                    "line": 907
-                },
+                "message": "Addition wrap-around failed: 9 != 10",
+                "trace": "src/testsAngle.hpp:907: Addition wrap-around failed: 9 != 10",
+                "filePath": "src/testsAngle.hpp",
+                "line": 907,
                 "duration": 0,
                 "retries": 0,
                 "suite": "angle"
@@ -901,11 +900,10 @@
                 "classname": "angle",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Subtraction wrap-around failed: 350 != 350",
-                    "file": "src/testsAngle.hpp",
-                    "line": 917
-                },
+                "message": "Subtraction wrap-around failed: 350 != 350",
+                "trace": "src/testsAngle.hpp:917: Subtraction wrap-around failed: 350 != 350",
+                "filePath": "src/testsAngle.hpp",
+                "line": 917,
                 "duration": 0,
                 "retries": 0,
                 "suite": "angle"
@@ -924,11 +922,10 @@
                 "classname": "angle",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Division with large scalar failed: 8 != 9",
-                    "file": "src/testsAngle.hpp",
-                    "line": 937
-                },
+                "message": "Division with large scalar failed: 8 != 9",
+                "trace": "src/testsAngle.hpp:937: Division with large scalar failed: 8 != 9",
+                "filePath": "src/testsAngle.hpp",
+                "line": 937,
                 "duration": 0,
                 "retries": 0,
                 "suite": "angle"
@@ -1019,11 +1016,10 @@
                 "classname": "cd",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Read 1 byte failed: 1 != 0",
-                    "file": "src/testsCD.hpp",
-                    "line": 325
-                },
+                "message": "Read 1 byte failed: 1 != 0",
+                "trace": "src/testsCD.hpp:325: Read 1 byte failed: 1 != 0",
+                "filePath": "src/testsCD.hpp",
+                "line": 325,
                 "duration": 0,
                 "retries": 0,
                 "suite": "cd"
@@ -1033,11 +1029,10 @@
                 "classname": "cd",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Read 1 byte failed: 1 != 99",
-                    "file": "src/testsCD.hpp",
-                    "line": 354
-                },
+                "message": "Read 1 byte failed: 1 != 99",
+                "trace": "src/testsCD.hpp:354: Read 1 byte failed: 1 != 99",
+                "filePath": "src/testsCD.hpp",
+                "line": 354,
                 "duration": 0,
                 "retries": 0,
                 "suite": "cd"
@@ -1056,11 +1051,10 @@
                 "classname": "cd",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Seek to invalid negative offset failed: -1 != -12",
-                    "file": "src/testsCD.hpp",
-                    "line": 404
-                },
+                "message": "Seek to invalid negative offset failed: -1 != -12",
+                "trace": "src/testsCD.hpp:404: Seek to invalid negative offset failed: -1 != -12",
+                "filePath": "src/testsCD.hpp",
+                "line": 404,
                 "duration": 0,
                 "retries": 0,
                 "suite": "cd"
@@ -1070,11 +1064,10 @@
                 "classname": "cd",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Seek to invalid beyond offset failed: -1 != -12",
-                    "file": "src/testsCD.hpp",
-                    "line": 428
-                },
+                "message": "Seek to invalid beyond offset failed: -1 != -12",
+                "trace": "src/testsCD.hpp:428: Seek to invalid beyond offset failed: -1 != -12",
+                "filePath": "src/testsCD.hpp",
+                "line": 428,
                 "duration": 0,
                 "retries": 0,
                 "suite": "cd"
@@ -1678,11 +1671,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "PlacementMalloc in CartRam failed",
-                    "file": "src/testsMemory.hpp",
-                    "line": 105
-                },
+                "message": "PlacementMalloc in CartRam failed",
+                "trace": "src/testsMemory.hpp:105: PlacementMalloc in CartRam failed",
+                "filePath": "src/testsMemory.hpp",
+                "line": 105,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1701,11 +1693,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "CartRam initialization failed",
-                    "file": "src/testsMemory.hpp",
-                    "line": 132
-                },
+                "message": "CartRam initialization failed",
+                "trace": "src/testsMemory.hpp:132: CartRam initialization failed",
+                "filePath": "src/testsMemory.hpp",
+                "line": 132,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1715,11 +1706,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Cross-zone allocation in CartRam failed",
-                    "file": "src/testsMemory.hpp",
-                    "line": 148
-                },
+                "message": "Cross-zone allocation in CartRam failed",
+                "trace": "src/testsMemory.hpp:148: Cross-zone allocation in CartRam failed",
+                "filePath": "src/testsMemory.hpp",
+                "line": 148,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1756,11 +1746,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Data integrity check failed after moving maximum size memory block",
-                    "file": "src/testsMemory.hpp",
-                    "line": 258
-                },
+                "message": "Data integrity check failed after moving maximum size memory block",
+                "trace": "src/testsMemory.hpp:258: Data integrity check failed after moving maximum size memory block",
+                "filePath": "src/testsMemory.hpp",
+                "line": 258,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1770,11 +1759,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Moving memory block with null source pointer should fail",
-                    "file": "src/testsMemory.hpp",
-                    "line": 277
-                },
+                "message": "Moving memory block with null source pointer should fail",
+                "trace": "src/testsMemory.hpp:277: Moving memory block with null source pointer should fail",
+                "filePath": "src/testsMemory.hpp",
+                "line": 277,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1856,11 +1844,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
-                    "file": "src/testsMemoryHWRam.hpp",
-                    "line": 537
-                },
+                "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "trace": "src/testsMemoryHWRam.hpp:537: Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "filePath": "src/testsMemoryHWRam.hpp",
+                "line": 537,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1879,11 +1866,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory allocation in HighWorkRam did not reduce free space (before 0 vs after 0)",
-                    "file": "src/testsMemoryHWRam.hpp",
-                    "line": 248
-                },
+                "message": "Memory allocation in HighWorkRam did not reduce free space (before 0 vs after 0)",
+                "trace": "src/testsMemoryHWRam.hpp:248: Memory allocation in HighWorkRam did not reduce free space (before 0 vs after 0)",
+                "filePath": "src/testsMemoryHWRam.hpp",
+                "line": 248,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1920,11 +1906,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get free space",
-                    "file": "src/testsMemoryHWRam.hpp",
-                    "line": 95
-                },
+                "message": "Failed to get free space",
+                "trace": "src/testsMemoryHWRam.hpp:95: Failed to get free space",
+                "filePath": "src/testsMemoryHWRam.hpp",
+                "line": 95,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -1961,11 +1946,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get HighWorkRam free space",
-                    "file": "src/testsMemoryHWRam.hpp",
-                    "line": 206
-                },
+                "message": "Failed to get HighWorkRam free space",
+                "trace": "src/testsMemoryHWRam.hpp:206: Failed to get HighWorkRam free space",
+                "filePath": "src/testsMemoryHWRam.hpp",
+                "line": 206,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2029,11 +2013,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Allocation of 1 error handling failed",
-                    "file": "src/testsMemoryHWRam.hpp",
-                    "line": 383
-                },
+                "message": "Allocation of 1 error handling failed",
+                "trace": "src/testsMemoryHWRam.hpp:383: Allocation of 1 error handling failed",
+                "filePath": "src/testsMemoryHWRam.hpp",
+                "line": 383,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2079,11 +2062,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "HighWorkRam Memory is already full",
-                    "file": "src/testsMemoryHWRam.hpp",
-                    "line": 281
-                },
+                "message": "HighWorkRam Memory is already full",
+                "trace": "src/testsMemoryHWRam.hpp:281: HighWorkRam Memory is already full",
+                "filePath": "src/testsMemoryHWRam.hpp",
+                "line": 281,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2129,11 +2111,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
-                    "file": "src/testsMemoryHWRam.hpp",
-                    "line": 537
-                },
+                "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "trace": "src/testsMemoryHWRam.hpp:537: Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "filePath": "src/testsMemoryHWRam.hpp",
+                "line": 537,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2161,11 +2142,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 537
-                },
+                "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "trace": "src/testsMemoryLWRam.hpp:537: Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 537,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2184,11 +2164,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory allocation in LowWorkRam did not reduce free space (before 0 vs after 0)",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 248
-                },
+                "message": "Memory allocation in LowWorkRam did not reduce free space (before 0 vs after 0)",
+                "trace": "src/testsMemoryLWRam.hpp:248: Memory allocation in LowWorkRam did not reduce free space (before 0 vs after 0)",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 248,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2225,11 +2204,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get free space",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 95
-                },
+                "message": "Failed to get free space",
+                "trace": "src/testsMemoryLWRam.hpp:95: Failed to get free space",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 95,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2266,11 +2244,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get LowWorkRam free space",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 206
-                },
+                "message": "Failed to get LowWorkRam free space",
+                "trace": "src/testsMemoryLWRam.hpp:206: Failed to get LowWorkRam free space",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 206,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2298,11 +2275,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "InRange failed for valid LowWorkRam address",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 314
-                },
+                "message": "InRange failed for valid LowWorkRam address",
+                "trace": "src/testsMemoryLWRam.hpp:314: InRange failed for valid LowWorkRam address",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 314,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2339,11 +2315,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Allocation of 1 error handling failed",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 383
-                },
+                "message": "Allocation of 1 error handling failed",
+                "trace": "src/testsMemoryLWRam.hpp:383: Allocation of 1 error handling failed",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 383,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2389,11 +2364,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "LowWorkRam Memory is already full",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 281
-                },
+                "message": "LowWorkRam Memory is already full",
+                "trace": "src/testsMemoryLWRam.hpp:281: LowWorkRam Memory is already full",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 281,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2439,11 +2413,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
-                    "file": "src/testsMemoryLWRam.hpp",
-                    "line": 537
-                },
+                "message": "Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "trace": "src/testsMemoryLWRam.hpp:537: Memory space didn't decrease after allocation (size : 1), before : 0 vs after : 0",
+                "filePath": "src/testsMemoryLWRam.hpp",
+                "line": 537,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2462,11 +2435,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 75
-                },
+                "message": "Memory allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:75: Memory allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 75,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2476,11 +2448,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory allocation failed for size 1",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 525
-                },
+                "message": "Memory allocation failed for size 1",
+                "trace": "src/testsMemoryCartRam.hpp:525: Memory allocation failed for size 1",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 525,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2490,11 +2461,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Array allocation failed for size 8",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 576
-                },
+                "message": "Array allocation failed for size 8",
+                "trace": "src/testsMemoryCartRam.hpp:576: Array allocation failed for size 8",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 576,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2504,11 +2474,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "new[] operator in CartRam failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 238
-                },
+                "message": "new[] operator in CartRam failed",
+                "trace": "src/testsMemoryCartRam.hpp:238: new[] operator in CartRam failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 238,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2518,11 +2487,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "CartRam memory allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 167
-                },
+                "message": "CartRam memory allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:167: CartRam memory allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 167,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2532,11 +2500,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "CartRam memory allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 183
-                },
+                "message": "CartRam memory allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:183: CartRam memory allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 183,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2546,11 +2513,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Initial allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 320
-                },
+                "message": "Initial allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:320: Initial allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 320,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2560,11 +2526,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get free space",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 91
-                },
+                "message": "Failed to get free space",
+                "trace": "src/testsMemoryCartRam.hpp:91: Failed to get free space",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 91,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2583,11 +2548,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get memory zone size",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 115
-                },
+                "message": "Failed to get memory zone size",
+                "trace": "src/testsMemoryCartRam.hpp:115: Failed to get memory zone size",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 115,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2597,11 +2561,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get memory report for CartRam",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 155
-                },
+                "message": "Failed to get memory report for CartRam",
+                "trace": "src/testsMemoryCartRam.hpp:155: Failed to get memory report for CartRam",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 155,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2611,11 +2574,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get CartRam free space",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 202
-                },
+                "message": "Failed to get CartRam free space",
+                "trace": "src/testsMemoryCartRam.hpp:202: Failed to get CartRam free space",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 202,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2634,11 +2596,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Failed to get CartRam memory zone size",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 226
-                },
+                "message": "Failed to get CartRam memory zone size",
+                "trace": "src/testsMemoryCartRam.hpp:226: Failed to get CartRam memory zone size",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 226,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2648,11 +2609,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "InRange failed for valid CartRam address",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 308
-                },
+                "message": "InRange failed for valid CartRam address",
+                "trace": "src/testsMemoryCartRam.hpp:308: InRange failed for valid CartRam address",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 308,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2662,11 +2622,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory allocation of zero bytes failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 127
-                },
+                "message": "Memory allocation of zero bytes failed",
+                "trace": "src/testsMemoryCartRam.hpp:127: Memory allocation of zero bytes failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 127,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2703,11 +2662,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 434
-                },
+                "message": "Memory allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:434: Memory allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 434,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2717,11 +2675,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Large block allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 337
-                },
+                "message": "Large block allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:337: Large block allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 337,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2731,11 +2688,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Fragmentation handling failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 356
-                },
+                "message": "Fragmentation handling failed",
+                "trace": "src/testsMemoryCartRam.hpp:356: Fragmentation handling failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 356,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2745,11 +2701,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Boundary condition allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 420
-                },
+                "message": "Boundary condition allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:420: Boundary condition allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 420,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2759,11 +2714,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "CartRam Memory is already full",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 275
-                },
+                "message": "CartRam Memory is already full",
+                "trace": "src/testsMemoryCartRam.hpp:275: CartRam Memory is already full",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 275,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2773,11 +2727,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Stress test allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 405
-                },
+                "message": "Stress test allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:405: Stress test allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 405,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2796,11 +2749,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Mixed size allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 463
-                },
+                "message": "Mixed size allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:463: Mixed size allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 463,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2810,11 +2762,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory initialization allocation failed",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 479
-                },
+                "message": "Memory initialization allocation failed",
+                "trace": "src/testsMemoryCartRam.hpp:479: Memory initialization allocation failed",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 479,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2824,11 +2775,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Memory allocation failed for size 1",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 525
-                },
+                "message": "Memory allocation failed for size 1",
+                "trace": "src/testsMemoryCartRam.hpp:525: Memory allocation failed for size 1",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 525,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
@@ -2838,11 +2788,10 @@
                 "classname": "memory",
                 "status": "failed",
                 "rawStatus": "failed",
-                "failure": {
-                    "message": "Array allocation failed for size 8",
-                    "file": "src/testsMemoryCartRam.hpp",
-                    "line": 576
-                },
+                "message": "Array allocation failed for size 8",
+                "trace": "src/testsMemoryCartRam.hpp:576: Array allocation failed for size 8",
+                "filePath": "src/testsMemoryCartRam.hpp",
+                "line": 576,
                 "duration": 0,
                 "retries": 0,
                 "suite": "memory"
