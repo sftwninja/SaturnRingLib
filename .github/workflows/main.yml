@@ -20,8 +20,7 @@ jobs:
         with:
           report-path: './Tests/*.json'
           summary-report: true
-          failed-report: true
-          fail-rate-report: true
+          failed-folded-report: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: always()
