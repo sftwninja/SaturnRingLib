@@ -19,5 +19,13 @@ jobs:
         uses: ctrf-io/github-test-reporter@v1
         with:
           report-path: './Tests/*.json'
+          summary-report: true
           failed-report: true
+          flaky-report: true
+          insights-report: true
+          test-report: true
+          # Order reports with the most important information first
+          report-order: 'summary-report,failed-report,flaky-report,insights-report,test-report'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: always()
