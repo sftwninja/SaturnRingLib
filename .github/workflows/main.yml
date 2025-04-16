@@ -1,22 +1,26 @@
-name: Build and Test
-
+---
+name: Generate Test Report
+# This workflow is triggered manually and generates a test report
 on:
   push:
     branches:
       - main
   pull_request:
+    branches:
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Step 5: Report Test Results
+        uses: actions/checkout@v4
       - name: Report Test Results
         uses: ctrf-io/github-test-reporter@v1
         with:
-          path: Tests/uts.json
+          report-path: './Tests/*.json'
+          summary-report: true
+          failed-folded-report: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: always()
