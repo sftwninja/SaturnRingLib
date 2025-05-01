@@ -102,13 +102,13 @@ namespace SRL
 
             SRL::string stringObj;
 
-            int32_t leftOver = stringObj.snprintf(Debug::lineBuffer, SRL_DEBUG_MAX_PRINT_LENGTH, text, args ...);
+            int32_t leftOver = stringObj.mysnprintf(Debug::lineBuffer, SRL_DEBUG_MAX_PRINT_LENGTH, text, args ...);
 
             if (leftOver >= SRL_DEBUG_MAX_PRINT_LENGTH)
             {
                 char expandedBuffer[SRL_DEBUG_MAX_PRINT_LENGTH + leftOver + 1];
 
-                if (stringObj.snprintf(expandedBuffer, SRL_DEBUG_MAX_PRINT_LENGTH + leftOver + 1, text, args ...) >= 0)
+                if (stringObj.mysnprintf(expandedBuffer, SRL_DEBUG_MAX_PRINT_LENGTH + leftOver + 1, text, args ...) >= 0)
                 {
                     Debug::Print(x, y, expandedBuffer);
                 }
