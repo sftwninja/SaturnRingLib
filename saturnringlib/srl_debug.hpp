@@ -98,13 +98,17 @@ namespace SRL
         template <typename ...Args>
         inline static void Print(uint8_t x, uint8_t y, const char* text, Args...args)
         {
-            int32_t leftOver = snprintf(Debug::lineBuffer, SRL_DEBUG_MAX_PRINT_LENGTH, text, args ...);
+            //int32_t leftOver = snprintf(Debug::lineBuffer, SRL_DEBUG_MAX_PRINT_LENGTH, text, args ...);
+
+            SRL::string stringObj;
+
+            int32_t leftOver = stringObj.snprintf(Debug::lineBuffer, SRL_DEBUG_MAX_PRINT_LENGTH, text, args ...);
 
             if (leftOver >= SRL_DEBUG_MAX_PRINT_LENGTH)
             {
                 char expandedBuffer[SRL_DEBUG_MAX_PRINT_LENGTH + leftOver + 1];
 
-                if (snprintf(expandedBuffer, SRL_DEBUG_MAX_PRINT_LENGTH + leftOver + 1, text, args ...) >= 0)
+                if (stringObj.snprintf(expandedBuffer, SRL_DEBUG_MAX_PRINT_LENGTH + leftOver + 1, text, args ...) >= 0)
                 {
                     Debug::Print(x, y, expandedBuffer);
                 }
