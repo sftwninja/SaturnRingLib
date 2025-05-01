@@ -1,6 +1,6 @@
 #pragma once
 #include <type_traits>
-
+#include <stdarg.h>
 extern "C" {
     int snprintf(char* buffer, size_t n, const char* fmt, ...);
     size_t	strlen(const char* str);
@@ -117,6 +117,178 @@ namespace SRL
         const char* c_str() const
         {
             return str;
+        }
+
+         /**
+         * @brief Extension of snprintf with support of SRL::Math::Types::Fxp. Supported format especifiers %c , %s , %u , %d, and %f. %f is used for FXP types.
+         * @param buffer Buffer where the string will be written to
+         * @param size maximum size of string to be written into buffer
+         * @param format format string
+         * 
+         */
+        int snprintf(char* buffer, int size, char* format, ... )
+         { 
+            va_list args;
+            va_start(args, format);
+            int writtenChars = 0;
+            for(int idx = 0 ; format[idx] != '\0'; idx++)
+            {
+                //go through all the format string
+                //check if a format delimiter was found. avoid instances of %%
+                if(format[idx] == '%' && format[idx+1] != '%' && format[idx+1] != '\0')
+                {
+                    switch(format[idx+1])
+                    {
+                        case 'c' : //char
+                            
+                            if(writtenChars < size)
+                            {
+                                buffer[writtenChars] = va_arg(args, int);
+                                writtenChars++;
+                            }else
+                            {
+                                writtenChars++;
+                            }
+        
+                        break;
+                        case 's' : //string
+                            {
+                                char* arg = va_arg(args, char*);
+                                for(int jdx = 0; arg[jdx] != 0  ; jdx++ , writtenChars++)
+                                {
+                                    if(writtenChars < size)
+                                    {
+                                        buffer[writtenChars] = arg[jdx];
+                                    }
+                                }
+                            }
+                        break;
+                        case 'd' : //signed int
+                            {
+                                char tmp[100] = {0};
+                                int arg = va_arg(args, int);
+                                snprintf(tmp, 100, "%d", arg);
+                                for(int jdx = 0; tmp[jdx] != 0 ; jdx++ , writtenChars++)
+                                {
+                                    if(writtenChars < size)
+                                    {
+                                        buffer[writtenChars] = tmp[jdx];
+                                    }
+                                    
+                                }
+                            }
+                        break;
+                        case 'u' : //unsigned int
+                            {
+                                char tmp[100] = {0};
+                                unsigned int arg = va_arg(args, unsigned int);
+                                snprintf(tmp, 100, "%u", arg);
+                                for(int jdx = 0; tmp[jdx] != 0 ; jdx++ , writtenChars++)
+                                {
+                                    if(writtenChars < size)
+                                    {
+                                        buffer[writtenChars] = tmp[jdx];
+                                    }
+                                }
+                            }
+                        break;
+                        case 'f' : // FXP 16.16 fixed point
+                        {
+                            
+                            char tmpBuffer[14] = {0};
+                            int bufferPos = 0;
+                            
+                            SRL::Math::Types::Fxp *arg = va_arg(args,  SRL::Math::Types::Fxp*);
+                            
+                            int32_t val = arg->RawValue();
+                            
+                            //determine if value is negative
+                            bool isNegative = val < 0;
+        
+                            //get the abosule value (why not just use abs() here ?)
+                            uint32_t absValue = static_cast<uint32_t>(isNegative ? -val : val);
+                           
+                            int32_t IntegerPart = absValue  >> 16;
+        
+                            uint32_t maskFractional = 0xffff;
+                            uint32_t FractionPart = absValue & maskFractional ;
+        
+                            // Scale fractional part to 5 decimal digits
+                            FractionPart = (FractionPart * 100000 + 0x8000) >> 16;
+        
+                            if(isNegative)
+                            {
+                                tmpBuffer[bufferPos++] = '-';
+                            }
+        
+                            // Convert integer part to decimal (in reverse)
+                            char intBuffer[6];
+                            int intLength = 0;
+        
+                            if (IntegerPart == 0) {
+                                intBuffer[intLength++] = '0';
+                            } else {
+                                while (IntegerPart > 0 && intLength < 6) {
+                                    intBuffer[intLength++] = '0' + (IntegerPart % 10);
+                                    IntegerPart /= 10;
+                                }
+                            }
+        
+                            // Write integer part in correct order
+                            for (int idx = intLength - 1; idx >= 0 && bufferPos < 13; --idx) {
+                                tmpBuffer[bufferPos++] = intBuffer[idx];
+                                }
+        
+                            // Decimal point
+                            if (bufferPos < 13) {
+                                tmpBuffer[bufferPos++] = '.';
+                             }
+        
+                            // Convert fractional part to decimal with leading zeros
+                            uint32_t divisor = 10000;
+                            for (int idx = 0; idx < 5 && bufferPos < 13; ++idx) {
+                                tmpBuffer[bufferPos++] = '0' + (FractionPart / divisor);
+                                FractionPart %= divisor;
+                                divisor /= 10;
+                            }
+        
+                            // Null terminator
+                            tmpBuffer[bufferPos] = '\0';
+                            char tmp[100] = {0};
+        
+                            snprintf(tmp, 100 ,"%s", tmpBuffer);
+                            for(int j = 0; tmp[j] != 0 ; j++ , writtenChars++)
+                            {
+                                if(writtenChars < size)
+                                {
+                                    buffer[writtenChars] = tmp[j];
+                                } 
+                            }
+        
+                        }
+                        break;
+                        default : //nothing
+                        break;
+        
+                    }
+        
+                    idx++;
+                }
+                else
+                {
+                    if(writtenChars < size )
+                    {
+                        buffer[writtenChars] = format[idx];
+                        writtenChars++;
+                    }else
+                    {
+                        writtenChars++; 
+                    }
+                }
+            }
+        
+            va_end(args);
+            return writtenChars;
         }
     };
 }
