@@ -1,13 +1,13 @@
 VDP2 can perform various color calculations between scroll Screen layers to 
 combine their colors. It is a powerful feature, however as with most things on the Saturn
 using it to its fullest potential requires some understanding of its quirks and limitations.
-Its not quite as simple as just assigning layers an opacity.
+It is not quite as simple as just assigning layers an opacity.
 
 Unfortunately, while the VDP2 manual attempts to describe these behaviors in diagrams,
 they can be difficult to follow, especially since they are in black and white!
 
 The VDP2 Color Calculation Sample is designed as an interactive version of some of these 
-diagrams, in the hopes that playing around with the settings and veiwing the results in 
+diagrams, in the hopes that playing around with the settings and viewing the results in 
 real time can give users a more intuitive understanding of the options available.
 
 Below is a set of guided experiments that you can follow along with to highlight
@@ -20,8 +20,8 @@ Demo 1) Top Color Ratios with no Extension
 This is the default Color Calculation mode that VDP2 initializes with. When selected, a
 Scroll Screen with color calculation turned ON can blend its color with the pixels behind it
 in what is essentially a weighted average. The weighting is called the Color Ratio in 
-VDP2 documentaion, but in SRL we represent it with a Fixed point value between 0.0 and 1.0
-called the opacity (In the demo menu this displays as a Percentage from 0 to 100%).
+VDP2 documentation, but in SRL we represent it with a Fixed point value between 0.0 and 1.0
+called the Opacity (In the demo menu this displays as a Percentage from 0% to 100% opaque).
 
 In SRL a ScrollScreen will have Color calculation turned on whenever its corresponding
 interface is set with an opacity < 1.0 (100% opaque). But this does not mean that a layer
@@ -48,7 +48,7 @@ iii)Note that in areas where the shapes don't overlap, they calculate their opac
 
 
 *********************************************************************************************
-Demo 2) 2nd Color Ratios with no Extention
+Demo 2) 2nd Color Ratios with no Extension
 
 When color calcuation mode is set to UseColorRatios2nd the opacities are calculated much 
 like before, except now the opacity value of a top layer pixel is determined by the 
@@ -112,7 +112,7 @@ Experiments:
 
 i)- Press R trigger to switch back to color ratio top mode, then press Z to toggle extended 
  color calculation ON. Notice that in the area where all 3 shapes overlap, the circle is now
- visible as well
+ visible behind the other shapes.
 
 ii)- adjust the opacity of the square, Note that in the areas where the square
  is behind the triangle, the the opacity is not affected by the adjustment. This is because color 
@@ -125,8 +125,5 @@ shape in these regions is now recieving 50% opacity calculation against the back
  
 iv) Press R to cycle back to Color Addition mode with Extension turned on. Toggle extension with Z
 as above and notice that here too overlapping regions appear slightly darker with extension turned on.
-This is because even in addition mode, the lower layer pixels apply 50% percent opacity with the pixels
-beneath them instead of adding
-
-
-
+This is because even in addition mode, the lower layer pixels apply 50% opacity with the pixels
+beneath them instead of directly adding like top layer pixels.
