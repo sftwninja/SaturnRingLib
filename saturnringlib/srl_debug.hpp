@@ -98,8 +98,6 @@ namespace SRL
         template <typename ...Args>
         inline static void Print(uint8_t x, uint8_t y, const char* text, Args...args)
         {
-            //int32_t leftOver = snprintf(Debug::lineBuffer, SRL_DEBUG_MAX_PRINT_LENGTH, text, args ...);
-
             SRL::string stringObj;
 
             int32_t leftOver = stringObj.snprintfEx(Debug::lineBuffer, SRL_DEBUG_MAX_PRINT_LENGTH, text, args ...);
@@ -132,7 +130,6 @@ namespace SRL
         inline static uint8_t PrintWithWrap(uint8_t x, uint8_t y, const uint8_t fromLeft, const uint8_t fromRight, const char* text, Args...args)
         {
             SRL::string stringObj;
-
 
             if (fromLeft < fromRight && x < fromRight && text != nullptr)
             {
