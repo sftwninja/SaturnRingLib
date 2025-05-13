@@ -254,7 +254,7 @@ namespace SRL::Tilemap::Interfaces
             if (bmp.GetInfo().Palette != nullptr)
             {
                 uint16_t sz = (this->info.ColorMode == CRAM::TextureColorMode::Paletted16) ? 16 : 256;
-                this->palData = new uint16_t[sz];
+                this->palData = autonew uint16_t[sz];
                 uint16_t* src = (uint16_t*)bmp.GetInfo().Palette->Colors;
 
                 for (int i = 0; i < sz; ++i) this->palData[i] = *src++;
@@ -264,19 +264,19 @@ namespace SRL::Tilemap::Interfaces
                 this->palData = nullptr;
             }
             
-            this->mapData = new uint16_t[this->info.MapWidth * this->info.MapHeight];
+            this->mapData = autonew uint16_t[this->info.MapWidth * this->info.MapHeight];
             for (int i = 0; i < numPages; ++i) this->ClearPage(i);
             
             //see if there is room for empty tile and add enough space at start of set
             if (this->info.CellByteSize + tileSize <= 0x20000)
             {
                 this->info.CellByteSize += tileSize;
-                this->cellData = new uint8_t[this->info.CellByteSize];
+                this->cellData = autonew uint8_t[this->info.CellByteSize];
                 this->ConvertBitmap(this->info, bmp, 0, true);
             }
             else
             {
-                this->cellData = new uint8_t[this->info.CellByteSize];
+                this->cellData = autonew uint8_t[this->info.CellByteSize];
                 this->ConvertBitmap(this->info, bmp, 0, false);
             }
         }
@@ -535,19 +535,19 @@ namespace SRL::Tilemap::Interfaces
                     this->info.MapWidth <<= 1;
                 }
 
-                this->cellData = new uint8_t[celSize];
-                this->mapData = new uint8_t[mapSize];
+                this->cellData = autonew uint8_t[celSize];
+                this->mapData = autonew uint8_t[mapSize];
 
                 // Load Palette Colors if they exist:
                 if (this->info.ColorMode == SRL::CRAM::TextureColorMode::Paletted16)
                 {
-                    this->palData = new uint8_t[32];
+                    this->palData = autonew uint8_t[32];
 
                     for (int i = 0; i < 32; ++i) this->palData[i] = *imageData++;
                 }
                 else if (this->info.ColorMode == SRL::CRAM::TextureColorMode::Paletted256)
                 {
-                    this->palData = new uint8_t[512];
+                    this->palData = autonew uint8_t[512];
 
                     for (int i = 0; i < 512; ++i) this->palData[i] = *(imageData++);
                 }
