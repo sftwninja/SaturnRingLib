@@ -43,11 +43,11 @@ jobs:
           path: Tests/BuildDrop.zip
       - name: Install Mednafen
         run: |
-          cd $GITHUB_WORKSPACE/emulators/mednafen
+          cd $GITHUB_WORKSPACE/emulators/
           curl -L -o Mednafen.Linux.zip https://github.com/willll/mednafenSSDev/releases/download/initial/Mednafen.Linux.zip
           unzip Mednafen.Linux.zip
           alias mednafen="$GITHUB_WORKSPACE/emulators/mednafen/mednafen"
-          ls
+          ls mednafen
       - name: Create Mednafen profile
         run: |
           mkdir -p $MEDNAFEN_HOME/firmware
