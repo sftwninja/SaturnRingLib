@@ -48,6 +48,7 @@ jobs:
           curl -L -o Mednafen.Linux.zip https://github.com/willll/mednafenSSDev/releases/download/initial/Mednafen.Linux.zip
           unzip -o Mednafen.Linux.zip
           echo "$GITHUB_WORKSPACE/emulators/mednafen/" >> $GITHUB_PATH
+          ls -la $GITHUB_WORKSPACE/emulators/mednafen/
       - name: Create Mednafen profile
         run: |
           mkdir -p $MEDNAFEN_HOME/firmware
