@@ -24,6 +24,7 @@ jobs:
       - name: Build
         run: |
           cd ${{ github.workspace }}/Tests
+          ls -la
           make all
           zip -r BuildDrop.zip BuildDrop/
       - name: Upload executable
