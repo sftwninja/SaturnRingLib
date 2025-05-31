@@ -4,10 +4,10 @@ name: Generate Test Report
 on:
   push:
     branches:
-      - main
+      - test-report
   pull_request:
     branches:
-      - main
+      - test-report
 
 jobs:
   build:
