@@ -14,6 +14,7 @@
       # Kill watchdog if it's running
       [[ -n $WATCHDOG_PID ]] && kill $WATCHDOG_PID 2>/dev/null
       # Add your cleanup tasks here
+      exit 1
   }
 
   # Set up trap for cleanup
@@ -56,6 +57,8 @@
   # Run emulator and capture output
   $command 2>&1 | tee "$log" &
 
+  EMULATOR_PID=$!
+
   echo "Emulator started, monitoring for completion..."
 
   # Monitor log file for completion
@@ -68,6 +71,10 @@
           pkill -9 kronos
           echo "Tests completed successfully"
           exit 0
+      fi
+      if ! kill -0 $EMULATOR_PID 2>/dev/null; then
+          echo "Emulator process has terminated unexpectedly"
+          exit 1
       fi
   done
 }
