@@ -34,7 +34,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/Tests
           make all
-          zip -r BuildDrop.zip BuildDrop/
+          # zip -r BuildDrop.zip BuildDrop/
       - name: Upload executable
         if: ${{ false }}
         uses: actions/upload-artifact@v4
@@ -47,8 +47,7 @@ jobs:
           rm -rf mednafen
           curl -L -o Mednafen.Linux.zip https://github.com/willll/mednafenSSDev/releases/download/initial/Mednafen.Linux.zip
           unzip -o Mednafen.Linux.zip
-          alias mednafen="$GITHUB_WORKSPACE/emulators/mednafen/mednafen"
-          ls mednafen
+          echo "$GITHUB_WORKSPACE/emulators/mednafen/" >> $GITHUB_PATH
       - name: Create Mednafen profile
         run: |
           mkdir -p $MEDNAFEN_HOME/firmware
