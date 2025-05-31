@@ -21,6 +21,11 @@ jobs:
       image: willll/saturn-docker:gcc_14.2.0_vanilla
 
     steps:
+      - name: Setup environment
+        run: |
+          apt-get update
+          apt-get upgrade -y
+          apt-get install -y unzip libsdl2-2.0-0 libflac-dev
       - name: Checkout repository (with submodules)
         uses: actions/checkout@v3
         with:
@@ -39,7 +44,6 @@ jobs:
       - name: Install Mednafen
         run: |
           cd $GITHUB_WORKSPACE/emulators/mednafen
-          apt-get install -y unzip libsdl2-2.0-0 libflac-dev
           curl -L -o Mednafen.Linux.zip https://github.com/willll/mednafenSSDev/releases/download/initial/Mednafen.Linux.zip
           unzip Mednafen.Linux.zip
           alias mednafen="$GITHUB_WORKSPACE/emulators/mednafen/mednafen"
