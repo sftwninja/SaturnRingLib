@@ -9,6 +9,10 @@ on:
     branches:
       - test-report
 
+env:
+  MEDNAFEN_HOME: $GITHUB_WORKSPACE/emulators/mednafen/.mednafen
+  SDL_VIDEODRIVER: dummy
+
 jobs:
   build:
     name: Build
@@ -24,7 +28,6 @@ jobs:
       - name: Build
         run: |
           cd $GITHUB_WORKSPACE/Tests
-          ls -la
           make all
           zip -r BuildDrop.zip BuildDrop/
       - name: Upload executable
@@ -35,17 +38,28 @@ jobs:
           path: Tests/BuildDrop.zip
       - name: Install Mednafen
         run: |
-          cd ${{ github.workspace }} 
+          cd $GITHUB_WORKSPACE/emulators/mednafen
           apt-get install -y unzip libsdl2-2.0-0 libflac-dev
-          mkdir app
-          cd app
           curl -L -o Mednafen.Linux.zip https://github.com/willll/mednafenSSDev/releases/download/initial/Mednafen.Linux.zip
           unzip Mednafen.Linux.zip
-          
+          alias mednafen="$GITHUB_WORKSPACE/emulators/mednafen/mednafen"
+          ls
+      - name: Create Mednafen profile
+        run: |
+          mkdir -p $MEDNAFEN_HOME/firmware
+      - name: Install BIOS
+        run: |
+          gdown 1YvFP-7DCGq4AVd2Xo-HAaUQmikV6ufVT -O "$MEDNAFEN_HOME/firmware/mpr-17933.bin"
+          gdown 1miIZbAytFFRGlmL8H2gM8Hs__A3AC23P -O "$MEDNAFEN_HOME/firmware/sega_101.bin"
+      - name: Run tests
+        run: |
+          cd $GITHUB_WORKSPACE/Tests
+          ./run_tests.bat mednafen
 
   generate-test-report:
     name: Generate Test Report
     runs-on: ubuntu-latest
+    needs: build
 
     steps:
       - name: Checkout code
