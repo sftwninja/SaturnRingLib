@@ -58,7 +58,7 @@ jobs:
       - name: Run tests
         run: |
           cd $GITHUB_WORKSPACE/Tests
-          ./run_tests.bat mednafen
+          run_tests.bat mednafen
 
   generate-test-report:
     name: Generate Test Report
