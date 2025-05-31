@@ -57,7 +57,7 @@ jobs:
           gdown 1miIZbAytFFRGlmL8H2gM8Hs__A3AC23P -O "$MEDNAFEN_HOME/firmware/sega_101.bin"
       - name: Run tests
         run: cd $GITHUB_WORKSPACE/Tests
-        run: ./run_tests.bat mednafen
+      -run: ./run_tests.bat mednafen
 
   generate-test-report:
     name: Generate Test Report
