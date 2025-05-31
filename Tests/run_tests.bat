@@ -11,7 +11,7 @@
     # Disable video output and enable debug cart
     export SDL_VIDEODRIVER=dummy
     command="mednafen -sound 0 -ss.cart debug -force_module ss BuildDrop/UTs.cue"
-  else if [ "$1" = "kronos" ]; then
+  elif [ "$1" = "kronos" ]; then
     echo "Using kronos emulator"
     # Run kronos in automation mode with no sound
     command="kronos -a -ns -i BuildDrop/UTs.cue"
