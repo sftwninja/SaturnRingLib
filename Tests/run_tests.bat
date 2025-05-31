@@ -1,7 +1,32 @@
 @goto(){
   # Linux test runner script for Saturn unit tests
-  # Usage: ./run_tests.bat [mednafen]
-  # If mednafen parameter is passed, uses mednafen emulator, otherwise uses kronos
+  # Usage: ./run_tests.bat [kronos|mednafen]
+ 
+  if [ -z "$1" ]; then
+    echo "Usage: $0 [kronos|mednafen]"
+    exit 1
+  fi
+
+  # Set timeout in seconds
+  TIMEOUT=600
+
+  cleanup() {
+      # Kill watchdog if it's running
+      [[ -n $WATCHDOG_PID ]] && kill $WATCHDOG_PID 2>/dev/null
+      # Add your cleanup tasks here
+  }
+
+  # Set up trap for cleanup
+  trap cleanup EXIT
+
+  # Start watchdog in background
+  (
+      sleep $TIMEOUT
+      echo "Script timed out after $TIMEOUT seconds"
+      kill -9 -$$ 2>/dev/null
+  ) &
+
+  WATCHDOG_PID=$!
 
   echo "Starting Saturn unit test runner..."
 

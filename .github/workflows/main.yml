@@ -10,7 +10,7 @@ on:
       - test-report
 
 env:
-  MEDNAFEN_HOME: ${GITHUB_WORKSPACE}/emulators/mednafen/.mednafen
+  MEDNAFEN_HOME: ${{ github.workspace }}/emulators/mednafen/.mednafen
   SDL_VIDEODRIVER: dummy
 
 jobs:
