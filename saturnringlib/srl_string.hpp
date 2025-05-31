@@ -126,7 +126,7 @@ namespace SRL
          * @param format format string
          * 
          */
-        int snprintfEx(char* buffer, int size, char* format, ... )
+        int snprintfEx(char* buffer, const int size, const char* format, ... )
          { 
             va_list args;
             va_start(args, format);
