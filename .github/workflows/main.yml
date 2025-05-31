@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
       - name: Build
         run: |
-          cd ${{ github.workspace }}/Tests
+          cd $GITHUB_WORKSPACE/Tests
           ls -la
           make all
           zip -r BuildDrop.zip BuildDrop/
