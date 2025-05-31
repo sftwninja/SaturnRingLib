@@ -169,9 +169,9 @@ namespace SRL
                         break;
                     }
 
-                    alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::A0, reqCycles);
+                    alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::B0, reqCycles);
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::A1, reqCycles);
-                    if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::B0, reqCycles);
+                    if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::A0, reqCycles);
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::B1, reqCycles);
                     if (alloc == nullptr) SRL::Debug::Assert("NBG Cel Allocation failed: insufficient VRAM");
                 }
@@ -211,7 +211,7 @@ namespace SRL
                 }
                 else // Reserve 1 cycle in bank B1 (or B0 if it doesn't conflict with RBG0 map)
                 {
-                    if (bankCycles[0]!=7) alloc = VRAM::Allocate(sz, page_sz, VramBank::B0, 1);
+                    if (bankCycles[0]!=7) alloc = VRAM::Allocate(sz, page_sz, VramBank::A0, 1);
                     if(!alloc) alloc = VRAM::Allocate(sz, page_sz, VramBank::B1, 1);
                     
                     //if (!alloc) alloc = VRAM::Allocate(sz, page_sz, VramBank::A1, 1);
