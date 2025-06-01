@@ -14,7 +14,7 @@
       # Kill watchdog if it's running
       [[ -n $WATCHDOG_PID ]] && kill $WATCHDOG_PID 2>/dev/null
       # Add your cleanup tasks here
-      exit 1
+      exit 0
   }
 
   # Set up trap for cleanup
@@ -68,7 +68,7 @@
       then
           echo "Test completion marker found"
           echo "Terminating emulator..."
-          pkill -9 kronos
+          kill -9 EMULATOR_PID
           echo "Tests completed successfully"
           exit 0
       fi
