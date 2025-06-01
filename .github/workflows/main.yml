@@ -72,3 +72,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: always()
+      - name: Archive UT results
+        uses: actions/upload-artifact@v4
+        with:
+          name: uts.log
+          path: $GITHUB_WORKSPACE/Tests/uts.log
+      - name: Archive report 
+        uses: actions/upload-artifact@v4
+        with:
+          name: uts.json
+          path: $GITHUB_WORKSPACE/Tests/uts.json
