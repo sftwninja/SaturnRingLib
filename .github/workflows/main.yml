@@ -1,13 +1,13 @@
 ---
 name: Generate Test Report
-# This workflow is triggered manually and generates a test report
+# This workflow is triggered automatically and generates a test report
 on:
   push:
     branches:
-      - test-report
+      - main
   pull_request:
     branches:
-      - test-report
+      - main
 
 env:
   MEDNAFEN_HOME: ${{ github.workspace }}/emulators/mednafen/.mednafen
