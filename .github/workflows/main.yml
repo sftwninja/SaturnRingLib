@@ -76,9 +76,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: uts.log
-          path: $GITHUB_WORKSPACE/Tests/uts.log
+          path: Tests/uts.log
       - name: Archive report 
         uses: actions/upload-artifact@v4
         with:
           name: uts.json
-          path: $GITHUB_WORKSPACE/Tests/uts.json
+          path: Tests/uts.json
