@@ -508,6 +508,36 @@ namespace SRL
                 return -1;
             }
 
+            /** @brief Read specified number of sectors from the file and advances file access pointer
+             * @param sectorCount Number of sectors to be read from file
+             * @param destination Buffer to read bytes into
+             * @return Number of bytes read (if lower than 0, error was encountered)
+             */
+            int32_t ReadSectors(const int32_t sectorCount, void* destination)
+            {
+                if (this->IsOpen() && !this->IsEOF() && sectorCount > 0)
+                {
+                    // Number of the current sector offset
+                    const auto currentSector = GFS_Tell(this->Handle);
+                    const auto toRead = SRL::Math::Min<int32_t>(sectorCount, this->Size.Sectors - currentSector);
+                    
+                    if (toRead > 0)
+                    {
+                        const auto read = GFS_Fread(this->Handle, sectorCount, destination, this->Size.SectorSize * toRead);
+
+                        // Advance read pointer
+                        if (read >= 0)
+                        {
+                            this->readBytes = (currentSector * this->Size.SectorSize) + read;
+                        }
+
+                        return read;
+                    }
+                }
+
+                return 0;
+            }
+
             /** @brief Seek file access pointer to specific byte
              * @param offset offset from start of the file
              * @return New position of the access pointer otherwise negative on error
