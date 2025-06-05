@@ -86,11 +86,11 @@ namespace SRL::Bitmap
                 {
                     this->ColorMode = CRAM::TextureColorMode::Paletted16;
                 }
-                else if (palette->Count <= 16)
+                else if (palette->Count <= 64)
                 {
                     this->ColorMode = CRAM::TextureColorMode::Paletted64;
                 }
-                else if (palette->Count <= 16)
+                else if (palette->Count <= 128)
                 {
                     this->ColorMode = CRAM::TextureColorMode::Paletted128;
                 }
