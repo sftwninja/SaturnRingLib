@@ -343,16 +343,9 @@ namespace SRL
                 {
                     this->readBytes = 0;
                     this->Handle = GFS_Open(this->identifier);
-
-                    if (this->Handle != nullptr)
-                    {
-                        GFS_NwCdRead(this->Handle, this->Size.Sectors);
-                        GFS_SetTransPara(this->Handle, 10);
-                        return true;
-                    }
                 }
 
-                return false;
+                return this->Handle != nullptr;
             }
 
             /** @brief File exists
