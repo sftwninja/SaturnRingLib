@@ -286,7 +286,7 @@ namespace SRL
                     }
                 }
             }
-        
+            buffer[writtenChars] = '\0';
             va_end(args);
             return writtenChars;
         }
