@@ -163,6 +163,46 @@ namespace SRL
                                 }
                             }
                         break;
+                        case '0' : // only %0d is supported for now
+                            {
+                                char tmp[100] = {0};
+                                int arg = va_arg(args, int);
+                                //print integer into to get its lenght
+                                int int_lenght = snprintf(tmp, 100, "%d", arg);
+                                //get the padding requested
+                                if(format[idx+2] != '\0')
+                                {
+                                    int padding_req = format[idx+2] - '0';
+                                    int padding = padding_req - int_lenght;
+                                    
+                                    if(padding > 0)
+                                    {
+                                        for(int i = 0 ; i < padding ; i++, writtenChars++)
+                                        {
+                                             if(writtenChars < size)
+                                            {
+                                                buffer[writtenChars] = '0';
+                                            }
+                                        }
+                                    }
+                                   
+                                    for(int jdx = 0; tmp[jdx] != 0 ; jdx++ , writtenChars++)
+                                    {
+                                        if(writtenChars < size)
+                                        {
+                                            buffer[writtenChars] = tmp[jdx];
+                                        }
+                                        
+                                    }
+                                    
+                                }
+                                
+                            idx = idx + 2;
+
+
+                            }
+                        break;
+
                         case 'd' : //signed int
                             {
                                 char tmp[100] = {0};
