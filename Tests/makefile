@@ -32,7 +32,7 @@ SRL_CUSTOM_CCFLAGS = -DNO_SGL_STDLIB
 SRL_CUSTOM_LDFLAGS = -lstdc++
 
 # SRL installation directory
-SRL_INSTALL_ROOT ?= ../..
+SRL_INSTALL_ROOT ?= ..
 
 # Find all .c and .cxx files
 SOURCES = $(patsubst ./%,%,$(shell find src/ -name '*.c')) 
