@@ -111,15 +111,13 @@ namespace SRL::Tilemap::Interfaces
                 byteWidth = bitmapInfo.Width >> 1;
                 byteCell = 4;
                 break;
-
-            case CRAM::TextureColorMode::Paletted256:
-                byteWidth = bitmapInfo.Width;
-                byteCell = 8;
-                break;
-
-            default:
+            case CRAM::TextureColorMode::RGB555:
                 byteWidth = bitmapInfo.Width << 1;
                 byteCell = 16;
+                break;  
+            default:
+                byteWidth = bitmapInfo.Width;
+                byteCell = 8;
                 break;
             }
 
@@ -225,7 +223,6 @@ namespace SRL::Tilemap::Interfaces
             this->numPages = pages;
             this->numCells = 0;
             this->info.CharSize = CHAR_SIZE_2x2;
-            this->info.ColorMode = bmp.GetInfo().ColorMode;
             this->info.MapMode = PNB_1WORD | CN_12BIT;
             this->info.PlaneSize = PL_SIZE_1x1;
             this->info.MapHeight = (this->info.CharSize) ? (32 * pages) : (64 * pages);
@@ -234,16 +231,19 @@ namespace SRL::Tilemap::Interfaces
             this->info.CellByteSize = bmp.GetInfo().Height * bmp.GetInfo().Width;
             int tileSize = (this->info.CharSize) ? 256 : 64;
 
-            if (this->info.ColorMode == CRAM::TextureColorMode::Paletted16)
+           if (bmp.GetInfo().ColorMode == CRAM::TextureColorMode::Paletted16)
             {
+                this->info.ColorMode = bmp.GetInfo().ColorMode;
                 this->info.CellByteSize >>= 1;
                 tileSize >>= 1;
             }
-            else if (this->info.ColorMode == CRAM::TextureColorMode::RGB555)
+            else if (bmp.GetInfo().ColorMode == CRAM::TextureColorMode::RGB555)
             {
+                this->info.ColorMode = bmp.GetInfo().ColorMode;
                 this->info.CellByteSize <<= 1;
                 tileSize <<= 1;
             }
+            else this->info.ColorMode = CRAM::TextureColorMode::Paletted256;//all other modes become 256 pallet
 
             if (this->info.CellByteSize > 0x20000 || (numPages << 10) > 0x20000)
             {
@@ -257,7 +257,7 @@ namespace SRL::Tilemap::Interfaces
                 this->palData = autonew uint16_t[sz];
                 uint16_t* src = (uint16_t*)bmp.GetInfo().Palette->Colors;
 
-                for (int i = 0; i < sz; ++i) this->palData[i] = *src++;
+                for (uint32_t i = 0; i < bmp.GetInfo().Palette->Count; ++i) this->palData[i] = *src++;
             }
             else
             {
