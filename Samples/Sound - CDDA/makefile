@@ -24,6 +24,10 @@ CD_NAME = Sound_CDDA
 # Directory build will be placed into
 BUILD_DROP = ./BuildDrop
 
+# Implement a custom SOX filter used during conversion
+# exporting is required for the conversion process to find the filter
+export SRL_SOX_FILTERS_radio = highpass 80 compand 0.3,1 6:-70,-60,-20 -5 -90 0.2 norm -3
+
 # SRL installation directory
 SRL_INSTALL_ROOT ?= ../..
 

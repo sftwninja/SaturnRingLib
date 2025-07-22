@@ -248,34 +248,109 @@ create_bin_cue: create_iso
 	echo '  TRACK 01 MODE1/2048' >> $(BUILD_CUE)
 	echo '    INDEX 01 00:00:00' >> $(BUILD_CUE)
 
-AUDIO_FILES = $(patsubst ./%,%,$(shell find $(MUSIC_DIR) \( -name '*.mp3' -o -name '*.wav' -o -name '*.ogg' -o -name '*.flac' -o -name '*.aac' -o -name '*.m4a' -o -name '*.wma' \)))
+# Check if tracklist file exists and determine audio file order
+ifneq (,$(wildcard $(MUSIC_DIR)/tracklist))
+    # Read files from tracklist, prepend MUSIC_DIR to each line, filter out empty lines and comments
+    TRACKLIST_LINES := $(shell sed 's/^\s*//;s/\s*$$//;/^$$/d;/^#/d' $(MUSIC_DIR)/tracklist)
+    AUDIO_FILES := $(foreach line,$(TRACKLIST_LINES),$(word 1,$(subst :, ,$(line))))
+    AUDIO_FILES := $(addprefix $(MUSIC_DIR)/,$(AUDIO_FILES))
+else
+    # Fallback to original behavior - find all supported audio files
+    AUDIO_FILES = $(patsubst ./%,%,$(shell find $(MUSIC_DIR) \( -name '*.mp3' -o -name '*.wav' -o -name '*.ogg' -o -name '*.flac' -o -name '*.aac' -o -name '*.m4a' -o -name '*.wma' \)))
+endif
+
 AUDIO_FILES_RAW = $(patsubst %,%.raw,$(AUDIO_FILES))
 
+# Function to get the filter option for a given audio file
+define get_filter_option
+$(strip $(shell if [ -f "$(MUSIC_DIR)/tracklist" ]; then \
+	basename_file=$$(basename "$(1)"); \
+	grep "^$$basename_file:" "$(MUSIC_DIR)/tracklist" | head -1 | cut -d: -f2; \
+fi))
+endef
+
+# Define default sox filter commands
+export SRL_SOX_FILTERS_normalize = highpass 80 bass -4 120 compand 0.3,1 -70,-70,-60,-40,-20,-15 -3 -90 0.2 norm -3
+
 %.raw: %
-	sox $< -t raw -r 44100 -e signed-integer -b 16 -c 2 $@
+	@filter_option="$(call get_filter_option,$<)"; \
+	if [ -n "$$filter_option" ]; then \
+		echo "Processing $< with filter option: $$filter_option"; \
+	else \
+		echo "Processing $< with no filter option"; \
+	fi; \
+	# apply any quick filter to the file through the sox conversion \
+	if [ -n "$$filter_option" ]; then \
+		filter_var="SRL_SOX_FILTERS_$$filter_option"; \
+		filter_cmd=$$(eval echo \$$$$filter_var); \
+		if [ -n "$$filter_cmd" ]; then \
+			sox "$<" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$@" $$filter_cmd; \
+		else \
+			echo "Warning: No SOX_FILTERS_$$filter_option defined, using no filters"; \
+			sox "$<" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$@"; \
+		fi; \
+	else \
+		sox "$<" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$@"; \
+	fi; \
+	# check to ensure the raw file is sector aligned to prevent track drift \
+	size=$$(stat -c%s "$@"); \
+	target_sectors=$$((size / 2352)); \
+	if [ $$((size % 2352)) -ne 0 ]; then \
+		target_sectors=$$((target_sectors + 1)); \
+	fi; \
+	target_size=$$((target_sectors * 2352)); \
+	if [ $$size -lt $$target_size ]; then \
+		mv "$@" "$@.unpadded"; \
+		dd if=/dev/zero bs=1 count=$$((target_size - size)) of=padding.tmp status=none; \
+		cat "$@.unpadded" padding.tmp > "$@"; \
+		rm -f padding.tmp "$@.unpadded"; \
+	fi; \
+	# prepad the track with a 75 frame silent buffer to aid in needle alignment \
+	mv $@ "$@.unpadded"; \
+	dd if=/dev/zero bs=1 count=$$((2352 * 75)) of=padding.tmp status=none; \
+	cat padding.tmp $@.unpadded > "$@"; \
+	rm -f padding.tmp $@.unpadded; \
+	echo "Converted $< to $@ ($$size -> $$target_size bytes, $$target_sectors sectors)";
 
 add_audio_to_bin_cue: $(AUDIO_FILES_RAW)
 	track=2; \
 	total_size=$$(stat -c%s "$(BUILD_BIN)"); \
+  sectors=$$((total_size / 2048)); \
+	echo "Starting with $$total_size bytes ($$sectors sectors)"; \
 	for i in $^; do \
-		sectors=$$((total_size / 2352)); \
-		minutes=$$((sectors / (60 * 75))); \
-		seconds=$$((sectors % (60 * 75) / 75)); \
-		frames=$$((sectors % 75)); \
+		echo "Track $$track: starts at sector $$sectors"; \
 		echo '  TRACK' $$(printf "%02d" $$track) 'AUDIO' >> $(BUILD_CUE); \
-		echo '    INDEX 01' $$(printf "%02d:%02d:%02d" $$minutes $$seconds $$frames) >> $(BUILD_CUE); \
-		size=$$(stat -c%s "$$i"); \
-		padding=$$((2352 - (size % 2352))); \
-		if [ $$padding -ne 2352 ]; then \
-			dd if=/dev/zero bs=1 count=$$padding of=padding.raw status=none; \
-			cat "$$i" padding.raw >> $(BUILD_BIN); \
-			rm -f padding.raw; \
-			total_size=$$((total_size + size + padding)); \
-		else \
-			cat "$$i" >> $(BUILD_BIN); \
-			total_size=$$((total_size + size)); \
+		# 150 frames are required to gap the audio track when directly following data \
+		# See Section 20 of ECMA-130/Yellow Book spec \
+		if [ $$track -eq 2 ]; then \
+			echo '    PREGAP   00:02:00' >> $(BUILD_CUE); \
 		fi; \
+		index_sectors=$$sectors; \
+		minutes=$$((index_sectors / (60 * 75))); \
+		remaining=$$((index_sectors % (60 * 75))); \
+		seconds=$$((remaining / 75)); \
+		frames=$$((remaining % 75)); \
+    msf=$$(printf "%02d:%02d:%02d" $$minutes $$seconds $$frames); \
+		echo "  INDEX calculation: sector $$index_sectors = $$msf"; \
+		if [ $$frames -ge 75 ]; then \
+			echo "  ERROR: Invalid frame count $$frames (must be 0-74)"; \
+			echo "  This indicates sector misalignment in the audio file(s)"; \
+			exit 1; \
+		fi; \
+		echo '    INDEX 01' $$msf >> $(BUILD_CUE); \
+		size=$$(stat -c%s "$$i"); \
+		if [ $$((size % 2352)) -ne 0 ]; then \
+			echo "  ERROR: File $$i is not sector-aligned ($$size bytes)"; \
+			echo "  File size must be a multiple of 2352 bytes"; \
+			exit 1; \
+		fi; \
+		sectors_in_file=$$((size / 2352)); \
+		echo "  Adding $$i: $$size bytes ($$sectors_in_file sectors)"; \
+		cat "$$i" >> $(BUILD_BIN); \
+		total_size=$$((total_size + size)); \
+		echo "  New total: $$total_size bytes ($$((total_size / 2352)) sectors)"; \
 		track=$$((track + 1)); \
+    sectors=$$((sectors + $$sectors_in_file)); \
 	done
 	rm -f $(AUDIO_FILES_RAW)
 
