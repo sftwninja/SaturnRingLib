@@ -325,6 +325,14 @@ enum tvsz
  */
 #define HSSoff (0 << 12)
 
+/** @brief No pre-clipping and no horizontal inversion
+ */
+#define Pclpoff (1 << 11)
+
+/** @brief Pre-clipping with horizontal inversion (default)
+ */
+#define Pclpon (0 << 11)
+
 /** @brief No window restrictions (default)
  */
 #define No_Window (0 << 9)

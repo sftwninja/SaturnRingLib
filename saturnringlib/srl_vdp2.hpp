@@ -150,7 +150,7 @@ namespace SRL
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::A1, 8);
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::B0, 8);
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::B1, 8);
-                    if (alloc == nullptr) SRL::Debug::Assert("RBG Cel Allocation failed: insufficient VRAM");
+                    if (alloc == nullptr) SRL::Debug::Assert("RBG Cell Allocation failed: insufficient VRAM");
                 }
                 else // Base cycle requirement on color type
                 {
@@ -173,7 +173,7 @@ namespace SRL
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::A1, reqCycles);
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::A0, reqCycles);
                     if (alloc == nullptr) alloc = VRAM::Allocate(info.CellByteSize, 32, VramBank::B1, reqCycles);
-                    if (alloc == nullptr) SRL::Debug::Assert("NBG Cel Allocation failed: insufficient VRAM");
+                    if (alloc == nullptr) SRL::Debug::Assert("NBG Cell Allocation failed: insufficient VRAM");
                 }
 
                 return alloc;
@@ -321,7 +321,7 @@ namespace SRL
              */
             static inline Tilemap::TilemapInfo Info = Tilemap::TilemapInfo();
 
-            /** Size of manually allocated VRAM for Cel Data
+            /** Size of manually allocated VRAM for Cell Data
              */
             inline static int CellAllocSize = -1;
 
@@ -407,12 +407,12 @@ namespace SRL
             }
 
             /** @brief Manually Sets VRAM area for Cell Data (Advanced Use Cases)
-             * @details This function manually sets an area in VRAM for a scrolls Cel Data to be loaded to. Unless the
+             * @details This function manually sets an area in VRAM for a scrolls Cell Data to be loaded to. Unless the
              * Address is obtained from VDP2::VRAM::Allocate(), the VRAM allocator will be bypassed entirely.
              * No Checks are performed for proper data alignment or cycle conflicts. For advanced use cases only.
              * @code {.cpp}
-             * //Manually Set NBG0 to store 16bpp Cel Data in an 0x8000 byte region allocated in VRAM bank A1:             * 
-             * SRL::VDP2::NBG0::SetCelAddress(SRL::VDP2::VRAM::Allocate(0x8000,32,SRL::VDP2::VramBank::A1, 3),0x8000);
+             * //Manually Set NBG0 to store 16bpp Cell Data in an 0x8000 byte region allocated in VRAM bank A1:             * 
+             * SRL::VDP2::NBG0::SetCellAddress(SRL::VDP2::VRAM::Allocate(0x8000,32,SRL::VDP2::VramBank::A1, 3),0x8000);
              * @endcode
              * @param address the VRAM address of the allocation
              * @param size the size of the allocation
@@ -420,8 +420,8 @@ namespace SRL
              */
             inline static void* SetCellAddress(void* address, int size)
             {
-                ScreenType::CelAddress = address;
-                ScreenType::CelAllocSize = size;
+                ScreenType::CellAddress = address;
+                ScreenType::CellAllocSize = size;
                 return address;
             }
 
@@ -484,8 +484,8 @@ namespace SRL
              */
             inline static  void* GetMapAddress() { return ScreenType::MapAddress; }
 
-            /** @brief Gets the starting address in VRAM of Cel data allocated to this scroll
-             *  @return Address of Cel data
+            /** @brief Gets the starting address in VRAM of Cell data allocated to this scroll
+             *  @return Address of Cell data
              *  @note Returns starting address of bitmap when displaying Bitmap Scroll
              */
             inline static  void* GetCellAddress() { return ScreenType::CellAddress; }
@@ -625,10 +625,10 @@ namespace SRL
                 slScrTransparent(VDP2::TransparentScrolls);
             }
 
-            /** @brief Compute the offset that must be added to map data When Corresponding Cel Data does not start on a VRAM bank boundary
+            /** @brief Compute the offset that must be added to map data When Corresponding Cell Data does not start on a VRAM bank boundary
             * @param tile The data configuration of the tilemap
-            * @param cellAddress Address of corresponding Cel Data in VRAM (must be a 32 byte boundary)
-            * @return The Cel Offset to add to to map data
+            * @param cellAddress Address of corresponding Cell Data in VRAM (must be a 32 byte boundary)
+            * @return The Cell Offset to add to to map data
             */
             inline static uint32_t GetCellOffset(SRL::Tilemap::TilemapInfo& tile, void* cellAddress)
             {
@@ -668,7 +668,7 @@ namespace SRL
             }
         private:
 
-            /** @brief Copies Cel data to VRAM (adapted from SGL samples).
+            /** @brief Copies Cell data to VRAM (adapted from SGL samples).
             * @param CellData Cell Data to copy.
             * @param CellAdr VRAM address to copy to.
             * @param Size Number of bytes to copy.
@@ -685,7 +685,7 @@ namespace SRL
              * @param info Tilemap data config.
              * @param mapData Map data to copy to VRAM.
              * @param mapAdr VRAM address to copy map to .
-             * @param mapoff offset added when Cel data does not start at bank boundary .
+             * @param mapoff offset added when Cell data does not start at bank boundary .
              * @param paloff Palette index in CRAM.
              */
             inline static void Map2VRAM(SRL::Tilemap::TilemapInfo& info, uint16_t* mapData, void* mapAdr, uint8_t paloff, uint32_t mapoff)

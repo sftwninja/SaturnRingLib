@@ -366,7 +366,7 @@ namespace SRL
 
         /** @brief Memory zone codes
          */
-        enum Zone
+        enum class Zone
         {
             /** @brief High (main) system RAM
              */
