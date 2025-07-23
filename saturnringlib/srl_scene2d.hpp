@@ -9,145 +9,8 @@ namespace SRL
      */
     class Scene2D
     {
-    private:
-
-        /** @brief Base address of the gouraud table
-         */
-        static const uint16_t GouraudTableBase = 0xe000;
-
-        /** @brief Struct to store effect settings
-         */
-        struct EffectStore {
-
-            /** @brief Gouraud table address
-             */
-            uint16_t Gouraud;
-
-            /** @brief Screen doors effect state
-             */
-            uint16_t ScreenDoors:1;
-
-            /** @brief Half-transparency effect state
-             */
-            uint16_t HalfTransparency:1;
-
-            /** @brief Clipping mode
-             */
-            uint16_t Clipping:2;
-
-            /** @brief Sprite flipping
-             */
-            uint16_t Flip:2;
-
-            /** @brief Sprite opacity with VDP2 layers
-            */
-            uint16_t OpacityBank:3;
-
-            /** @brief Reserved for future use
-             */
-            uint16_t Reserved:7;
-        };
-
-        /** @brief Stored effect state
-         */
-        static inline Scene2D::EffectStore Effects = { 0, 0, 0, 0, 0, 0, 0 };
-
-        /** @brief Is gouraud shading enabled?
-         * @return true if gouraud shading is enabled
-         */
-        static constexpr inline bool IsGouraudEnabled()
-        {
-            return Scene2D::Effects.Gouraud >= SRL::Scene2D::GouraudTableBase;
-        }
-
-        /** @brief Generates base shape command
-         * @param type Sprite type
-         * @param color Sprite color
-         * @return Sprite command
-         */
-        static constexpr inline SPRITE GetShapeCommand(uint16_t type, Types::HighColor color)
-        {
-            SPRITE sprite;
-            sprite.COLR = color;
-            sprite.CTRL = type | (Scene2D::IsGouraudEnabled() ? UseGouraud : 0);
-
-            sprite.PMOD = 0x0080 |
-                ((CL32KRGB & 7) << 3) |
-                (Scene2D::IsGouraudEnabled() ? CL_Gouraud : 0) |
-                (Scene2D::Effects.ScreenDoors << 8) |
-                (Scene2D::Effects.Clipping << 9) |
-                (Scene2D::Effects.HalfTransparency ? 0x3 : 0 );
-
-            sprite.GRDA = (Scene2D::IsGouraudEnabled() ? Scene2D::Effects.Gouraud : 0);
-            return sprite;
-        }
-
-        /** @brief Generates sprite attributes struct
-         * @param texture Texture identifier
-         * @param texturePalette Palette override
-         * @return Sprite attributes
-         */
-        static constexpr inline SPR_ATTR GetSpriteAttribute(const uint16_t texture, SRL::CRAM::Palette* texturePalette)
-        {
-            uint8_t colorMode = CL32KRGB;
-            uint16_t palette = No_Palet;
-            CRAM::TextureColorMode colorModeType = SRL::VDP1::Metadata[texture].ColorMode;
-            uint16_t paletteId = SRL::VDP1::Metadata[texture].PaletteId;
-
-            if (texturePalette != nullptr)
-            {
-                colorModeType = texturePalette->GetMode();
-                paletteId = texturePalette->GetId();
-            }
-
-            switch (colorModeType)
-            {
-            case SRL::CRAM::TextureColorMode::Paletted256:
-                colorMode = CL256Bnk;
-                palette = paletteId << 8| (Scene2D::Effects.OpacityBank << 11);
-                break;
-
-            case SRL::CRAM::TextureColorMode::Paletted128:
-                colorMode = CL128Bnk;
-                palette = paletteId << 7| (Scene2D::Effects.OpacityBank << 11);
-                break;
-
-            case SRL::CRAM::TextureColorMode::Paletted64:
-                colorMode = CL64Bnk;
-                palette = paletteId << 6| (Scene2D::Effects.OpacityBank << 11);
-                break;
-
-            case SRL::CRAM::TextureColorMode::Paletted16:
-                colorMode = CL16Bnk;
-                palette = paletteId << 4| (Scene2D::Effects.OpacityBank << 11);
-                break;
-
-            default:
-                break;
-            }
-
-            #pragma GCC diagnostic push
-            #pragma GCC diagnostic ignored "-Wnarrowing"
-            return SPR_ATTRIBUTE(
-                texture,
-                palette,
-                (Scene2D::IsGouraudEnabled() ? Scene2D::Effects.Gouraud : 0),
-
-                (Scene2D::Effects.Clipping << 9) |
-                (Scene2D::Effects.ScreenDoors << 8) |
-                colorMode |
-                ECdis |
-                (Scene2D::IsGouraudEnabled() ? CL_Gouraud : 0) |
-                (Scene2D::Effects.HalfTransparency ? 0x3 : 0 ),
-
-                (Scene2D::Effects.Flip << 4) |
-                FUNC_Texture |
-                _ZmCC);
-            #pragma GCC diagnostic pop
-        }
-
     public:
-
+    
         /** @brief Clipping effect mode
          */
         enum ClippingEffect : uint8_t
@@ -184,7 +47,7 @@ namespace SRL
 
         /** @brief List of all available sprite effects
          */
-        enum SpriteEffect : uint8_t
+        enum class SpriteEffect : uint8_t
         {
 
             /** @brief Gouraud shading
@@ -245,7 +108,7 @@ namespace SRL
             Clipping = 3,
 
             /** @brief Flip sprite effect
-             * @details Allows to set sprite texture read direction (making sprite flipped)
+             * @details Allows to set sprite texture read direction (making sprite flipped).
              * @code {.cpp}
              * // Disable flipping
              * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::Flip, SRL::Scene2D::FlipEffect::NoFlip);
@@ -262,7 +125,7 @@ namespace SRL
             Flip = 4,
 
              /** @brief VDP2 color calculation effect
-             * @details Set sprites Color Calculation Ratio to one of 8 stored opacities (Banks 0-7)
+             * @details Set sprites Color Calculation Ratio to one of 8 stored opacities (Banks 0-7).
              * @code {.cpp}
              * //Set sprite to use ratio stored in opacity bank 1:
              * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::OpacityBank, 1);
@@ -270,7 +133,268 @@ namespace SRL
              * @note Only applies to palette color modes
              */
             OpacityBank = 5,
+
+            /** @brief Enables textured sprite high speed shrink
+             * @details When EnableHSS is specified, lines drawn with magnification of less than 1 are drawn by sampling only even or odd pixels of the original data.
+             * @code {.cpp}
+             * // Disable effect
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::EnableHSS, false);
+             * // or
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::EnableHSS);
+             *
+             * // Enable effect
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::EnableHSS, true);
+             * @endcode
+             * @note Applies only to textured polygons
+             */
+            EnableHSS = 6,
+            
+            /** @brief Enables end code character for textured sprites
+             * @details Drawing in horizontal direction is terminated, when an end code is read twice.
+             *  Color mode | EndCode
+             * ------------|---------
+             * 16 colors (CRAM)| 0xf
+             * 16 colors (CLUT)| 0xf
+             * 64 colors (CRAM)| 0xff
+             * 128 colors (CRAM) | 0xff
+             * 256 colors (CRAM) | 0xff
+             * 16bit RGB | 0x7fff
+             * Behaviour in combination with EnableHSS
+             * HSS | ECD | Behaviour
+             * ----|-----|--------------------
+             * OFF | ON  | End code enabled, drawing in horizontal direction is disabled when second ECD is read and ECD becomes transparent
+             * OFF | OFF | End code disabled, ECD is not processed, color of the code is drawn
+             * ON & enlarge | ON | End code enabled, drawing in horizontal direction is disabled when second ECD is read and ECD becomes transparent
+             * ON & reduce | ON | End code disabled, ECD is not processed, color of the code is drawn
+             * ON | OFF | End code disabled, ECD is not processed, color of the code is drawn
+             * @code {.cpp}
+             * // Disable effect
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::EnableECD, false);
+             * // or
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::EnableECD);
+             *
+             * // Enable effect
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::EnableECD, true);
+             * @endcode
+             * @note Applies only to textured polygons
+             */
+            EnableECD = 7,
+
+            /** @brief Disables pre-clipping of textured sprite
+             * @details Drawing commands comprise of group of several lines, and perspective lines compris of a number of dots.
+             * Each dot is drawn based on drawing area specified by CPU. For lines completely outside or not fully inside drawing area,
+             * enabled pre-clipping can improve performance. If lines are fully within drawing area, disabling pre-clipping can improve performance.
+             * @image html preclip.png
+             * @code {.cpp}
+             * // Disable effect
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::DisablePreClip, false);
+             * // or
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::DisablePreClip);
+             *
+             * // Enable effect
+             * SRL::Scene2D::SetEffect(SRL::Scene2D::SpriteEffect::DisablePreClip, true);
+             * @endcode
+             * @note By default, PreClip is enabled
+             * @note Applies only to textured polygons
+             */
+            DisablePreClip = 8,
         };
+
+        /** @brief Scaled sprite zoom point
+         */
+        enum ZoomPoint : uint8_t
+        {
+            /** @brief Upper left corner
+             */
+            UpperLeft = 0x5,
+
+            /** @brief Center left side
+             */
+            CenterLeft = 0x9,
+
+            /** @brief Bottom left corner
+             */
+            BottomLeft = 0xd,
+
+            /** @brief Center top side
+             */
+            TopCenter = 0x6,
+
+            /** @brief Sprite center
+             */
+            Center = 0xa,
+
+            /** @brief Center bottom side
+             */
+            BottomCenter = 0xe,
+
+            /** @brief Upper right corner
+             */
+            UpperRight = 0x7,
+
+            /** @brief Center right side
+             */
+            CenterRight = 0xb,
+
+            /** @brief Bottom right corner
+             */
+            BottomRight = 0xf
+        };
+
+    private:
+
+        /** @brief Base address of the gouraud table
+         */
+        static const uint16_t GouraudTableBase = 0xe000;
+
+        /** @brief Struct to store effect settings
+         */
+        struct EffectStore {
+
+            /** @brief Gouraud table address
+             */
+            uint16_t Gouraud;
+
+            /** @brief Screen doors effect state
+             */
+            uint16_t ScreenDoors:1;
+
+            /** @brief Half-transparency effect state
+             */
+            uint16_t HalfTransparency:1;
+
+            /** @brief Clipping mode
+             */
+            uint16_t Clipping:2;
+
+            /** @brief Sprite flipping
+             */
+            uint16_t Flip:2;
+
+            /** @brief Sprite opacity with VDP2 layers
+            */
+            uint16_t OpacityBank:3;
+
+            /** @brief Sprite high speed shrink option
+             */
+            uint16_t HighSpeedShrink:1;
+
+            /** @brief Enable or disable textured sprite end code
+             */
+            uint16_t EndCode:1;
+
+            /** @brief Disable sprite pre clipping
+             */
+            uint16_t DisablePreClipping:1;
+
+            /** @brief Reserved for future use
+             */
+            uint16_t Reserved:4;
+        };
+
+        /** @brief Stored effect state
+         */
+        static inline Scene2D::EffectStore Effects = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        /** @brief Is gouraud shading enabled?
+         * @return true if gouraud shading is enabled
+         */
+        static constexpr inline bool IsGouraudEnabled()
+        {
+            return Scene2D::Effects.Gouraud >= SRL::Scene2D::GouraudTableBase;
+        }
+
+        /** @brief Generates base shape command
+         * @param type Sprite type
+         * @param color Sprite color
+         * @return Sprite command
+         */
+        static constexpr inline SPRITE GetShapeCommand(uint16_t type, Types::HighColor color)
+        {
+            SPRITE sprite;
+            sprite.COLR = color;
+            sprite.CTRL = type | (Scene2D::IsGouraudEnabled() ? UseGouraud : 0);
+
+            sprite.PMOD = 0x0080 |
+                ((CL32KRGB & 7) << 3) |
+                (Scene2D::IsGouraudEnabled() ? CL_Gouraud : 0) |
+                (Scene2D::Effects.ScreenDoors << 8) |
+                (Scene2D::Effects.Clipping << 9) |
+                (Scene2D::Effects.HalfTransparency ? 0x3 : 0 );
+
+            sprite.GRDA = (Scene2D::IsGouraudEnabled() ? Scene2D::Effects.Gouraud : 0);
+            return sprite;
+        }
+
+        /** @brief Generates sprite attributes struct
+         * @param texture Texture identifier
+         * @param texturePalette Palette override
+         * @return Sprite attributes
+         */
+        static constexpr inline SPR_ATTR GetSpriteAttribute(
+            const uint16_t texture,
+            SRL::CRAM::Palette* texturePalette,
+            const Scene2D::ZoomPoint zoomPoint = Scene2D::ZoomPoint::Center)
+        {
+            uint8_t colorMode = CL32KRGB;
+            uint16_t palette = No_Palet;
+            CRAM::TextureColorMode colorModeType = SRL::VDP1::Metadata[texture].ColorMode;
+            uint16_t paletteId = SRL::VDP1::Metadata[texture].PaletteId;
+
+            if (texturePalette != nullptr)
+            {
+                colorModeType = texturePalette->GetMode();
+                paletteId = texturePalette->GetId();
+            }
+
+            switch (colorModeType)
+            {
+            case SRL::CRAM::TextureColorMode::Paletted256:
+                colorMode = CL256Bnk;
+                palette = paletteId << 8| (Scene2D::Effects.OpacityBank << 11);
+                break;
+
+            case SRL::CRAM::TextureColorMode::Paletted128:
+                colorMode = CL128Bnk;
+                palette = paletteId << 7| (Scene2D::Effects.OpacityBank << 11);
+                break;
+
+            case SRL::CRAM::TextureColorMode::Paletted64:
+                colorMode = CL64Bnk;
+                palette = paletteId << 6| (Scene2D::Effects.OpacityBank << 11);
+                break;
+
+            case SRL::CRAM::TextureColorMode::Paletted16:
+                colorMode = CL16Bnk;
+                palette = paletteId << 4| (Scene2D::Effects.OpacityBank << 11);
+                break;
+
+            default:
+                break;
+            }
+
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Wnarrowing"
+            return SPR_ATTRIBUTE(
+                texture,
+                palette,
+                (Scene2D::IsGouraudEnabled() ? Scene2D::Effects.Gouraud : 0),
+
+                (Scene2D::Effects.Clipping << 9) |
+                (Scene2D::Effects.ScreenDoors << 8) |
+                colorMode |
+                (Scene2D::Effects.EndCode ? ECenb : ECdis) |
+                (Scene2D::Effects.HighSpeedShrink ? HSSon : HSSoff) |
+                (Scene2D::Effects.DisablePreClipping ? Pclpoff : Pclpon) |
+                (Scene2D::IsGouraudEnabled() ? CL_Gouraud : 0) |
+                (Scene2D::Effects.HalfTransparency ? 0x3 : 0 ),
+
+                (Scene2D::Effects.Flip << 4) |
+                FUNC_Texture |
+                (zoomPoint << 8));
+            #pragma GCC diagnostic pop
+        }
+    public:
 
         /**
          * @name Draw functions
@@ -312,6 +436,7 @@ namespace SRL
          * @param location Location of the sprite (Z coordinate is used for sorting)
          * @param angle Sprite rotation angle
          * @param scale Scale of the sprite
+         * @param zoomPoint Zoom point of the sprite
          * @return True on success
          */
         static bool DrawSprite(
@@ -319,41 +444,120 @@ namespace SRL
             SRL::CRAM::Palette* texturePalette,
             const SRL::Math::Types::Vector3D& location,
             const SRL::Math::Types::Angle& angle = SRL::Math::Types::Angle(),
-            const SRL::Math::Types::Vector2D& scale = SRL::Math::Types::Vector2D(1.0, 1.0))
+            const SRL::Math::Types::Vector2D& scale = SRL::Math::Types::Vector2D(1.0, 1.0),
+            const Scene2D::ZoomPoint zoomPoint = Scene2D::ZoomPoint::Center)
         {
-            if (scale.X != scale.Y || angle.RawValue() != 0)
+            if (angle.RawValue() != 0)
             {
-                // Due to bug in SGL we can't use slDispSpriteHV or slDispSpriteSZ
-                SRL::Math::Types::Fxp sin = Math::Trigonometry::Sin(angle);
-                SRL::Math::Types::Fxp cos = Math::Trigonometry::Cos(angle);
+                // Due to bug in SGL we can't use slDispSpriteHV or slDispSpriteSZ with angles
+                const SRL::Math::Types::Fxp sin = Math::Trigonometry::Sin(angle);
+                const SRL::Math::Types::Fxp cos = Math::Trigonometry::Cos(angle);
 
-                SRL::Math::Types::Vector2D size = SRL::Math::Types::Vector2D(
+                const SRL::Math::Types::Vector2D size = SRL::Math::Types::Vector2D(
+                    SRL::Math::Types::Fxp((int16_t)VDP1::Textures[texture].Width) * scale.X,
+                    SRL::Math::Types::Fxp((int16_t)VDP1::Textures[texture].Height) * scale.Y);
+
+                const SRL::Math::Types::Vector2D halfSize = SRL::Math::Types::Vector2D(
                     (SRL::Math::Types::Fxp((int16_t)VDP1::Textures[texture].Width) * scale.X) >> 1,
                     (SRL::Math::Types::Fxp((int16_t)VDP1::Textures[texture].Height) * scale.Y) >> 1);
 
-                SRL::Math::Types::Vector2D points[4] = {
-                    SRL::Math::Types::Vector2D(((cos * -size.X) - (sin * -size.Y)) + location.X, ((sin * -size.X) + (cos * -size.Y)) + location.Y),
-                    SRL::Math::Types::Vector2D(((cos * size.X) - (sin * -size.Y)) + location.X, ((sin * size.X) + (cos * -size.Y)) + location.Y),
-                    SRL::Math::Types::Vector2D(((cos * size.X) - (sin * size.Y)) + location.X, ((sin * size.X) + (cos * size.Y)) + location.Y),
-                    SRL::Math::Types::Vector2D(((cos * -size.X) - (sin * size.Y)) + location.X, ((sin * -size.X) + (cos * size.Y)) + location.Y)
+                // Prepare rotation matrix
+                SRL::Math::Matrix43 rotMat = SRL::Math::Matrix43::Identity();
+                rotMat.RotateZ(angle);
+
+                // Set zoom
+                SRL::Math::Types::Vector3D points[4]
+                {
+                    SRL::Math::Types::Vector3D(-halfSize.X, -halfSize.Y, 0.0),
+                    SRL::Math::Types::Vector3D(halfSize.X, -halfSize.Y, 0.0),
+                    SRL::Math::Types::Vector3D(halfSize.X, halfSize.Y, 0.0),
+                    SRL::Math::Types::Vector3D(-halfSize.X, halfSize.Y, 0.0)
+                };
+
+                SRL::Math::Types::Vector3D offsetLocation = SRL::Math::Types::Vector3D();
+
+                switch (zoomPoint)
+                {
+                    // Corners
+                    // Corners
+                    case Scene2D::ZoomPoint::UpperLeft:
+                        offsetLocation.X -= halfSize.X;
+                        offsetLocation.Y -= halfSize.Y;
+                        break;
+                
+                    case Scene2D::ZoomPoint::UpperRight:
+                        offsetLocation.X += halfSize.X;
+                        offsetLocation.Y -= halfSize.Y;
+                        break;
+
+                    case Scene2D::ZoomPoint::BottomRight:
+                        offsetLocation.X += halfSize.X;
+                        offsetLocation.Y += halfSize.Y;
+                        break;
+
+                    case Scene2D::ZoomPoint::BottomLeft:
+                        offsetLocation.X -= halfSize.X;
+                        offsetLocation.Y += halfSize.Y;
+                        break;
+
+                    // Center sides
+                    case Scene2D::ZoomPoint::CenterLeft:
+                        offsetLocation.X -= halfSize.X;
+                        break;
+                
+                    case Scene2D::ZoomPoint::TopCenter:
+                        offsetLocation.Y -= halfSize.Y;
+                        break;
+
+                    case Scene2D::ZoomPoint::CenterRight:
+                        offsetLocation.X += halfSize.X;
+                        break;
+
+                    case Scene2D::ZoomPoint::BottomCenter:
+                        offsetLocation.Y += halfSize.Y;
+                        break;
+
+                    // Sprite center
+                    default:
+                        break;
+                }
+
+                const SRL::Math::Types::Vector2D realPoints[4] = {
+                    SRL::Math::Types::Vector2D(location + (rotMat.TransformPoint(points[0] + offsetLocation))),
+                    SRL::Math::Types::Vector2D(location + (rotMat.TransformPoint(points[1] + offsetLocation))),
+                    SRL::Math::Types::Vector2D(location + (rotMat.TransformPoint(points[2] + offsetLocation))),
+                    SRL::Math::Types::Vector2D(location + (rotMat.TransformPoint(points[3] + offsetLocation)))
                 };
 
                 // Calculate new 4 corners
-                return Scene2D::DrawSprite(texture, texturePalette, points, location.Z);
+                return Scene2D::DrawSprite(texture, texturePalette, realPoints, location.Z);
             }
-            else
+            else if (scale.X == scale.Y)
             {
                 // Sprite attributes and command points
-                SPR_ATTR attr = Scene2D::GetSpriteAttribute(texture, texturePalette);
+                SPR_ATTR attr = Scene2D::GetSpriteAttribute(texture, texturePalette, zoomPoint);
 
                 FIXED sgl_pos[5];
                 sgl_pos[X] = location.X.RawValue();
                 sgl_pos[Y] = location.Y.RawValue();
                 sgl_pos[Z] = location.Z.RawValue();
-                sgl_pos[Sh] = scale.X.RawValue();
-                sgl_pos[Sv] = scale.Y.RawValue();
+                sgl_pos[S] = scale.X.RawValue();
 
-                return slDispSprite(sgl_pos, &attr, angle.RawValue()) != 0;
+                return slDispSprite(sgl_pos, &attr, 0) != 0;
+            }
+            else
+            {
+                // Sprite attributes and command points
+                SPR_ATTR attr = Scene2D::GetSpriteAttribute(texture, texturePalette, zoomPoint);
+
+                FIXED sgl_pos[5];
+                sgl_pos[X] = location.X.RawValue();
+                sgl_pos[Y] = location.Y.RawValue();
+                sgl_pos[Z] = location.Z.RawValue();
+                sgl_pos[S] = scale.X.RawValue();
+                sgl_pos[XYZS] = scale.Y.RawValue();
+
+                return slDispSpriteHV(sgl_pos, &attr, 0) != 0;
             }
         }
 
@@ -362,26 +566,33 @@ namespace SRL
          * @param location Location of the sprite (Z coordinate is used for sorting)
          * @param angle Sprite rotation angle
          * @param scale Scale of the sprite
+         * @param zoomPoint Zoom point of the sprite
          * @return True on success
          */
         static bool DrawSprite(
             const uint16_t texture,
             const SRL::Math::Types::Vector3D& location,
             const SRL::Math::Types::Angle& angle = SRL::Math::Types::Angle::Zero(),
-            const SRL::Math::Types::Vector2D& scale = SRL::Math::Types::Vector2D(1.0, 1.0))
+            const SRL::Math::Types::Vector2D& scale = SRL::Math::Types::Vector2D(1.0, 1.0),
+            const Scene2D::ZoomPoint zoomPoint = Scene2D::ZoomPoint::Center)
         {
-            return Scene2D::DrawSprite(texture, nullptr, location, angle, scale);
+            return Scene2D::DrawSprite(texture, nullptr, location, angle, scale, zoomPoint);
         }
 
         /** @brief Draw simple sprite
          * @param texture Sprite texture
          * @param location Location of the sprite (Z coordinate is used for sorting)
          * @param scale Scale of the sprite
+         * @param zoomPoint Zoom point of the sprite
          * @return True on success
          */
-        static bool DrawSprite(const uint16_t texture, const SRL::Math::Types::Vector3D& location, const SRL::Math::Types::Vector2D& scale)
+        static bool DrawSprite(
+            const uint16_t texture,
+            const SRL::Math::Types::Vector3D& location,
+            const SRL::Math::Types::Vector2D& scale,
+            const Scene2D::ZoomPoint zoomPoint = Scene2D::ZoomPoint::Center)
         {
-            return Scene2D::DrawSprite(texture, nullptr, location, SRL::Math::Types::Angle(), scale);
+            return Scene2D::DrawSprite(texture, nullptr, location, SRL::Math::Types::Angle(), scale, zoomPoint);
         }
 
         /** @brief Draw simple sprite
@@ -389,15 +600,17 @@ namespace SRL
          * @param texturePalette Sprite texture color palette override
          * @param location Location of the sprite (Z coordinate is used for sorting)
          * @param scale Scale of the sprite
+         * @param zoomPoint Zoom point of the sprite
          * @return True on success
          */
         static bool DrawSprite(
             const uint16_t texture,
             SRL::CRAM::Palette* texturePalette,
             const SRL::Math::Types::Vector3D& location,
-            const SRL::Math::Types::Vector2D& scale)
+            const SRL::Math::Types::Vector2D& scale,
+            const Scene2D::ZoomPoint zoomPoint = Scene2D::ZoomPoint::Center)
         {
-            return Scene2D::DrawSprite(texture, texturePalette, location, SRL::Math::Types::Angle(), scale);
+            return Scene2D::DrawSprite(texture, texturePalette, location, SRL::Math::Types::Angle(), scale, zoomPoint);
         }
 
         /** @brief Draws a Line
@@ -491,6 +704,18 @@ namespace SRL
                 Scene2D::Effects.OpacityBank = data < 0 ? 0 : data & 0x7;
                 break;
 
+            case SpriteEffect::EnableHSS:
+                Scene2D::Effects.HighSpeedShrink = data == 1;
+                break;
+
+            case SpriteEffect::EnableECD:
+                Scene2D::Effects.EndCode = data == 1;
+                break;
+
+            case SpriteEffect::DisablePreClip:
+                Scene2D::Effects.DisablePreClipping = data == 1;
+                break;
+
             default:
                 break;
             }
@@ -521,6 +746,15 @@ namespace SRL
 
             case SpriteEffect::OpacityBank:
                 return Scene2D::Effects.OpacityBank;
+
+            case SpriteEffect::EnableHSS:
+                return Scene2D::Effects.HighSpeedShrink;
+
+            case SpriteEffect::EnableECD:
+                return Scene2D::Effects.EndCode;
+
+            case SpriteEffect::DisablePreClip:
+                return Scene2D::Effects.DisablePreClipping;
 
             default:
                 return -1;

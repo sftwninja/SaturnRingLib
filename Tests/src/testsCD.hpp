@@ -299,7 +299,10 @@ extern "C"
     // Test: Verify seeking to the beginning of a file.
     MU_TEST(cd_file_seek_test_beginning)
     {
+        const char *dirname = "ROOT";
         const char *filename = "TESTFILE.UTS";
+        
+        SRL::Cd::ChangeDir(dirname);
         Cd::File file(filename);
 
         // Verify the file exists and can be opened
@@ -328,7 +331,10 @@ extern "C"
     // Test seeking to a specific offset
     MU_TEST(cd_file_seek_test_offset)
     {
+        const char *dirname = "ROOT";
         const char *filename = "TESTFILE.UTS";
+        
+        SRL::Cd::ChangeDir(dirname);
         Cd::File file(filename);
 
         bool exists = file.Exists();
@@ -383,7 +389,10 @@ extern "C"
     // Test seeking to an invalid offset (negative)
     MU_TEST(cd_file_seek_test_invalid_negative)
     {
+        const char *dirname = "ROOT";
         const char *filename = "TESTFILE.UTS";
+        
+        SRL::Cd::ChangeDir(dirname);
         Cd::File file(filename);
 
         // Verify the file exists and can be opened
@@ -407,7 +416,10 @@ extern "C"
     // Test: Verify seeking to an invalid offset (beyond file size).
     MU_TEST(cd_file_seek_test_invalid_beyond)
     {
+        const char *dirname = "ROOT";
         const char *filename = "TESTFILE.UTS";
+        
+        SRL::Cd::ChangeDir(dirname);
         Cd::File file(filename);
 
         // Verify the file exists and can be opened
