@@ -190,7 +190,7 @@ public:
             delete this->circles[circle];
         }
 
-        delete this->circles;
+        delete[] this->circles;
     }
 
     /** @brief Push volume into the meter history

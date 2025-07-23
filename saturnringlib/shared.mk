@@ -269,9 +269,6 @@ $(strip $(shell if [ -f "$(MUSIC_DIR)/tracklist" ]; then \
 fi))
 endef
 
-# Define default sox filter commands
-export SRL_SOX_FILTERS_normalize = highpass 80 bass -4 120 compand 0.3,1 -70,-70,-60,-40,-20,-15 -3 -90 0.2 norm -3
-
 %.raw: %
 	@filter_option="$(call get_filter_option,$<)"; \
 	if [ -n "$$filter_option" ]; then \
