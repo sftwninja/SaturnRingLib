@@ -3,6 +3,15 @@
 /** @brief Application initialization
  */
 extern "C" {
+
+    /** @brief Start of a .bss section
+     */
+    extern uint32_t _bstart;
+
+    /** @brief End of a .bss section
+     */
+    extern uint32_t _bend;
+
     /** @brief Start address of constructor array
      */
     extern void(*__ctors)();
@@ -24,7 +33,13 @@ extern "C" {
      */
     void PreLoader()
     {
-        // Initialize memory management
+        // Zero stuff inside .bss section
+        for (uint32_t* bssBlock = &_bstart; bssBlock < &_bend; bssBlock++)
+        {
+            *bssBlock = 0;
+        }
+
+        // Initialize memory management (malloc stuff)
         SRL::Memory::Initialize();
 
         // Call all constructors

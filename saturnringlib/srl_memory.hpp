@@ -774,7 +774,7 @@ namespace SRL
             }
         };
 
-        /** @brief Det memory to some value
+        /** @brief Set memory to some value by 1 byte
          * @param destination Destination to set
          * @param value Value to set
          * @param length Data length to set

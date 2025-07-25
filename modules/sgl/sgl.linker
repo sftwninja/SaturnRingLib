@@ -57,6 +57,7 @@ SECTIONS {
 	{
 		__bstart = . ;
 		*(.bss*)
+        . = ALIGN(0x10);
 		__bend = . ;
 		_end = .;
 	}
