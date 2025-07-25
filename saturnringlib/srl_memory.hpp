@@ -788,6 +788,7 @@ namespace SRL
         }
 
         /** @brief Initialize memory
+         * @warning SGL is not yet initialized at this point
          */
         inline static void Initialize()
         {

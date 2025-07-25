@@ -13,6 +13,15 @@ SGLIDIR = $(SGLDIR)/INC
 
 LIBS = $(SGLLDIR)/LIBCPK.A $(SGLLDIR)/SEGA_SYS.A $(SGLLDIR)/LIBCD.A $(SGLLDIR)/LIBSGL.A
 
+# Allow custom IPBIN
+ifneq ($(strip $(SRL_IPBIN)),)
+	IPFILE = $(SRL_IPBIN);
+endif
+
+# include preloader first
+PRELOADERSOURCES = $(SGLDIR)/SRC/preloader.cxx
+OBJECTS = $(PRELOADERSOURCES:.cxx=.o)
+
 # include extra modules
 MODULE_EXTRA_INC =
 
