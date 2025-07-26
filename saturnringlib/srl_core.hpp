@@ -44,7 +44,7 @@ namespace SRL
             SRL::Input::Gun::VblankRefresh();
             Core::OnVblank.Invoke();
         }
-
+        
     public:
 
         /** @brief Initialize basic environment
@@ -52,8 +52,6 @@ namespace SRL
          */
         inline static void Initialize(const Types::HighColor& backColor)
         {
-            SRL::Memory::Initialize();
-
 #if defined(SRL_FRAMERATE) && (SRL_FRAMERATE > 0)
             slInitSystem((uint16_t)SRL::TV::Resolution, SRL::VDP1::Textures->SglPtr(), SRL_FRAMERATE);
 #elif defined(SRL_FRAMERATE) && (SRL_FRAMERATE == 0)
