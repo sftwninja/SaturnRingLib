@@ -20,7 +20,7 @@ SGL_MAX_EVENTS = 1             	# Number of events that can be used
 SGL_MAX_WORKS = 1             	# Number of works that can be used 
 
 # Disk name
-CD_NAME = Sound_CDDA
+CD_NAME = Sound_CDDA_simple
 
 # Directory build will be placed into
 BUILD_DROP = ./BuildDrop
