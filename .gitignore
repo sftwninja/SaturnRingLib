@@ -20,6 +20,7 @@
 /[Mm]odules/[Ss][Gg][Ll]/[Ii][Pp]/*.o
 /[Mm]odules/[Tt][Ll][Ss][Ff]/**
 !/[Mm]odules/[Tt][Ll][Ss][Ff]/.git
+/[Tt]ools/[Bb]in/**
 
 # just to get rid of the old txt
 !/[Ee]mulators/[Mm]ednafen/put_mednafen_here.txt

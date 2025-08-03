@@ -252,9 +252,11 @@ endif
 
 # Create CUE sheet
 create_bin_cue: create_iso
-	dd if=$(BUILD_ISO) of=$(BUILD_BIN) bs=2048
+	# Convert ISO to MODE1/2352 raw format
+	@echo "Converting ISO to MODE1/2352 raw format..."
+	$(SDK_ROOT)/../tools/scripts/iso2raw.sh $(BUILD_ISO) $(BUILD_BIN); \
 	echo 'FILE "$(CD_NAME).bin" BINARY' > $(BUILD_CUE)
-	echo '  TRACK 01 MODE1/2048' >> $(BUILD_CUE)
+	echo '  TRACK 01 MODE1/2352' >> $(BUILD_CUE)
 	echo '    INDEX 01 00:00:00' >> $(BUILD_CUE)
 
 # Check if tracklist file exists and determine audio file order
@@ -311,17 +313,12 @@ endef
 		cat "$@.unpadded" padding.tmp > "$@"; \
 		rm -f padding.tmp "$@.unpadded"; \
 	fi; \
-	# prepad the track with a 75 frame silent buffer to aid in needle alignment \
-	mv $@ "$@.unpadded"; \
-	dd if=/dev/zero bs=1 count=$$((2352 * 75)) of=padding.tmp status=none; \
-	cat padding.tmp $@.unpadded > "$@"; \
-	rm -f padding.tmp $@.unpadded; \
 	echo "Converted $< to $@ ($$size -> $$target_size bytes, $$target_sectors sectors)";
 
 add_audio_to_bin_cue: $(AUDIO_FILES_RAW)
 	track=2; \
 	total_size=$$(stat -c%s "$(BUILD_BIN)"); \
-  sectors=$$((total_size / 2048)); \
+  sectors=$$((total_size / 2352)); \
 	echo "Starting with $$total_size bytes ($$sectors sectors)"; \
 	for i in $^; do \
 		echo "Track $$track: starts at sector $$sectors"; \
@@ -361,6 +358,21 @@ add_audio_to_bin_cue: $(AUDIO_FILES_RAW)
 	rm -f $(AUDIO_FILES_RAW)
 
 build_bin_cue: create_bin_cue add_audio_to_bin_cue
+	@echo "Regenerating EDC/ECC checksums..."
+	@if [ -n "$(OS)" ]; then \
+		$(SDK_ROOT)/../tools/bin/win/edcre/edcre.exe $(BUILD_BIN); \
+	else \
+		host_platform=$$(uname -s); \
+		if [ "$$host_platform" = "Linux" ]; then \
+			$(SDK_ROOT)/../tools/bin/lin/edcre/edcre $(BUILD_BIN); \
+		elif [ "$$host_platform" = "Darwin" ]; then \
+			$(SDK_ROOT)/../tools/bin/mac/edcre/edcre $(BUILD_BIN); \
+		else \
+			echo "Unsupported platform: $$host_platform"; \
+			exit 1; \
+		fi; \
+	fi
+	@echo "EDC/ECC regeneration complete."
 
 # CLONE_CD_PATH = $(BUILD_DROP)/CloneCdFiles
 # CLONE_CD_CCD = $(CLONE_CD_PATH)/$(CD_NAME).ccd
