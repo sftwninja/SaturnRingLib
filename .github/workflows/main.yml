@@ -32,8 +32,6 @@ jobs:
           submodules: recursive
       - name: Setup EDCRE tool
         run: |
-          chmod +x $GITHUB_WORKSPACE/tools/scripts/getedcre.sh
-          chmod +x $GITHUB_WORKSPACE/tools/scripts/iso2raw.sh
           cd $GITHUB_WORKSPACE
           ./tools/scripts/getedcre.sh v1.1.0
       - name: Build
