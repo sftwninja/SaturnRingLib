@@ -91,11 +91,23 @@ function DownloadFile($url, $targetFile)
     }
 }
 
+if ($args.Length -ne 1)
+{
+    write-host "Usage: $($MyInvocation.MyCommand.Name) <version>"
+    write-host "Example: $($MyInvocation.MyCommand.Name) v1.1.0"
+    Write-Host -NoNewLine 'Press any key to continue...';
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host ""
+    Break;
+}
+
+$version = $args[0]
+
 # Detect architecture
 if ([System.Environment]::Is64BitOperatingSystem) {
-    $file = "edcre-v1.1.0-windows-x86_64-static.zip"
+    $file = "edcre-$($version)-windows-x86_64-static.zip"
 } else {
-    $file = "edcre-v1.1.0-windows-i686-static.zip"
+    $file = "edcre-$($version)-windows-i686-static.zip"
 }
 
 $folderPath = "./tools/bin/win/edcre"
@@ -131,7 +143,7 @@ else {
 
 Write-Progress "Installing EDCRE" -Id 3 -status "Step 1/3: Downloading EDCRE..." -PercentComplete 0
 
-DownloadFile "https://github.com/alex-free/edcre/releases/download/v1.1.0/$($file)" "$($folderPath)/$($file)"
+DownloadFile "https://github.com/alex-free/edcre/releases/download/$($version)/$($file)" "$($folderPath)/$($file)"
 
 if ([System.IO.File]::Exists("$($folderPath)/$($file)")) {
     Write-Progress "Installing EDCRE" -Id 3 -status "Step 2/3: Extracting EDCRE..." -PercentComplete 33
