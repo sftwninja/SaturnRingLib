@@ -252,6 +252,34 @@ endif
 
 # Create CUE sheet
 create_bin_cue: create_iso
+	# Check if iso2raw binary exists
+	@if [ -n "$(OS)" ]; then \
+		iso2raw_path="$(SDK_ROOT)/../tools/bin/win/iso2raw/iso2raw.exe"; \
+		platform_name="Windows"; \
+	else \
+		host_platform=$$(uname -s); \
+		if [ "$$host_platform" = "Linux" ]; then \
+			iso2raw_path="$(SDK_ROOT)/../tools/bin/lin/iso2raw/iso2raw"; \
+			platform_name="Linux"; \
+		elif [ "$$host_platform" = "Darwin" ]; then \
+			iso2raw_path="$(SDK_ROOT)/../tools/bin/mac/iso2raw/iso2raw"; \
+			platform_name="macOS"; \
+		else \
+			echo "Unsupported platform: $$host_platform"; \
+			exit 1; \
+		fi; \
+	fi; \
+	if [ ! -f "$$iso2raw_path" ]; then \
+		echo "ERROR: iso2raw not found at $$iso2raw_path"; \
+		echo "Please run setup_compiler.bat to install the required tools."; \
+		echo "Press any key to continue..."; \
+		if [ -n "$(OS)" ]; then \
+			read -n 1; \
+		else \
+			read -r dummy; \
+		fi; \
+		exit 1; \
+	fi; \
 	# Convert ISO to MODE1/2352 raw format with proper EDC/ECC
 	@echo "Converting ISO to MODE1/2352 raw format..."
 	@if [ -n "$(OS)" ]; then \
