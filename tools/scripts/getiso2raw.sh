@@ -4,7 +4,7 @@ version=$1
 
 if [ -z "$version" ]; then
     echo "Usage: $0 <version>"
-    echo "Example: $0 v1.1.0"
+    echo "Example: $0 v0.2.2"
     exit 1
 fi
 
@@ -14,31 +14,29 @@ ARCH=$(uname -m)
 
 # Set the appropriate file and platform directory based on OS and architecture
 if [ "$OS" = "Darwin" ]; then
-    # macOS - only x86_64 available (ignoring PowerPC)
-    file="edcre-${version}-mac-os-x86_64.zip"
+    if [ "$ARCH" = "arm64" ]; then
+        file="iso2raw-macos-arm64.zip"
+    else
+        file="iso2raw-macos-amd64.zip"
+    fi
     platform="mac"
 elif [ "$OS" = "Linux" ]; then
-    if [ "$ARCH" = "x86_64" ]; then
-        file="edcre-${version}-linux-x86_64-static.zip"
-    else
-        # Fallback to i386 for any other architecture
-        file="edcre-${version}-linux-i386-static.zip"
-    fi
+    file="iso2raw-linux-amd64.zip"
     platform="lin"
 else
     echo "Unsupported operating system: $OS"
     exit 1
 fi
 
-toolDir=./tools/bin/$platform/edcre
-url="https://github.com/alex-free/edcre/releases/download/${version}/$file"
+toolDir=./tools/bin/$platform/iso2raw
+url="https://github.com/sftwninja/iso2raw/releases/download/${version}/$file"
 target="$toolDir/$file"
 
 if [ ! -d "$toolDir" ]; then
   mkdir -p $toolDir
 else
   if [ "$(ls -A $toolDir)" ]; then
-    echo "EDCRE directory is not empty! Proceeding will clear all of its contents."
+    echo "iso2raw directory is not empty! Proceeding will clear all of its contents."
     read -r -p "Are you sure? [y/N] " response
 
     case "$response" in
@@ -77,6 +75,14 @@ fi
 mv temp_extract/*/* . 2>/dev/null || mv temp_extract/* .
 rmdir temp_extract/* 2>/dev/null
 rmdir temp_extract
+
+# Rename the binary to just 'iso2raw' (remove any version suffix)
+for f in iso2raw-*; do
+    if [ -f "$f" ]; then
+        mv "$f" iso2raw
+        break
+    fi
+done
 
 printf "\nCleaning up...\n";
 rm -f $file
