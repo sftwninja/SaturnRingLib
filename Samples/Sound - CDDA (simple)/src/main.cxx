@@ -58,7 +58,7 @@ int main()
             SRL::Sound::Cdda::StopPause();
         }
         
-        SRL::Debug::Print(1,8, "Playing Track %i  ", currentTrack);
+        SRL::Debug::Print(1,8, "Playing Track %d  ", currentTrack);
         
         // Refresh screen
         SRL::Core::Synchronize();
