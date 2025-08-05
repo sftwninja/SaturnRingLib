@@ -94,7 +94,7 @@ function DownloadFile($url, $targetFile)
 if ($args.Length -ne 1)
 {
     write-host "Usage: $($MyInvocation.MyCommand.Name) <version>"
-    write-host "Example: $($MyInvocation.MyCommand.Name) v1.1.0"
+    write-host "Example: $($MyInvocation.MyCommand.Name) v0.2.2"
     Write-Host -NoNewLine 'Press any key to continue...';
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
     Write-Host ""
@@ -103,14 +103,10 @@ if ($args.Length -ne 1)
 
 $version = $args[0]
 
-# Detect architecture
-if ([System.Environment]::Is64BitOperatingSystem) {
-    $file = "edcre-$($version)-windows-x86_64-static.zip"
-} else {
-    $file = "edcre-$($version)-windows-i686-static.zip"
-}
+# Use Windows amd64 build
+$file = "iso2raw-windows-amd64.zip"
 
-$folderPath = "./tools/bin/win/edcre"
+$folderPath = "./tools/bin/win/iso2raw"
 
 # Ensure parent directories exist
 $parentPath = Split-Path -Parent $folderPath
@@ -126,12 +122,12 @@ else {
 
     if ($directoryInfo.count -ne 0)
     {
-        write-host "EDCRE directory is not empty! Proceeding will clear all of its contents."
+        write-host "iso2raw directory is not empty! Proceeding will clear all of its contents."
         $confirmation = Read-Host "Are you Sure You Want To Proceed (y/n)"
 
         if ($confirmation -eq 'y') 
         {
-            write-host "Clearing EDCRE directory"
+            write-host "Clearing iso2raw directory"
             Remove-Item "$($folderPath)/*" -Recurse -Force
         }
         else
@@ -141,18 +137,18 @@ else {
     }
 }
 
-Write-Progress "Installing EDCRE" -Id 3 -status "Step 1/3: Downloading EDCRE..." -PercentComplete 0
+Write-Progress "Installing iso2raw" -Id 3 -status "Step 1/3: Downloading iso2raw..." -PercentComplete 0
 
-DownloadFile "https://github.com/alex-free/edcre/releases/download/$($version)/$($file)" "$($folderPath)/$($file)"
+DownloadFile "https://github.com/sftwninja/iso2raw/releases/download/$($version)/$($file)" "$($folderPath)/$($file)"
 
 if ([System.IO.File]::Exists("$($folderPath)/$($file)")) {
-    Write-Progress "Installing EDCRE" -Id 3 -status "Step 2/3: Extracting EDCRE..." -PercentComplete 33
+    Write-Progress "Installing iso2raw" -Id 3 -status "Step 2/3: Extracting iso2raw..." -PercentComplete 33
     
     # Extract to temp directory first
     $tempPath = "$($folderPath)/temp_extract"
     Expand-Archive "$($folderPath)/$($file)" -DestinationPath $tempPath
     
-    # Move contents from subdirectory to edcre directory
+    # Move contents from subdirectory to iso2raw directory
     $subdir = Get-ChildItem -Path $tempPath -Directory | Select-Object -First 1
     if ($subdir) {
         Get-ChildItem -Path $subdir.FullName -Force | Move-Item -Destination $folderPath -Force
@@ -160,18 +156,24 @@ if ([System.IO.File]::Exists("$($folderPath)/$($file)")) {
         Get-ChildItem -Path $tempPath -Force | Move-Item -Destination $folderPath -Force
     }
     
+    # Rename the binary to 'iso2raw.exe' (remove any version suffix)
+    $oldBinary = Get-ChildItem -Path $folderPath -Name "iso2raw-*.exe" | Select-Object -First 1
+    if ($oldBinary) {
+        Rename-Item -Path "$folderPath/$oldBinary" -NewName "iso2raw.exe"
+    }
+    
     # Clean up temp directory
     Remove-Item -Path $tempPath -Recurse -Force
     
-    Write-Progress "Installing EDCRE" -Id 3 -status "Step 3/3: Cleaning up..." -PercentComplete 66
+    Write-Progress "Installing iso2raw" -Id 3 -status "Step 3/3: Cleaning up..." -PercentComplete 66
     Remove-Item "$($folderPath)/$($file)" -Force
     
-    Write-Progress "Installing EDCRE" -Id 3 -status "Installation successful!" -Completed
-    Write-Host "EDCRE installation successful!";
+    Write-Progress "Installing iso2raw" -Id 3 -status "Installation successful!" -Completed
+    Write-Host "iso2raw installation successful!";
 }
 else {
-    Write-Progress "Installing EDCRE" -Id 3 -status "Installation failed!" -Completed
-    Write-Host "EDCRE installation failed!";
+    Write-Progress "Installing iso2raw" -Id 3 -status "Installation failed!" -Completed
+    Write-Host "iso2raw installation failed!";
 }
 
 Write-Host -NoNewLine 'Press any key to continue...';
