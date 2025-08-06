@@ -299,18 +299,8 @@ create_bin_cue: create_iso
 	echo '  TRACK 01 MODE1/2352' >> $(BUILD_CUE)
 	echo '    INDEX 01 00:00:00' >> $(BUILD_CUE)
 
-# Check if tracklist file exists and determine audio file order
-ifneq (,$(wildcard $(MUSIC_DIR)/tracklist))
-    # Read files from tracklist, prepend MUSIC_DIR to each line, filter out empty lines and comments
-    TRACKLIST_LINES := $(shell sed 's/^\s*//;s/\s*$$//;/^$$/d;/^#/d' $(MUSIC_DIR)/tracklist)
-    AUDIO_FILES := $(foreach line,$(TRACKLIST_LINES),$(word 1,$(subst :, ,$(line))))
-    AUDIO_FILES := $(addprefix $(MUSIC_DIR)/,$(AUDIO_FILES))
-else
-    # Fallback to original behavior - find all supported audio files
-    AUDIO_FILES = $(patsubst ./%,%,$(shell find $(MUSIC_DIR) \( -name '*.mp3' -o -name '*.wav' -o -name '*.ogg' -o -name '*.flac' -o -name '*.aac' -o -name '*.m4a' -o -name '*.wma' \)))
-endif
-
-AUDIO_FILES_RAW = $(patsubst %,%.raw,$(AUDIO_FILES))
+AUDIO_FILES = 
+AUDIO_FILES_RAW =
 
 # Function to get the filter option for a given audio file
 define get_filter_option
@@ -355,12 +345,105 @@ endef
 	fi; \
 	echo "Converted $< to $@ ($$size -> $$target_size bytes, $$target_sectors sectors)";
 
-add_audio_to_bin_cue: $(AUDIO_FILES_RAW)
+add_audio_to_bin_cue: create_bin_cue
 	track=2; \
 	total_size=$$(stat -c%s "$(BUILD_BIN)"); \
   sectors=$$((total_size / 2352)); \
 	echo "Starting with $$total_size bytes ($$sectors sectors)"; \
-	for i in $^; do \
+	# Find audio files and convert them to raw \
+	if [ -f "$(MUSIC_DIR)/tracklist" ]; then \
+		# Parse tracklist and handle files with spaces \
+		# Use a temp file to avoid pipeline subshell issues \
+		# Ensure file ends with newline, then filter \
+		( cat "$(MUSIC_DIR)/tracklist"; echo ) | sed 's/^\s*//;s/\s*$$//;/^$$/d;/^#/d' > .tracklist_temp; \
+		while IFS= read -r line; do \
+			# Extract filename part before colon (if any) \
+			if echo "$$line" | grep -q ':'; then \
+				audiofile=$${line%%:*}; \
+			else \
+				audiofile=$$line; \
+			fi; \
+			# Prepend music directory \
+			audiofile="$(MUSIC_DIR)/$$audiofile"; \
+			rawfile="$$audiofile.raw"; \
+			if [ -f "$$audiofile" ]; then \
+				if [ ! -f "$$rawfile" ]; then \
+					echo "Converting $$audiofile to $$rawfile"; \
+					# Get filter option for this file \
+					filter_option=""; \
+					if echo "$$line" | grep -q ':'; then \
+						filter_option=$${line#*:}; \
+					fi; \
+					# Apply sox conversion with or without filters \
+					if [ -n "$$filter_option" ]; then \
+						filter_var="SRL_SOX_FILTERS_$$filter_option"; \
+						filter_cmd=$$(eval echo \$$$$filter_var); \
+						if [ -n "$$filter_cmd" ]; then \
+							sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile" $$filter_cmd; \
+						else \
+							echo "Warning: No SOX_FILTERS_$$filter_option defined, using no filters"; \
+							sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
+						fi; \
+					else \
+						sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
+					fi; \
+					# Check to ensure the raw file is sector aligned \
+					size=$$(stat -c%s "$$rawfile"); \
+					target_sectors=$$((size / 2352)); \
+					if [ $$((size % 2352)) -ne 0 ]; then \
+						target_sectors=$$((target_sectors + 1)); \
+					fi; \
+					target_size=$$((target_sectors * 2352)); \
+					if [ $$size -lt $$target_size ]; then \
+						mv "$$rawfile" "$$rawfile.unpadded"; \
+						dd if=/dev/zero bs=1 count=$$((target_size - size)) of=padding.tmp status=none; \
+						cat "$$rawfile.unpadded" padding.tmp > "$$rawfile"; \
+						rm -f padding.tmp "$$rawfile.unpadded"; \
+					fi; \
+					echo "Converted $$audiofile to $$rawfile ($$size -> $$target_size bytes, $$target_sectors sectors)"; \
+				fi; \
+				echo "$$rawfile" >> .audio_files_temp; \
+			else \
+				echo "Warning: Audio file not found: $$audiofile"; \
+			fi; \
+		done < .tracklist_temp; \
+		rm -f .tracklist_temp; \
+	else \
+		# Auto-discover audio files and convert to raw \
+		# Use xargs to handle spaces in filenames properly \
+		find $(MUSIC_DIR) \( -name '*.mp3' -o -name '*.wav' -o -name '*.ogg' -o -name '*.flac' -o -name '*.aac' -o -name '*.m4a' -o -name '*.wma' \) -print0 | \
+		xargs -0 -I {} sh -c ' \
+		audiofile="{}"; \
+		rawfile="$$audiofile.raw"; \
+		if [ ! -f "$$rawfile" ]; then \
+			echo "Converting $$audiofile to $$rawfile"; \
+			sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
+			size=$$(stat -c%s "$$rawfile"); \
+			target_sectors=$$((size / 2352)); \
+			if [ $$((size % 2352)) -ne 0 ]; then \
+				target_sectors=$$((target_sectors + 1)); \
+			fi; \
+			target_size=$$((target_sectors * 2352)); \
+			if [ $$size -lt $$target_size ]; then \
+				mv "$$rawfile" "$$rawfile.unpadded"; \
+				dd if=/dev/zero bs=1 count=$$((target_size - size)) of=padding.tmp status=none; \
+				cat "$$rawfile.unpadded" padding.tmp > "$$rawfile"; \
+				rm -f padding.tmp "$$rawfile.unpadded"; \
+			fi; \
+			echo "Converted $$audiofile to $$rawfile ($$size -> $$target_size bytes, $$target_sectors sectors)"; \
+		fi; \
+		echo "$$rawfile" >> .audio_files_temp; \
+		'; \
+	fi; \
+	if [ ! -f .audio_files_temp ]; then \
+		echo "No audio files found"; \
+		touch .audio_files_temp; \
+	fi; \
+	while IFS= read -r i; do \
+		[ -z "$$i" ] && continue; \
+		# Remove quotes if present \
+		i=$${i#\"}; i=$${i%\"}; \
+		[ ! -f "$$i" ] && continue; \
 		echo "Track $$track: starts at sector $$sectors"; \
 		echo '  TRACK' $$(printf "%02d" $$track) 'AUDIO' >> $(BUILD_CUE); \
 		# 150 frames are required to gap the audio track when directly following data \
@@ -394,10 +477,12 @@ add_audio_to_bin_cue: $(AUDIO_FILES_RAW)
 		echo "  New total: $$total_size bytes ($$((total_size / 2352)) sectors)"; \
 		track=$$((track + 1)); \
     sectors=$$((sectors + $$sectors_in_file)); \
-	done
-	rm -f $(AUDIO_FILES_RAW)
+	done < .audio_files_temp; \
+	rm -f .audio_files_temp
+	# Clean up raw files \
+	find $(MUSIC_DIR) -name '*.raw' -delete
 
-build_bin_cue: create_bin_cue add_audio_to_bin_cue
+build_bin_cue: add_audio_to_bin_cue
 
 # CLONE_CD_PATH = $(BUILD_DROP)/CloneCdFiles
 # CLONE_CD_CCD = $(CLONE_CD_PATH)/$(CD_NAME).ccd
