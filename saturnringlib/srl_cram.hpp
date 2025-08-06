@@ -241,7 +241,7 @@ namespace SRL
                     break;
                 
                 case CRAM::TextureColorMode::Paletted64:
-                    for (int32_t id = 0; id < 32 && freeBank < 0; (((uint8_t*)CRAM::AllocationMask)[id >> 1] & (id % 2 == 0 ? 0x0f : 0xf0) == 0) ? freeBank = id : id++);
+                    for (int32_t id = 0; id < 32 && freeBank < 0; ((((uint8_t*)CRAM::AllocationMask)[id >> 1] & (id % 2 == 0 ? 0x0f : 0xf0)) == 0) ? freeBank = id : id++);
                     break;
                 
                 case CRAM::TextureColorMode::Paletted16:
