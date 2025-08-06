@@ -40,6 +40,9 @@
 **/cd/data/BIB.TXT
 **/cd/data/CPY.TXT
 
+# Audio raw files (generated from source audio)
+**/cd/music/*.raw
+
 /[Tt]ests/**/[Bb]uild[Dd]rop/**
 /[Tt]ests/**/*.o
 /[Tt]ests/**/*.log

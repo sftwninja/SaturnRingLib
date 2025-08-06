@@ -299,53 +299,52 @@ create_bin_cue: create_iso
 	echo '  TRACK 01 MODE1/2352' >> $(BUILD_CUE)
 	echo '    INDEX 01 00:00:00' >> $(BUILD_CUE)
 
-AUDIO_FILES = 
-AUDIO_FILES_RAW =
 
-# Function to get the filter option for a given audio file
-define get_filter_option
-$(strip $(shell if [ -f "$(MUSIC_DIR)/tracklist" ]; then \
-	basename_file=$$(basename "$(1)"); \
-	grep "^$$basename_file:" "$(MUSIC_DIR)/tracklist" | head -1 | cut -d: -f2; \
-fi))
+# Shell function to convert audio file to raw and sector align
+# Usage: convert_audio_to_raw audiofile rawfile [filter_option]
+define CONVERT_AUDIO_TO_RAW
+convert_audio_to_raw() { \
+	audiofile="$$1"; \
+	rawfile="$$2"; \
+	filter_option="$$3"; \
+	if [ ! -f "$$rawfile" ] || [ "$$audiofile" -nt "$$rawfile" ]; then \
+		if [ -f "$$rawfile" ]; then \
+			echo "Regenerating $$rawfile (source file is newer)"; \
+		else \
+			echo "Converting $$audiofile to $$rawfile"; \
+		fi; \
+		if [ -n "$$filter_option" ]; then \
+			filter_var="SRL_SOX_FILTERS_$$filter_option"; \
+			filter_cmd=$$(eval echo \$$$$filter_var); \
+			if [ -n "$$filter_cmd" ]; then \
+				sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile" $$filter_cmd; \
+			else \
+				echo "Warning: No SOX_FILTERS_$$filter_option defined, using no filters"; \
+				sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
+			fi; \
+		else \
+			sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
+		fi; \
+		size=$$(stat -c%s "$$rawfile"); \
+		target_sectors=$$((size / 2352)); \
+		if [ $$((size % 2352)) -ne 0 ]; then \
+			target_sectors=$$((target_sectors + 1)); \
+		fi; \
+		target_size=$$((target_sectors * 2352)); \
+		if [ $$size -lt $$target_size ]; then \
+			padding_needed=$$((target_size - size)); \
+			: "Use sparse file approach - seek to target size minus 1 and write a single byte"; \
+			dd if=/dev/zero of="$$rawfile" bs=1 count=1 seek=$$((target_size - 1)) 2>/dev/null; \
+		fi; \
+		echo "Converted $$audiofile to $$rawfile ($$size -> $$target_size bytes, $$target_sectors sectors)"; \
+	else \
+		echo "Using existing $$rawfile (up to date)"; \
+	fi; \
+}
 endef
 
-%.raw: %
-	@filter_option="$(call get_filter_option,$<)"; \
-	if [ -n "$$filter_option" ]; then \
-		echo "Processing $< with filter option: $$filter_option"; \
-	else \
-		echo "Processing $< with no filter option"; \
-	fi; \
-	# apply any quick filter to the file through the sox conversion \
-	if [ -n "$$filter_option" ]; then \
-		filter_var="SRL_SOX_FILTERS_$$filter_option"; \
-		filter_cmd=$$(eval echo \$$$$filter_var); \
-		if [ -n "$$filter_cmd" ]; then \
-			sox "$<" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$@" $$filter_cmd; \
-		else \
-			echo "Warning: No SOX_FILTERS_$$filter_option defined, using no filters"; \
-			sox "$<" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$@"; \
-		fi; \
-	else \
-		sox "$<" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$@"; \
-	fi; \
-	# check to ensure the raw file is sector aligned to prevent track drift \
-	size=$$(stat -c%s "$@"); \
-	target_sectors=$$((size / 2352)); \
-	if [ $$((size % 2352)) -ne 0 ]; then \
-		target_sectors=$$((target_sectors + 1)); \
-	fi; \
-	target_size=$$((target_sectors * 2352)); \
-	if [ $$size -lt $$target_size ]; then \
-		mv "$@" "$@.unpadded"; \
-		dd if=/dev/zero bs=1 count=$$((target_size - size)) of=padding.tmp status=none; \
-		cat "$@.unpadded" padding.tmp > "$@"; \
-		rm -f padding.tmp "$@.unpadded"; \
-	fi; \
-	echo "Converted $< to $@ ($$size -> $$target_size bytes, $$target_sectors sectors)";
-
 add_audio_to_bin_cue: create_bin_cue
+	$(CONVERT_AUDIO_TO_RAW); \
 	track=2; \
 	total_size=$$(stat -c%s "$(BUILD_BIN)"); \
   sectors=$$((total_size / 2352)); \
@@ -367,41 +366,12 @@ add_audio_to_bin_cue: create_bin_cue
 			audiofile="$(MUSIC_DIR)/$$audiofile"; \
 			rawfile="$$audiofile.raw"; \
 			if [ -f "$$audiofile" ]; then \
-				if [ ! -f "$$rawfile" ]; then \
-					echo "Converting $$audiofile to $$rawfile"; \
-					# Get filter option for this file \
-					filter_option=""; \
-					if echo "$$line" | grep -q ':'; then \
-						filter_option=$${line#*:}; \
-					fi; \
-					# Apply sox conversion with or without filters \
-					if [ -n "$$filter_option" ]; then \
-						filter_var="SRL_SOX_FILTERS_$$filter_option"; \
-						filter_cmd=$$(eval echo \$$$$filter_var); \
-						if [ -n "$$filter_cmd" ]; then \
-							sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile" $$filter_cmd; \
-						else \
-							echo "Warning: No SOX_FILTERS_$$filter_option defined, using no filters"; \
-							sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
-						fi; \
-					else \
-						sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
-					fi; \
-					# Check to ensure the raw file is sector aligned \
-					size=$$(stat -c%s "$$rawfile"); \
-					target_sectors=$$((size / 2352)); \
-					if [ $$((size % 2352)) -ne 0 ]; then \
-						target_sectors=$$((target_sectors + 1)); \
-					fi; \
-					target_size=$$((target_sectors * 2352)); \
-					if [ $$size -lt $$target_size ]; then \
-						mv "$$rawfile" "$$rawfile.unpadded"; \
-						dd if=/dev/zero bs=1 count=$$((target_size - size)) of=padding.tmp status=none; \
-						cat "$$rawfile.unpadded" padding.tmp > "$$rawfile"; \
-						rm -f padding.tmp "$$rawfile.unpadded"; \
-					fi; \
-					echo "Converted $$audiofile to $$rawfile ($$size -> $$target_size bytes, $$target_sectors sectors)"; \
+				# Get filter option for this file \
+				filter_option=""; \
+				if echo "$$line" | grep -q ':'; then \
+					filter_option=$${line#*:}; \
 				fi; \
+				convert_audio_to_raw "$$audiofile" "$$rawfile" "$$filter_option"; \
 				echo "$$rawfile" >> .audio_files_temp; \
 			else \
 				echo "Warning: Audio file not found: $$audiofile"; \
@@ -410,30 +380,12 @@ add_audio_to_bin_cue: create_bin_cue
 		rm -f .tracklist_temp; \
 	else \
 		# Auto-discover audio files and convert to raw \
-		# Use xargs to handle spaces in filenames properly \
-		find $(MUSIC_DIR) \( -name '*.mp3' -o -name '*.wav' -o -name '*.ogg' -o -name '*.flac' -o -name '*.aac' -o -name '*.m4a' -o -name '*.wma' \) -print0 | \
-		xargs -0 -I {} sh -c ' \
-		audiofile="{}"; \
-		rawfile="$$audiofile.raw"; \
-		if [ ! -f "$$rawfile" ]; then \
-			echo "Converting $$audiofile to $$rawfile"; \
-			sox "$$audiofile" -t raw -r 44100 -e signed-integer -b 16 -c 2 "$$rawfile"; \
-			size=$$(stat -c%s "$$rawfile"); \
-			target_sectors=$$((size / 2352)); \
-			if [ $$((size % 2352)) -ne 0 ]; then \
-				target_sectors=$$((target_sectors + 1)); \
-			fi; \
-			target_size=$$((target_sectors * 2352)); \
-			if [ $$size -lt $$target_size ]; then \
-				mv "$$rawfile" "$$rawfile.unpadded"; \
-				dd if=/dev/zero bs=1 count=$$((target_size - size)) of=padding.tmp status=none; \
-				cat "$$rawfile.unpadded" padding.tmp > "$$rawfile"; \
-				rm -f padding.tmp "$$rawfile.unpadded"; \
-			fi; \
-			echo "Converted $$audiofile to $$rawfile ($$size -> $$target_size bytes, $$target_sectors sectors)"; \
-		fi; \
-		echo "$$rawfile" >> .audio_files_temp; \
-		'; \
+		find $(MUSIC_DIR) \( -name '*.mp3' -o -name '*.wav' -o -name '*.ogg' -o -name '*.flac' -o -name '*.aac' -o -name '*.m4a' -o -name '*.wma' \) | \
+		while IFS= read -r audiofile; do \
+			rawfile="$$audiofile.raw"; \
+			convert_audio_to_raw "$$audiofile" "$$rawfile" ""; \
+			echo "$$rawfile" >> .audio_files_temp; \
+		done; \
 	fi; \
 	if [ ! -f .audio_files_temp ]; then \
 		echo "No audio files found"; \
@@ -479,8 +431,6 @@ add_audio_to_bin_cue: create_bin_cue
     sectors=$$((sectors + $$sectors_in_file)); \
 	done < .audio_files_temp; \
 	rm -f .audio_files_temp
-	# Clean up raw files \
-	find $(MUSIC_DIR) -name '*.raw' -delete
 
 build_bin_cue: add_audio_to_bin_cue
 
@@ -538,10 +488,14 @@ build_bin_cue: add_audio_to_bin_cue
 # 		fi; \
 # 	done < $(BUILD_CUE)
 
-clean:
+# Clean everything except raw audio files (used during normal builds)
+clean-preserve-audio:
 	rm -f $(SGLLDIR)/../SRC/*.o
 	rm -f $(OBJECTS) $(BUILD_ELF) $(BUILD_ISO) $(BUILD_MAP) $(ASSETS_DIR)/0.bin
-	rm -f $(AUDIO_FILES_RAW)
+
+# Full clean including raw audio files (used by clean.bat)
+clean: clean-preserve-audio
+	find $(MUSIC_DIR) -name '*.raw' -delete 2>/dev/null || true
 ifeq ($(strip ${SRL_USE_SGL_SOUND_DRIVER}),1)
 	rm -f $(ASSETS_DIR)/SDDRVS.DAT $(ASSETS_DIR)/SDDRVS.TSK $(ASSETS_DIR)/BOOTSND.MAP
 ifeq ($(strip ${SRL_ENABLE_FREQ_ANALYSIS}), 1)
@@ -552,4 +506,4 @@ endif
 
 build : pre_build build_bin_cue post_build
 
-all: clean build
+all: clean-preserve-audio build
